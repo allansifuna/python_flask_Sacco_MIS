@@ -1,0 +1,162 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container">
+  <div class="col-md-12 m-auto text-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800"> ADD WORK RECORD</h1>
+    <div class="col-lg-6 m-auto">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+    </div>
+  </div>
+  <br>
+  <div class="card o-hidden border-0 shadow-lg col-lg-6 my-5  mt-5 m-auto">
+    <div class="card-body p-0">
+      <!-- Nested Row within Card Body -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="p-5">
+              <form class="user" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group">
+
+
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {%if form.first_name.errors%}
+                    {{form.first_name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.first_name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.first_name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter First Name...")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {%if form.last_name.errors%}
+                    {{form.last_name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.last_name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.last_name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Last Name...")}}
+                    {%endif%}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {%if form.department.errors%}
+                    {{form.department(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.department.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.department(class="form-control form-control-user",id="exampleInputEmail",placeholder="Worker Department...")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {%if form.shift.errors%}
+                    {{form.shift(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.shift.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.shift(class="form-control form-control-user",id="exampleInputEmail",placeholder="Worker Shift...")}}
+                    {%endif%}
+                  </div>
+                </div>
+                {%if user.userdepartment.name=="Punching"%}
+                <div class="form-group">
+                  {%if form.fifty_piece.errors%}
+                  {{form.fifty_piece(class="form-control form-control-user is-invalid",id="exampleInputfifty_piece")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.fifty_piece.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.fifty_piece(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Fifty-Piece Count...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                  {%if form.single_piece.errors%}
+                  {{form.single_piece(class="form-control form-control-user is-invalid",id="exampleInputsingle_piece")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.single_piece.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.single_piece(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Single-Piece Quantity...")}}
+                  {%endif%}
+                </div>
+                {%elif user.userdepartment.name=="Packing"%}
+                <div class="form-group">
+                  {%if form.complete.errors%}
+                  {{form.complete(class="form-control form-control-user is-invalid")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.complete.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.complete(class="form-control form-control-user",placeholder="Enter No. of Complete Boxes...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                  {%if form.incomplete.errors%}
+                  {{form.incomplete(class="form-control form-control-user is-invalid")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.incomplete.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.incomplete(class="form-control form-control-user",placeholder="Enter No. of fifty-Piece in InComplete Boxes...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                      {%if form.packing_form.errors%}
+                            {{form.packing_form(class="form-control form-control-user is-invalid",id="userpacking_form")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.packing_form.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.packing_form(class="form-control custom-select",id="userRole")}}
+                            {%endif%}
+
+                    </div>
+                {%endif%}
+
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Add Record
+                </button>
+                <hr>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%endblock content%}

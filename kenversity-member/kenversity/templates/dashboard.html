@@ -1,0 +1,166 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div id="layoutSidenav_content">
+                <main>
+                    <!-- Main page content-->
+                    <div class="container mt-n10">
+                        <div class="">
+                            <div class="col-xxl-8">
+                                <!-- Tabbed dashboard card example-->
+                                <div class="card mb-4">
+                                    <div class="card-header border-bottom">
+                                        <!-- Dashboard card navigation-->
+                                        <ul class="nav nav-tabs card-header-tabs" id="dashboardNav" role="tablist">
+                                            <li class="nav-item mr-1"><a class="nav-link active" id="production-pill" href="#production" data-toggle="tab" role="tab" aria-controls="production" aria-selected="true">Production</a></li>
+                                            <li class="nav-item mr-1"><a class="nav-link" id="punching-pill" href="#punching" data-toggle="tab" role="tab" aria-controls="punching" aria-selected="false">Punching</a></li>
+                                            <li class="nav-item mr-1"><a class="nav-link" id="packing-pill" href="#packing" data-toggle="tab" role="tab" aria-controls="packing" aria-selected="false">Packing</a></li>
+                                            <li class="nav-item"><a class="nav-link" id="confirming-pill" href="#confirming" data-toggle="tab" role="tab" aria-controls="confirming" aria-selected="false">Confirming</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="tab-content" id="dashboardNavContent">
+                                            <!-- Dashboard Tab Pane 1-->
+                                            <div class="tab-pane fade show active" id="production" role="tabpanel" aria-labelledby="production-pill">
+                                                <div class="datatable table-responsive">
+                                                    <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>                                                            </tr>
+                                                        </tfoot>
+                                                        <tbody>
+                                                            {%for producer in producers%}
+                                                                <tr>
+                                                                <td>{{producer.national_id}}</td>
+                                                                <td>
+                                                                    <i class="mr-2 text-green" data-feather="zap"></i>
+                                                                    {{producer.fname}}
+                                                                </td>
+                                                                <td>{{producer.lname}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="punching" role="tabpanel" aria-labelledby="punching-pill">
+                                                <div class="datatable table-responsive">
+                                                    <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>                                                            </tr>
+                                                        </tfoot>
+                                                        <tbody>
+                                                            {%for puncher in punchers%}
+                                                                <tr>
+                                                                <td>{{puncher.national_id}}</td>
+                                                                <td>
+                                                                    <i class="mr-2 text-green" data-feather="zap"></i>
+                                                                    {{puncher.fname}}
+                                                                </td>
+                                                                <td>{{puncher.lname}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="packing" role="tabpanel" aria-labelledby="packing-pill">
+                                                <div class="datatable table-responsive">
+                                                    <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                                <th>Record Work</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                                <th>Record Work</th>                                                            </tr>
+                                                        </tfoot>
+                                                        <tbody>
+                                                            {%for packer in packers%}
+                                                                <tr>
+                                                                <td>{{packer.national_id}}</td>
+                                                                <td>
+                                                                    <i class="mr-2 text-green" data-feather="zap"></i>
+                                                                    {{packer.fname}}
+                                                                </td>
+                                                                <td>{{packer.lname}}</td>
+                                                                <td></td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="confirming" role="tabpanel" aria-labelledby="confirming-pill">
+                                                <div class="datatable table-responsive">
+                                                    <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th>National ID</th>
+                                                                <th>First Name</th>
+                                                                <th>Last Name</th>                                                            </tr>
+                                                        </tfoot>
+                                                        <tbody>
+                                                            {%for puncher in punchers%}
+                                                                <tr>
+                                                                <td>{{puncher.national_id}}</td>
+                                                                <td>
+                                                                    <i class="mr-2 text-green" data-feather="zap"></i>
+                                                                    {{puncher.fname}}
+                                                                </td>
+                                                                <td>{{puncher.lname}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <!-- Dashboard Tab Pane 2-->
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+{%endblock%}

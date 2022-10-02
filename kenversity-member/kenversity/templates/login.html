@@ -1,0 +1,76 @@
+{%extends 'form_layout.html'%}
+{%block content%}
+
+            <!-- Nested Row within Card Body -->
+              <!-- <div class="col-lg-6 d-none d-lg-block bg-logi-image"></div> -->
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">KENVERSITY MEMBER PORTAL</h1>
+                  </div>
+                  <div>
+                    {%with messages= get_flashed_messages(with_categories=true)%}
+                            {%if messages%}
+                            {%for category,message in messages%}
+                            <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                              {{message}}
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span
+                              </button>
+                            </div>
+                            {%endfor%}
+                            {%endif%}
+                            {%endwith%}
+                  </div>
+                  <form class="user" method="POST">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                      {%if form.email.errors%}
+                            {{form.email(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.email.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.email(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {%endif%}
+
+                    </div>
+
+                    <div class="form-group">
+                      {%if form.password.errors%}
+                            {{form.password(class="form-control form-control-user is-invalid")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.password.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.password(class="form-control form-control-user",id="exampleInputPassword",placeholder="Enter Password...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox small">
+                        {{form.remember(class="custom-control-input",id="customCheck")}}
+                        {{form.remember.label(class="custom-control-label",for="customCheck")}}
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                      Login
+                    </button>
+                    <hr>
+
+
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                    <a class="small" href="{{url_for('member.dashboard')}}">Forgot Password?</a>
+                  </div>
+                </div>
+          </div>
+        </div>
+
+      </div>
+
+   {%endblock content%}
