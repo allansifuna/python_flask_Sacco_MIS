@@ -15,6 +15,12 @@ class Config:
     MAIL_PASSWORD = 'yogeroyogerodinero33'
     MAIL_DEFAULT_SENDER = 'Kenversity SACCO Developers'
     SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+    API_ENVIRONMENT="production"
+    APP_KEY="kAXqU8JZzdzxUchRKnnaKVPX5AVl1MLZ"
+    APP_SECRET="Dmpu7oYaCULD1xZG"
+    BUSINESS_SHORTCODE="4029829"
+    PASSCODE="2ce084c9f634b1334c806ce7c7b3cbfdf8f6a5e5b1a4a94f64a5495a3cb27960"
+    CALLBACK_URL="http://192.46.209.254:65123/mpesa/b2c/v1"
 
 class Development(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:////home/allan/Documents/kenversityMIS/kenversity.db'

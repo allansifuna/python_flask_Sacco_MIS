@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_mpesa import MpesaAPI
 # from flask_redis import FlaskRedis
 from logging.handlers import SMTPHandler
 import logging
@@ -15,6 +16,7 @@ bcrypt = Bcrypt()
 lm = LoginManager()
 lms=LoginManager()
 mail = Mail()
+mpesa= MpesaAPI()
 # redis = FlaskRedis()
 lm.login_view = 'member.login'
 lm.login_message_category = 'info'
@@ -33,6 +35,7 @@ def create_app(conf_method):
     mail.init_app(app)
     migrate.init_app(app, db)
     lm.init_app(app)
+    mpesa.init_app(app)
     # redis.init_app(app)
 
     app.register_blueprint(member)

@@ -26,3 +26,6 @@ class MemberDataForm(FlaskForm):
     id_back = FileField('ID Back', validators=[FileAllowed(['jpg', 'png'])])
     kra_pin = FileField('KRA PIN Certificate', validators=[FileAllowed(['pdf'])])
     photo = FileField('Passport Photo', validators=[FileAllowed(['jpg', 'png'])])
+
+class MemberRegPayForm(FlaskForm):
+    phone = TelField('Phone Number')

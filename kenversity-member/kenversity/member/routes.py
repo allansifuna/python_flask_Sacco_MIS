@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,MemberRegistrationForm,MemberDataForm
+from .forms import LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm
+from .utils import save_picture,save_file,simulate_pay
 from kenversity.models import Member, Deposit
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+REGISTRATION_FEE_AMOUNT=1
+
 member = Blueprint('member', __name__)
 
 @member.route('/member')
@@ -19,10 +22,10 @@ def login():
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-        user = User.query.filter_by(email=email).first()
-        if user and user.password is not None:
-            if bcrypt.check_password_hash(user.password, password):
-                login_user(user, remember=form.remember.data)
+        member = Member.query.filter_by(email=email).first()
+        if member and member.password is not None:
+            if bcrypt.check_password_hash(member.password, password):
+                login_user(member, remember=form.remember.data)
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('member.dashboard'))
             else:
@@ -53,12 +56,38 @@ def register():
             password=bcrypt.generate_password_hash(passw).decode("utf-8")
             member=Member(first_name=fname,last_name=lname,email=email,phone_number=phone,national_id=nat_id,password=password)
             member.save()
-            return redirect(url_for('member.register',stage="user_data"))
+            return redirect(url_for('member.register',stage="user_data",member=member.id))
     elif stage == "user_data":
+        memberID=request.args.get("member")
         form=MemberDataForm()
         if form.validate_on_submit():
-            return redirect(url_for('member.register',stage="payment"))
+            id_front=save_picture(form.id_front.data)
+            id_back=save_picture(form.id_back.data)
+            kra_pin=save_file(form.kra_pin.data)
+            photo=save_picture(form.photo.data)
+            member=Member.query.get(memberID)
+            member.id_front=id_front
+            member.id_back=id_back
+            member.kra_pin=kra_pin
+            member.photo=photo
+            member.update()
+            return redirect(url_for('member.register',stage="payment",member=member.id))
     elif stage == "payment":
-        pass
+        form=MemberRegPayForm()
+        memberID=request.args.get("member")
+        member=Member.query.get(memberID)
+        if form.validate_on_submit():
+            phone=form.phone.data
+            resp=simulate_pay(phone,REGISTRATION_FEE_AMOUNT)
+            if resp:
+                flash("Once payment is successful, you will be verified by our staff  with in 12hrs and you will be able to Login","info")
+                return redirect(url_for("member.login"))
+            flash("Payment simulation failed. Pleas try again!","danger")
+        form.phone.data=member.phone_number
 
-    return render_template('register.html',stage=stage)
+    return render_template('register.html',stage=stage,form=form)
+
+@member.route('/callback_url', methods=["POST"])
+def callback_url():
+    request_data = request.data
+    decoded = request_data.decode()

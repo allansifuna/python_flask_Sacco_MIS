@@ -1,0 +1,207 @@
+{%extends 'form_layout.html'%}
+{%block content%}
+
+            <!-- Nested Row within Card Body -->
+              <!-- <div class="col-lg-6 d-none d-lg-block bg-logi-image"></div> -->
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">KENVERSITY MEMBER PORTAL</h1>
+                  </div>
+                  <div>
+                    {%with messages= get_flashed_messages(with_categories=true)%}
+                            {%if messages%}
+                            {%for category,message in messages%}
+                            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                              {{message}}
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            {%endfor%}
+                            {%endif%}
+                            {%endwith%}
+                  </div>
+                  {% if not stage%}
+                  <form class="user" method="POST" enctype="multipart/form-data">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                      {%if form.first_name.errors%}
+                            {{form.first_name(class="form-control form-control-user is-invalid",id="exampleInputfirst_name")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.first_name.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.first_name(class="form-control form-control-user",id="exampleInputfirst_name",placeholder="Enter First Name...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {%if form.last_name.errors%}
+                            {{form.last_name(class="form-control form-control-user is-invalid",id="exampleInputlast_name")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.last_name.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.last_name(class="form-control form-control-user",id="exampleInputlast_name",placeholder="Enter Last Name...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {%if form.email.errors%}
+                            {{form.email(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.email.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.email(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {%if form.phone.errors%}
+                            {{form.phone(class="form-control form-control-user is-invalid",id="exampleInputphone")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.phone.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.phone(class="form-control form-control-user",id="exampleInputphone",placeholder="Enter Phone Number...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {%if form.national_id.errors%}
+                            {{form.national_id(class="form-control form-control-user is-invalid",id="exampleInputnational_id")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.national_id.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.national_id(class="form-control form-control-user",id="exampleInputnational_id",placeholder="Enter National ID...")}}
+                            {%endif%}
+
+                    </div>
+
+                    <div class="form-group">
+                      {%if form.password.errors%}
+                            {{form.password(class="form-control form-control-user is-invalid")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.password.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.password(class="form-control form-control-user",id="exampleInputPassword",placeholder="Enter Password...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {%if form.confirm_password.errors%}
+                            {{form.confirm_password(class="form-control form-control-user is-invalid")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.confirm_password.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.confirm_password(class="form-control form-control-user",id="exampleInputconfirm_password",placeholder="Confirm Password...")}}
+                            {%endif%}
+
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                      Save
+                    </button>
+                    <hr>
+
+
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                    <a class="small" href="{{url_for('member.dashboard')}}">Forgot Password?</a>
+                  </div>
+                  {% elif stage == "user_data"%}
+                    <form class="user" method="POST" enctype="multipart/form-data">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                      {{ form.photo.label() }}
+                      {{ form.photo(class="form-control form-control-file") }}
+                      {% if form.photo.errors %}
+                      {% for error in form.photo.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{ form.id_front.label() }}
+                      {{ form.id_front(class="form-control form-control-file") }}
+                      {% if form.id_front.errors %}
+                      {% for error in form.id_front.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{ form.id_back.label() }}
+                      {{ form.id_back(class="form-control form-control-file") }}
+                      {% if form.id_back.errors %}
+                      {% for error in form.id_back.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                      {{ form.kra_pin.label() }}
+                      {{ form.kra_pin(class="form-control form-control-file") }}
+                      {% if form.kra_pin.errors %}
+                      {% for error in form.kra_pin.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                      Save
+                    </button>
+                    <hr>
+
+
+                  </form>
+                  {%else%}
+                    <div>
+                      <h3>Pay Registration Fees</h3>
+                    </div>
+                    <div>
+                      <p>On clicking the pay button, You will be propted to pay KES 1000, Resistration fees.</p>
+                    </div>
+                    <form class="user" method="POST" enctype="multipart/form-data">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                      {%if form.phone.errors%}
+                            {{form.phone(class="form-control form-control-user is-invalid",id="exampleInputphone")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.phone.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.phone(class="form-control form-control-user",id="exampleInputphone",placeholder="Enter National ID...", hidden=True)}}
+                            {%endif%}
+
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                      Pay
+                    </button>
+                  </form>
+                  {%endif%}
+                </div>
+
+   {%endblock content%}
