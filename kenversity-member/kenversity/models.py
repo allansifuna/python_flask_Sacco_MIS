@@ -74,6 +74,7 @@ class Staff(db.Model,UserMixin, CRUDMixin):
     role=db.Column(db.String(20),nullable=False)
     created_at=db.Column(db.DateTime,default=datetime.now,nullable=False)
     status=db.Column(db.String(40),default="INACTIVE")
+    password=db.Column(db.String(255),nullable=True)
     approved_collaterals = db.relationship('Collateral', backref='collateral_approver', lazy=True)
     approved_loans = db.relationship('Loan', backref='loan_approver', lazy=True)
     approved_guarantors = db.relationship('Guarantor', backref='guarantor_approver', lazy=True)

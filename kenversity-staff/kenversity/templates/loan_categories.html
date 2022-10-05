@@ -1,0 +1,133 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container">
+  <div class="col-md-12 m-auto text-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800"> ADD LOAN CATEGORY</h1>
+    <div class="col-lg-6 m-auto">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+    </div>
+  </div>
+  <br>
+  <div class="card o-hidden border-0 shadow-lg col-lg-6 my-5  mt-5 m-auto">
+    <div class="card-body p-0">
+      <!-- Nested Row within Card Body -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="p-5">
+              <form class="user" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group">
+
+
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {%if form.name.errors%}
+                    {{form.name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Loan Category Name...")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {%if form.min_shares.errors%}
+                    {{form.min_shares(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.min_shares.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.min_shares(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Minimum Shares...")}}
+                    {%endif%}
+                  </div>
+                </div>
+                <div class="form-group">
+                  {%if form.max_amount.errors%}
+                  {{form.max_amount(class="form-control form-control-user is-invalid",id="exampleInputmax_amount")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.max_amount.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.max_amount(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Max Amount...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                  {%if form.repayment_duration.errors%}
+                  {{form.repayment_duration(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.repayment_duration.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.repayment_duration(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Repayment Duration...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                  {%if form.qualification_duration.errors%}
+                  {{form.qualification_duration(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.qualification_duration.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.qualification_duration(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Qualification Duration...")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                  {%if form.interest_rate.errors%}
+                  {{form.interest_rate(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.interest_rate.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.interest_rate(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Loan Rate...")}}
+                  {%endif%}
+                </div>
+
+
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Save Loan Category
+                </button>
+                <hr>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- <script type="text/javascript">
+      let role=document.getElementById('userRole');
+      let dept=document.getElementById('department');
+      role.onchange=function(){
+        console.log(role.value)
+        if(role.value =='Secretary' || role.value=='Supervisor'){
+        document.getElementById('department').style.display = 'none';
+      }else{
+        document.getElementById('department').style.display = 'block';
+      }
+      }
+    </script> -->
+    {%endblock content%}

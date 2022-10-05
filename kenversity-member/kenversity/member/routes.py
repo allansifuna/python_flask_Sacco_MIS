@@ -114,6 +114,4 @@ def callback_url():
         #TODO
         #text the person that their transaction was not prosessed
         print("I Was Here")
-    with open("out.txt","a") as file:
-        file.writelines(decoded)
-    return {}
+    return {"status":"success"}

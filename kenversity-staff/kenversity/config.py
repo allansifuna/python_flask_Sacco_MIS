@@ -12,7 +12,7 @@ class Config:
     MAIL_USE_TLS = True
     ADMINS = 'allansifuna324@gmail.com'
     MAIL_USERNAME = 'noreply.sifuna@gmail.com'
-    MAIL_PASSWORD = 'yogeroyogerodinero33'
+    MAIL_PASSWORD = 'ftsliklrueweevrl'
     MAIL_DEFAULT_SENDER = 'Kenversity SACCO Developers'
     SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
