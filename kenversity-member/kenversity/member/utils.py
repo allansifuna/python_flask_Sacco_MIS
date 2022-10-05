@@ -33,7 +33,7 @@ def simulate_pay(phone,amount):
         "passcode": current_app.config.get("PASSCODE"),
         "amount": amount,
         "phone_number":phone, #phone number to be prompted to pay
-        "reference_code": f"KENV_{phone}",
+        "reference_code": f"REG_{phone}",
         "callback_url": current_app.config.get("CALLBACK_URL"), # cllback url should be exposes. for testing putposes you can route on host 0.0.0.0 and set the callback url to be https://youripaddress:yourport/endpoint
         "description": "Registration fees on Kenversity" #a description of the transaction its optional
     }

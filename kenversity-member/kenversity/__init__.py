@@ -11,6 +11,7 @@ import logging
 from kenversity.config import conf
 import os
 
+
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 lm = LoginManager()

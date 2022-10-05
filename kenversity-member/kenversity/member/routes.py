@@ -2,9 +2,10 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from kenversity import db, bcrypt, mail
 from .forms import LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm
 from .utils import save_picture,save_file,simulate_pay
-from kenversity.models import Member, Deposit
+from kenversity.models import Member, Deposit,Transaction
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+import json
 REGISTRATION_FEE_AMOUNT=1
 
 member = Blueprint('member', __name__)
@@ -91,3 +92,28 @@ def register():
 def callback_url():
     request_data = request.data
     decoded = request_data.decode()
+    resp=json.loads(decoded)
+    print(resp)
+    resultCode=resp["Body"]["stkCallback"]["ResultCode"]
+    print(resultCode)
+    if resultCode == 0:
+        phone_number=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
+        amount=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
+        transaction_code=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
+        member=Member.query.filter_by(phone_number=phone_number).first()
+        if member:
+            if not member.memberNo:
+                transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="REG")
+                transaction.save()
+            #email the person that their transaction was successful
+        else:
+            transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="MISC")
+            transaction.save()
+
+    else:
+        #TODO
+        #text the person that their transaction was not prosessed
+        print("I Was Here")
+    with open("out.txt","a") as file:
+        file.writelines(decoded)
+    return {}

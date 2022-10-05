@@ -175,6 +175,7 @@ class Transaction(db.Model, CRUDMixin):
     transaction_code=db.Column(db.String(40),nullable=False)
     amount=db.Column(db.Integer,nullable=False)
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
+    reason=db.Column(db.String(40),nullable=True)
     repayments=db.relationship('Repayment', backref='repayment_transaction', lazy=True)
     deposits=db.relationship('Deposit', backref='deposit_transaction', lazy=True)
     loans=db.relationship('Loan', backref='loan_transaction', lazy=True)
