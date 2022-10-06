@@ -29,3 +29,7 @@ class MemberDataForm(FlaskForm):
 
 class MemberRegPayForm(FlaskForm):
     phone = TelField('Phone Number')
+
+class MakeDepositForm(FlaskForm):
+    phone = TelField('Phone Number')
+    amount = IntegerField('Amount', validators=[DataRequired()])

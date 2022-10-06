@@ -74,13 +74,13 @@
        <li class="nav-item">
         <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#hubgames" aria-expanded="true" aria-controls="hubgames">
           <i class="fas fa-fw fa-baseball-ball"></i>
-          <span>Addings:</span>
+          <span>Approvings:</span>
         </a>
         <div id="hubgames" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
            <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Click to View: </h6>
-            <a class="collapse-item" href="">Add Department</a>
-            <a class="collapse-item" href="">Add {{current_user.role}}</a>
+            <a class="collapse-item" href="{{url_for('staff.member_approvals')}}">Approve Members</a>
+            <a class="collapse-item" href="">Add Staff</a>
             <a class="collapse-item" href="">Add User</a>
           </div>
         </div>

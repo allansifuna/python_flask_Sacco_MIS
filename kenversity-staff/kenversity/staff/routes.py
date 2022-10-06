@@ -91,3 +91,15 @@ def set_password(token):
         flash(f'Your password has been set. You can now log in', 'success')
         return redirect(url_for('staff.login'))
     return render_template("set_password.html", form=form)
+
+
+@staff.route('/staff/member/approvals',methods=["POST","GET"])
+@login_required
+def member_approvals():
+    members=Member.query.filter_by(memberNo=None).all()
+    i=1
+    ms={}
+    for member in members:
+        ms[i]=member
+        i+=1
+    return render_template("member_approvals.html", ms=ms)

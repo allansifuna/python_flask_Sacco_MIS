@@ -15,6 +15,10 @@ class CRUDMixin:
         db.session.commit()
         return self
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
 
 @lm.user_loader
 def load_member(id):
@@ -99,9 +103,11 @@ class Staff(db.Model,UserMixin, CRUDMixin):
 class Deposit(db.Model, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberID=db.Column(db.String(8), db.ForeignKey('member.id'),nullable=False)
-    transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=False)
+    transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=True)
+    CheckoutRequestID=db.Column(db.String(30),nullable=True)
     deposit_date=db.Column(db.DateTime,default=datetime.now,nullable=False)
-    amount=db.Column(db.Integer,nullable=False)
+    amount=db.Column(db.Integer,nullable=True)
+
 
     def __repr__(self):
         return f"<{self.depositID}|{self.amount}>"
@@ -192,6 +198,7 @@ class Repayment(db.Model, CRUDMixin):
     transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=False)
     amount=db.Column(db.Integer,nullable=False)
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
+    CheckoutRequestID=db.Column(db.String(30),nullable=True)
 
     def __repr__(self):
         return f"<{self.repaymentID}|{self.amount}>"

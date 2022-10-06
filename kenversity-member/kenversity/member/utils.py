@@ -39,6 +39,6 @@ def simulate_pay(phone,amount):
     }
     resp = mpesa.MpesaExpress.stk_push(**data)
     if resp.get("ResponseCode")=="0":
-        return True
+        return resp
     return False
 

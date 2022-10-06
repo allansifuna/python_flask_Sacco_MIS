@@ -20,7 +20,7 @@ class Config:
     APP_SECRET="Dmpu7oYaCULD1xZG"
     BUSINESS_SHORTCODE="4029829"
     PASSCODE="2ce084c9f634b1334c806ce7c7b3cbfdf8f6a5e5b1a4a94f64a5495a3cb27960"
-    CALLBACK_URL="https://ff8d-105-161-213-249.in.ngrok.io/callback_url"
+    CALLBACK_URL="https://03b3-105-160-48-151.eu.ngrok.io/callback_url"
 
 class Development(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:////home/allan/Documents/kenversityMIS/kenversity.db'

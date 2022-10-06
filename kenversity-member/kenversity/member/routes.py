@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm
+from .forms import LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm
 from .utils import save_picture,save_file,simulate_pay
 from kenversity.models import Member, Deposit,Transaction
 from flask_login import login_user, current_user, logout_user, login_required
@@ -13,7 +13,12 @@ member = Blueprint('member', __name__)
 @member.route('/member')
 @login_required
 def dashboard():
-    return render_template('home.html')
+    total_shares=0
+    deps=Deposit.query.filter_by(memberID=current_user.id).all()
+    for dep in deps:
+        if dep.amount:
+            total_shares+=dep.amount
+    return render_template('home.html',total_shares=total_shares)
 
 @member.route('/member/login', methods=["POST", "GET"])
 def login():
@@ -93,25 +98,76 @@ def callback_url():
     request_data = request.data
     decoded = request_data.decode()
     resp=json.loads(decoded)
-    print(resp)
     resultCode=resp["Body"]["stkCallback"]["ResultCode"]
-    print(resultCode)
     if resultCode == 0:
         phone_number=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
         amount=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
         transaction_code=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
+        checkout_requestID=resp["Body"]["stkCallback"]["CheckoutRequestID"]
         member=Member.query.filter_by(phone_number=phone_number).first()
         if member:
             if not member.memberNo:
                 transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="REG")
                 transaction.save()
+            elif member.memberNo:
+                dep=Deposit.query.filter_by(CheckoutRequestID=checkout_requestID).first()
+                if dep:
+                    transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="DEP")
+                    transaction.save()
+                    dep.transactionID=transaction.id
+                    dep.amount=amount
+                    dep.update()
+
             #email the person that their transaction was successful
         else:
             transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="MISC")
             transaction.save()
 
     else:
+        checkout_requestID=resp["Body"]["stkCallback"]["CheckoutRequestID"]
+        dep=Deposit.query.filter_by(CheckoutRequestID=checkout_requestID).first()
+        if dep:
+            dep.delete()
         #TODO
         #text the person that their transaction was not prosessed
         print("I Was Here")
     return {"status":"success"}
+
+@member.route('/member/make/deposit', methods=["POST", "GET"])
+@login_required
+def make_deposit():
+    form = MakeDepositForm()
+    if form.validate_on_submit():
+        phone=form.phone.data
+        amount=form.amount.data
+        resp=simulate_pay(phone,REGISTRATION_FEE_AMOUNT)
+        if resp:
+            dep=Deposit(memberID=current_user.id,CheckoutRequestID=resp["CheckoutRequestID"])
+            dep.save()
+            flash(f"A payment request has been sent to youe phone.","success")
+            return redirect(url_for("member.dashboard"))
+        flash("Payment simulation failed. Pleas try again!","danger")
+    form.phone.data=current_user.phone_number
+    return render_template("make_deposit.html",form=form)
+
+@member.route('/member/view/deposits', methods=["POST", "GET"])
+@login_required
+def view_deposits():
+    deposits=Deposit.query.filter_by(memberID=current_user.id).filter(Deposit.amount!=None).all()
+    i=1
+    ds={}
+    for deposit in deposits:
+        ds[i]=deposit
+        i+=1
+    return render_template("member_deposits.html",ds=ds)
+
+@member.route('/member/view/transactions', methods=["POST", "GET"])
+@login_required
+def view_transactions():
+    transactions=Transaction.query.filter_by(phone_number=current_user.phone_number).order_by(Transaction.date_created.desc()).all()
+    i=1
+    ts={}
+    for transaction in transactions:
+        ts[i]=transaction
+        i+=1
+    return render_template("member_transactions.html",ts=ts)

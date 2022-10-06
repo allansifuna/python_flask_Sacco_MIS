@@ -1,0 +1,62 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div id="layoutSidenav_content">
+                <main>
+                    <!-- Main page content-->
+                    <div class="container mt-n10">
+                        <div class="">
+                            <div class="col-xxl-8">
+                                <!-- Tabbed dashboard card example-->
+                                <div class="card mb-4">
+                                    <div class="card-header border-bottom">
+                                        <!-- Dashboard card navigation-->
+                                        <ul class="nav nav-tabs card-header-tabs" id="dashboardNav" role="tablist">
+                                            <li class="nav-item mr-1">Deposits</li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="tab-content" id="dashboardNavContent">
+                                            <!-- Dashboard Tab Pane 1-->
+                                            <div class="tab-pane fade show active" id="production" role="tabpanel" aria-labelledby="production-pill">
+                                                <div class="datatable table-responsive">
+                                                    <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No#</th>
+                                                                <th>Date Deposited</th>
+                                                                <th>Mpesa Code</th>
+                                                                <th>Amount</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {%for num,deposit in ds.items()%}
+                                                                <tr>
+                                                                    <td>{{num}}</td>
+                                                                <td>{{deposit.deposit_date.strftime('%Y-%m-%d %I:%M %p')}}</td>
+                                                                <td>
+                                                                    {{deposit.deposit_transaction.transaction_code}}
+                                                                </td>
+                                                                <td>KES {{deposit.amount}}.00</td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+
+
+                                                                                                   <!-- Dashboard Tab Pane 2-->
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+{%endblock%}

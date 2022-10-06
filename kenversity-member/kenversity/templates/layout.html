@@ -47,7 +47,7 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active">
-        <a class="nav-link" href="">
+        <a class="nav-link" href="{{url_for('member.dashboard')}}">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></a>
       </li>
@@ -60,7 +60,7 @@
       </div>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="{{url_for('member.view_deposits')}}" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-school"></i>
           <span> Deposits</span>
         </a>
@@ -85,10 +85,10 @@
         <div id="hubgames" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
            <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Click to View: </h6>
-            <a class="collapse-item" href="">Make a Deposit</a>
+            <a class="collapse-item" href="{{url_for('member.make_deposit')}}">Make a Deposit</a>
             <a class="collapse-item" href="">Make a Repayment</a>
             <a class="collapse-item" href="">Apply for a Loan</a>
-            <a class="collapse-item" href="">View Transactions</a>
+            <a class="collapse-item" href="{{url_for('member.view_transactions')}}">View Transactions</a>
           </div>
         </div>
       </li>
