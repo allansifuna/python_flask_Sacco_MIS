@@ -1,0 +1,208 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          {%with messages= get_flashed_messages(with_categories=true)%}
+                            {%if messages%}
+                            {%for category,message in messages%}
+                            <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                              {{message}}
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span
+                              </button>
+                            </div>
+                            {%endfor%}
+                            {%endif%}
+                            {%endwith%}
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">MEMBER APPROVAL</h1>
+            <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <!-- Content Column -->
+            <div class="col-lg-7 mb-4">
+
+              <!-- Project Card Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Credentials</h6>
+                </div>
+                <div class="card-body">
+                    <h4 class="small font-weight-bold">ID FRONT</h4>
+                    <div class="text-center">
+                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 30rem;"
+                        src="http://127.0.0.1:5000/static/ids/{{member.id_front}}" alt="...">
+                    </div>
+                    <hr>
+                    <h4 class="small font-weight-bold">ID BACK</h4>
+                    <div class="text-center">
+                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 30rem;"
+                        src="http://127.0.0.1:5000/static/ids/{{member.id_back}}" alt="...">
+                    </div>
+                    <hr>
+                    <h4 class="small font-weight-bold">KRA PIN</h4>
+                    <div class="text-center">
+                        <iframe src="http://127.0.0.1:5000/static/kra/{{member.kra_pin}}" width="100%" height="500px"></iframe>
+                    </div>
+                </div>
+            </div>
+
+
+
+            </div>
+            <div class="col-lg-5 mb-4">
+
+              <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Form</h6>
+                </div>
+                <div class="card-body">
+                  <form class="user" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group row">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form.first_name.label() }}
+                    {%if form.first_name.errors%}
+                    {{form.first_name(class="form-control is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.first_name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.first_name(class="form-control",id="exampleInputEmail",placeholder="Enter First Name...",readonly="readonly")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form.last_name.label() }}
+                    {%if form.last_name.errors%}
+                    {{form.last_name(class="form-control is-invalid",id="exampleInputEmail")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.last_name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.last_name(class="form-control ",id="exampleInputEmail",placeholder="Enter Last Name...",readonly="readonly")}}
+                    {%endif%}
+                  </div>
+                </div>
+                <div class="form-group">
+                    {{ form.national_id.label() }}
+                  {%if form.national_id.errors%}
+                  {{form.national_id(class="form-control is-invalid",id="exampleInputEmail")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.national_id.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.national_id(class="form-control ",id="exampleInputEmail",placeholder="Enter National ID...",readonly="readonly")}}
+                  {%endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.reg_fees.label() }}
+                      {%if form.reg_fees.errors%}
+                            {{form.reg_fees(class="form-control is-invalid",id="userreg_fees")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.reg_fees.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.reg_fees(class="form-control",id="userreg_fees",readonly="readonly")}}
+                            {%endif%}
+
+                    </div>
+                <div class="form-group">
+                    {{ form.verdict.label() }}
+                      {%if form.verdict.errors%}
+                            {{form.verdict(class="form-control is-invalid",id="verdict")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.verdict.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.verdict(class="form-control custom-select",id="verdict")}}
+                            {%endif%}
+
+                    </div>
+
+                <div class="form-group">
+                    {{ form.reason.label(id="reasonl") }}
+                  {%if form.reason.errors%}
+                  {{form.reason(class="form-control is-invalid",id="reason")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.reason.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.reason(class="form-control",id="reason",placeholder="Enter Reason if the verdict is Disapprove...")}}
+                  {%endif%}
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Save
+                </button>
+                <hr>
+              </form>
+
+                </div>
+              </div>
+
+
+
+            </div>
+
+
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; KENVERSITY SACCO <span id="year"></span> </span>
+              <script>
+                  document.getElementById("year").innerHTML=new Date().getFullYear();
+              </script>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+  <script type="text/javascript">
+          let select_verdict=document.getElementById('verdict');
+          let select_reason=document.getElementById('reason');
+          let select_reasonl=document.getElementById('reasonl');
+          select_verdict.onchange=function(){
+            verdict=select_verdict.value;
+
+            if(verdict == "APPROVE"){
+                select_reason.hidden = true;
+                select_reasonl.hidden = true;
+            }
+            if(verdict == "DISAPPROVE"){
+                select_reason.hidden = false;
+                select_reasonl.hidden = false;
+            }
+          }
+        </script>
+  {%endblock content%}

@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm
-from .utils import send_set_password_email
-from kenversity.models import Staff,Member,LoanCategory
+from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm
+from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email
+from kenversity.models import Staff,Member,LoanCategory,Transaction
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 staff = Blueprint('staff', __name__)
 
+@staff.route('/')
 @staff.route('/staff')
 @login_required
 def dashboard():
@@ -96,10 +97,48 @@ def set_password(token):
 @staff.route('/staff/member/approvals',methods=["POST","GET"])
 @login_required
 def member_approvals():
-    members=Member.query.filter_by(memberNo=None).all()
+    members=Member.query.filter_by(memberNo=None).filter_by(status="INACTIVE").all()
     i=1
     ms={}
     for member in members:
         ms[i]=member
         i+=1
     return render_template("member_approvals.html", ms=ms)
+
+@staff.route('/staff/<member_id>/approve',methods=["POST","GET"])
+@login_required
+def member_approval(member_id):
+    form=ApproveMemberForm()
+    member=Member.query.get_or_404(member_id)
+    member.member_approver=current_user
+    member.update()
+    reg=Transaction.query.filter_by(phone_number=member.phone_number).filter_by(reason="REG").first()
+    if form.validate_on_submit():
+        verdict=form.verdict.data
+        if verdict=="APPROVE":
+            member.memberNo=get_member_No()
+            member.status="ACTIVE"
+            member.update()
+            # send_approval_email(member.email)
+            flash("Member Successfully Approved","success")
+            return redirect(url_for('staff.member_approvals'))
+        else:
+            member.status="DISAPPROVED"
+            member.update()
+            if reg:
+                print(f"I was called {form.reason.data}")
+                # send_disapproval_email(member,form.reason.data,True)
+            else:
+                print(f"I was called {form.reason.data}")
+                # send_disapproval_email(member,form.reason.data,False)
+            flash("Member has been notified of the disapproval.","success")
+            return redirect(url_for('staff.member_approvals'))
+
+    reg_fees=0
+    if reg:
+        reg_fees=reg.amount
+    form.first_name.data=member.first_name
+    form.last_name.data=member.last_name
+    form.national_id.data=member.national_id
+    form.reg_fees.data=reg_fees
+    return render_template("member_approval.html",form=form,member=member)

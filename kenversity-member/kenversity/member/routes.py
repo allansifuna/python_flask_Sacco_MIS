@@ -29,11 +29,16 @@ def login():
         email = form.email.data
         password = form.password.data
         member = Member.query.filter_by(email=email).first()
-        if member and member.password is not None:
+        if member and member.password is not None and member.status != "DEACTIVATED":
             if bcrypt.check_password_hash(member.password, password):
-                login_user(member, remember=form.remember.data)
-                next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('member.dashboard'))
+                if member.status == "ACTIVE":
+                    login_user(member, remember=form.remember.data)
+                    next_page = request.args.get('next')
+                    return redirect(next_page) if next_page else redirect(url_for('member.dashboard'))
+                elif member.status == "DISAPPROVED":
+                    flash("Your Membership application was disapproved. Please check your email for the reason.", "danger")
+                elif member.status == "INACTIVE":
+                    flash("Your Membership application has not been approved yet. The Approval will be done within 24hrs. Please be patient.", "danger")
             else:
                 flash("Wrong email or Password!!", "danger")
         else:
@@ -65,6 +70,9 @@ def register():
             return redirect(url_for('member.register',stage="user_data",member=member.id))
     elif stage == "user_data":
         memberID=request.args.get("member")
+        member=Member.query.get_or_404(memberID)
+        if member.status == "DEACTIVATED" or member.status == "ACTIVE":
+            return redirect(url_for('member.login'))
         form=MemberDataForm()
         if form.validate_on_submit():
             id_front=save_picture(form.id_front.data)
@@ -76,6 +84,7 @@ def register():
             member.id_back=id_back
             member.kra_pin=kra_pin
             member.photo=photo
+            member.status="INACTIVE"
             member.update()
             return redirect(url_for('member.register',stage="payment",member=member.id))
     elif stage == "payment":
@@ -109,6 +118,8 @@ def callback_url():
             if not member.memberNo:
                 transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="REG")
                 transaction.save()
+                member.status="INACTIVE"
+                member.update()
             elif member.memberNo:
                 dep=Deposit.query.filter_by(CheckoutRequestID=checkout_requestID).first()
                 if dep:
