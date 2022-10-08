@@ -141,7 +141,7 @@ class LoanCategory(db.Model, CRUDMixin):
     loans=db.relationship('Loan', backref='loan_category', lazy=True)
 
     def __repr__(self):
-        return f"<{self.loan_categoryID}|{self.name}>"
+        return f"<{self.id}|{self.name}>"
 
 class OTP(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
@@ -157,10 +157,10 @@ class Loan(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loan_categoryID=db.Column(db.String(8),db.ForeignKey('loan_category.id'),nullable=False)
-    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=False)
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
     amount=db.Column(db.Integer,nullable=False)
-    start_date=db.Column(db.Date,nullable=False)
-    end_date=db.Column(db.Date,nullable=False)
+    start_date=db.Column(db.Date,nullable=True)
+    end_date=db.Column(db.Date,nullable=True)
     status=db.Column(db.String(40),default="UNAPPROVED")
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     guarantors=db.relationship('Guarantor', backref='loan_guarantor', lazy=True)
@@ -169,7 +169,7 @@ class Loan(db.Model, CRUDMixin):
     transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=True)
 
     def __repr__(self):
-        return f"<{self.loanID}|{self.amount}>"
+        return f"<{self.id}|{self.amount}>"
 
 class Transaction(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)

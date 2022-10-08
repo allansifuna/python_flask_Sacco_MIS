@@ -33,69 +33,75 @@
                 </div>
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form.first_name.label() }}
                     {%if form.first_name.errors%}
-                    {{form.first_name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    {{form.first_name(class="form-control is-invalid",id="exampleInputEmail")}}
                     <div class="invalid-feedback">
                       {%for error in form.first_name.errors%}
                       <span>{{error}}</span><br />
                       {%endfor%}
                     </div>
                     {%else%}
-                    {{form.first_name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter First Name...")}}
+                    {{form.first_name(class="form-control",id="exampleInputEmail",placeholder="Enter First Name...")}}
                     {%endif%}
                   </div>
                   <div class="col-sm-6">
+                    {{ form.last_name.label() }}
                     {%if form.last_name.errors%}
-                    {{form.last_name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    {{form.last_name(class="form-control is-invalid",id="exampleInputEmail")}}
                     <div class="invalid-feedback">
                       {%for error in form.last_name.errors%}
                       <span>{{error}}</span><br />
                       {%endfor%}
                     </div>
                     {%else%}
-                    {{form.last_name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Last Name...")}}
+                    {{form.last_name(class="form-control",id="exampleInputEmail",placeholder="Enter Last Name...")}}
                     {%endif%}
                   </div>
                 </div>
                 <div class="form-group">
+                  {{ form.email.label() }}
                   {%if form.email.errors%}
-                  {{form.email(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.email(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.email.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.email(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                  {{form.email(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
+                  {{ form.phone_number.label() }}
                   {%if form.phone_number.errors%}
-                  {{form.phone_number(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.phone_number(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.phone_number.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.phone_number(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Phone Number...")}}
+                  {{form.phone_number(class="form-control",id="exampleInputEmail",placeholder="Enter Phone Number...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
+                  {{ form.national_id.label() }}
                   {%if form.national_id.errors%}
-                  {{form.national_id(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.national_id(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.national_id.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.national_id(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter National ID...")}}
+                  {{form.national_id(class="form-control",id="exampleInputEmail",placeholder="Enter National ID...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
+                  {{ form.role.label() }}
                       {%if form.role.errors%}
-                            {{form.role(class="form-control form-control-user is-invalid",id="userRole")}}
+                            {{form.role(class="form-control is-invalid",id="userRole")}}
                             <div class="invalid-feedback">
                               {%for error in form.role.errors%}
                               <span>{{error}}</span><br />

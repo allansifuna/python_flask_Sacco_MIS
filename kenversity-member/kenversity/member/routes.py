@@ -1,14 +1,22 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app
+from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app,jsonify
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm
+from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
+                    ApplyLoanForm)
 from .utils import save_picture,save_file,simulate_pay
-from kenversity.models import Member, Deposit,Transaction
+from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
 REGISTRATION_FEE_AMOUNT=1
 
 member = Blueprint('member', __name__)
+
+def get_loan_category():
+    return LoanCategory.query.all()
+
+
+def get_loan_category_pk(obj):
+    return str(obj)
 
 @member.route('/member')
 @login_required
@@ -182,3 +190,30 @@ def view_transactions():
         ts[i]=transaction
         i+=1
     return render_template("member_transactions.html",ts=ts)
+
+@member.route('/member/loan/apply', methods=["POST", "GET"])
+@login_required
+def apply_loan():
+    form=ApplyLoanForm()
+    form.loan_category.get_pk = get_loan_category_pk
+    form.loan_category.query_factory = get_loan_category
+    if form.validate_on_submit():
+        loan_cat=str(form.loan_category.data)
+        loan_amount = int(form.loan_amount.data)
+        loan=Loan(loan_applier=current_user,loan_categoryID=loan_cat,amount=loan_amount)
+        loan.save()
+        flash(f"Loan application has been successfully submitted","success")
+        return redirect(url_for('member.dashboard'))
+    return render_template("apply_loan.html",form=form)
+
+@member.route('/get/lc/<loan_cat_id>', methods=["POST", "GET"])
+@login_required
+def get_loan_cat(loan_cat_id):
+    lc = LoanCategory.query.get(loan_cat_id)
+    data={}
+    if lc:
+        data["min_shares"] = lc.min_shares
+        data["max_amount"] = lc.max_amount
+        data["repayment_duration"]=lc.repayment_duration
+        data["interest_rate"] = lc.interest_rate
+    return jsonify(data)

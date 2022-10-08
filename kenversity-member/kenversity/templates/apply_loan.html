@@ -1,0 +1,184 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container">
+  <div class="col-md-12 m-auto text-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800"> APPLY LOAN</h1>
+    <div class="col-lg-6 m-auto">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+    </div>
+  </div>
+  <br>
+  <div class="card o-hidden border-0 shadow-lg col-lg-6 my-5  mt-5 m-auto">
+    <div class="card-body p-0">
+      <!-- Nested Row within Card Body -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="p-5">
+              <form class="user" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group">
+                  {{ form.loan_category.label() }}
+                      {%if form.loan_category.errors%}
+                            {{form.loan_category(class="form-control is-invalid",id="loancat")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.loan_category.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.loan_category(class="form-control custom-select",id="loancat")}}
+                            {%endif%}
+
+                    </div>
+                  <div class="form-group row"  id="div1">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form.min_shares.label() }}
+                    {%if form.min_shares.errors%}
+                    {{form.min_shares(class="form-control is-invalid",id="minsh")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.min_shares.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.min_shares(class="form-control",id="minsh",readonly="readonly")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form.max_amount.label() }}
+                    {%if form.max_amount.errors%}
+                    {{form.max_amount(class="form-control is-invalid",id="maxa")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.max_amount.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.max_amount(class="form-control ",id="maxa",readonly="readonly")}}
+                    {%endif%}
+                  </div>
+                </div>
+                <div class="form-group row" id="div2">
+                  <div class="col-sm-6 mb-3 mb-sm-0">
+                    {{ form.interest_rate.label() }}
+                    {%if form.interest_rate.errors%}
+                    {{form.interest_rate(class="form-control is-invalid",id="intr")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.interest_rate.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.interest_rate(class="form-control",id="intr",readonly="readonly")}}
+                    {%endif%}
+                  </div>
+                  <div class="col-sm-6">
+                    {{ form.repayment_duration.label() }}
+                  {%if form.repayment_duration.errors%}
+                  {{form.repayment_duration(class="form-control is-invalid",id="repd")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.repayment_duration.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.repayment_duration(class="form-control",id="repd",readonly="readonly")}}
+                  {%endif%}
+
+                  </div>
+                </div>
+                <div class="form-group"  id="div3">
+                  {{ form.repayment_amount.label() }}
+                    {%if form.repayment_amount.errors%}
+                    {{form.repayment_amount(class="form-control is-invalid",id="ram")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.repayment_amount.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.repayment_amount(class="form-control ",id="ram",readonly="readonly")}}
+                    {%endif%}
+                </div>
+                  <div class="form-group">
+                  {{ form.loan_amount.label() }}
+                  {%if form.loan_amount.errors%}
+                  {{form.loan_amount(class="form-control is-invalid",id="lam")}}
+                  <div class="invalid-feedback">
+                    {%for error in form.loan_amount.errors%}
+                    <span>{{error}}</span><br />
+                    {%endfor%}
+                  </div>
+                  {%else%}
+                  {{form.loan_amount(class="form-control",id="lam",placeholder="Enter Loan Amount...")}}
+                  {%endif%}
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Apply Loan
+                </button>
+                <hr>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+          let dv1=document.getElementById('div1');
+          let dv2=document.getElementById('div2');
+          let dv3=document.getElementById('div3');
+          let lcat=document.getElementById('loancat');
+          let mns=document.getElementById('minsh');
+          let mxa=document.getElementById('maxa');
+          let inr=document.getElementById('intr');
+          let rep=document.getElementById('repd');
+          let lm=document.getElementById('lam');
+          let rm=document.getElementById('ram');
+          lcat.onchange=function(){
+            lc=lcat.value;
+            if(lc == '__None'){
+              // div1.hidden=true;
+              // div2.hidden=true;
+              // div3.hidden=true;
+              mns.value=""
+              mxa.value=""
+              inr.value=""
+              rep.value = ""
+              rm.value = ""
+            }else{
+                fetch('/get/lc/'+lc).then(function(response){
+                response.json().then(function(data){
+                  console.table(data.school)
+                  mns.value="KES "+data.min_shares
+                  mxa.value="KES "+data.max_amount
+                  inr.value=data.interest_rate +"%"
+                  rep.value = data.repayment_duration + " Months"
+                  // div1.hidden=false;
+                  // div2.hidden=false;
+                  // div3.hidden=false;
+                  // let othtml='';
+                  // othtml+='<option value ="'+data.school.id+'">' + data.school.name + '</option>';
+                  // select_school.innerHTML =othtml;
+                });
+                });
+                lm.onchange=function(){
+                  v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
+                  rm.value = "KES "+ v
+                }
+            }
+
+          }
+        </script>
+    {%endblock content%}

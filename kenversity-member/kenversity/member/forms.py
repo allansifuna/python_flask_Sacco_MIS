@@ -33,3 +33,17 @@ class MemberRegPayForm(FlaskForm):
 class MakeDepositForm(FlaskForm):
     phone = TelField('Phone Number')
     amount = IntegerField('Amount', validators=[DataRequired()])
+
+class ApplyLoanForm(FlaskForm):
+    loan_category=QuerySelectField('Select Loan Category', validators=[DataRequired()], get_label='name', allow_blank=True)
+    min_shares = StringField('Minimum Shares')
+    max_amount = StringField('Maximum Amount')
+    interest_rate = StringField('Interest Rate')
+    repayment_duration = StringField('Repayment Duration')
+    repayment_amount = StringField('Repayment Amount')
+    loan_amount=IntegerField("Loan Amount", validators=[DataRequired()])
+
+    def validate_loan_amount(self, loan_amount):
+        mxa = int(self.max_amount.data.split(" ")[1])
+        if int(loan_amount.data) > mxa:
+            raise ValidationError('Loan Amount should be less that the Max Amount')
