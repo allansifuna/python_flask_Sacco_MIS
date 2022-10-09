@@ -120,7 +120,7 @@ class Collateral(db.Model, CRUDMixin):
     description=db.Column(db.String(255),nullable=False)
     value=db.Column(db.Integer,nullable=False)
     status=db.Column(db.String(40),default="UNAPPROVED")
-    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=False)
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
 
     def __repr__(self):
         return f"<{self.collateralID}|{self.name}>"
@@ -130,7 +130,7 @@ class Guarantor(db.Model, CRUDMixin):
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
     status=db.Column(db.String(40),default="UNAPPROVED")
-    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=False)
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
 
     def __repr__(self):
         return f"<{self.guarantorID}|{self.memberID}>"

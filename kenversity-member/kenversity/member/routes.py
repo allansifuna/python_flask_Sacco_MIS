@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app,jsonify
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
-                    ApplyLoanForm)
+                    ApplyLoanForm,SearchGuatantorForm,AddCollateralForm)
 from .utils import save_picture,save_file,simulate_pay
-from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan
+from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
@@ -203,7 +203,7 @@ def apply_loan():
         loan=Loan(loan_applier=current_user,loan_categoryID=loan_cat,amount=loan_amount)
         loan.save()
         flash(f"Loan application has been successfully submitted","success")
-        return redirect(url_for('member.dashboard'))
+        return redirect(url_for('member.add_guarantor',loan_id=loan.id))
     return render_template("apply_loan.html",form=form)
 
 @member.route('/get/lc/<loan_cat_id>', methods=["POST", "GET"])
@@ -217,3 +217,78 @@ def get_loan_cat(loan_cat_id):
         data["repayment_duration"]=lc.repayment_duration
         data["interest_rate"] = lc.interest_rate
     return jsonify(data)
+
+@member.route('/get/member/<name>', methods=["POST", "GET"])
+@login_required
+def get_member(name):
+    members=Member.query.filter_by(first_name=name).all()
+    members.extend(Member.query.filter_by(last_name=name).all())
+    members.extend(Member.query.filter_by(email=name).all())
+    members.extend(Member.query.filter_by(phone_number=name).all())
+    data=[]
+    for member in members:
+        datas={}
+        datas["id"]=member.id
+        datas["name"]= f"{member.first_name} {member.last_name}"
+        data.append(datas)
+    return jsonify(data)
+
+@member.route('/member/guarantors/<loan_id>/add', methods=["POST", "GET"])
+@login_required
+def add_guarantor(loan_id):
+    form = SearchGuatantorForm()
+    guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
+    members=[]
+    for guarantor in guarantors:
+        members.append(Member.query.get(guarantor.memberID))
+    if request.method == "POST":
+        guarantor=form.guarantor.data
+        if guarantor == "":
+            flash("Please Select a Guarantor before Adding.","danger")
+            return redirect(url_for('member.add_guarantor',loan_id=loan_id))
+        has_g=Guarantor.query.filter_by(memberID=guarantor).filter_by(loanID=loan_id).first()
+        if has_g:
+            flash("Guarantor Already exist. Please select another.","danger")
+            return redirect(url_for('member.add_guarantor',loan_id=loan_id))
+        g=Guarantor(memberID=guarantor,loanID=loan_id)
+        g.save()
+        flash("Added a guarantor","success")
+        return redirect(url_for('member.add_guarantor',loan_id=loan_id))
+    form.name.data=""
+    return render_template("add_guarantors.html",form=form,members=members,loan_id=loan_id)
+
+@member.route('/member/guarantors/<loan_id>/<guarantor_id>/remove', methods=["POST", "GET"])
+@login_required
+def remove_guarantor(loan_id,guarantor_id):
+    guarantor=Guarantor.query.get_or_404(guarantor_id)
+    guarantor.delete()
+    flash("Successfully Deleted A Guarantor","success")
+    return redirect(url_for('member.add_guarantor',loan_id=loan_id))
+
+@member.route('/member/collateral/<loan_id>/add', methods=["POST", "GET"])
+@login_required
+def add_collateral(loan_id):
+    form = AddCollateralForm()
+    cols=Collateral.query.filter_by(loanID=loan_id).all()
+    collaterals={}
+    i=1
+    for col in cols:
+        collaterals[i]=col
+        i+=1
+    if form.validate_on_submit():
+        name=form.name.data
+        value=form.value.data
+        description=form.description.data
+        col=Collateral(memberID=current_user.id,loanID=loan_id,name=name,value=value,description=description)
+        col.save()
+        flash("Added a Collateral","success")
+        return redirect(url_for('member.add_collateral',loan_id=loan_id))
+    return render_template("add_collateral.html",form=form,collaterals=collaterals,loan_id=loan_id)
+
+@member.route('/member/collateral/<loan_id>/<collateral_id>/remove', methods=["POST", "GET"])
+@login_required
+def remove_collateral(loan_id,collateral_id):
+    collateral=Collateral.query.get_or_404(collateral_id)
+    collateral.delete()
+    flash(" Successfully Deleted A Collateral","success")
+    return redirect(url_for('member.add_collateral',loan_id=loan_id))

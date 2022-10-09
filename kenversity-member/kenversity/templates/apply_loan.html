@@ -114,7 +114,7 @@
                   <div class="form-group">
                   {{ form.loan_amount.label() }}
                   {%if form.loan_amount.errors%}
-                  {{form.loan_amount(class="form-control is-invalid",id="lam")}}
+                  {{form.loan_amount(class="form-control is-invalid",id="lam2")}}
                   <div class="invalid-feedback">
                     {%for error in form.loan_amount.errors%}
                     <span>{{error}}</span><br />
@@ -145,6 +145,7 @@
           let inr=document.getElementById('intr');
           let rep=document.getElementById('repd');
           let lm=document.getElementById('lam');
+          let lm2=document.getElementById('lam2');
           let rm=document.getElementById('ram');
           lcat.onchange=function(){
             lc=lcat.value;
@@ -174,6 +175,10 @@
                 });
                 });
                 lm.onchange=function(){
+                  v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
+                  rm.value = "KES "+ v
+                }
+                lm2.onchange=function(){
                   v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
                   rm.value = "KES "+ v
                 }

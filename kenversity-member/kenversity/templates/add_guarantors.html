@@ -1,0 +1,141 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container">
+  <div class="col-md-12 m-auto text-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800"> ADD GUARANTORS</h1>
+    <div class="col-lg-6 m-auto">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+    </div>
+  </div>
+  <br>
+  <div class="card o-hidden border-0 shadow-lg col-lg-6 my-5  mt-5 m-auto">
+    <div class="card-body p-0">
+      <!-- Nested Row within Card Body -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="p-5">
+              <form class="user" method="POST">
+                {{form.hidden_tag()}}
+                <div class="form-group"  id="div3">
+                  {{ form.name.label() }}
+                    {%if form.name.errors%}
+                    {{form.name(class="form-control is-invalid",id="name")}}
+                    <div class="invalid-feedback">
+                      {%for error in form.name.errors%}
+                      <span>{{error}}</span><br />
+                      {%endfor%}
+                    </div>
+                    {%else%}
+                    {{form.name(class="form-control ",id="name")}}
+                    {%endif%}
+                </div>
+                <div class="form-group">
+                  {{ form.guarantor.label() }}
+                      {%if form.guarantor.errors%}
+                            {{form.guarantor(class="form-control is-invalid",id="guar")}}
+                            <div class="invalid-feedback">
+                              {%for error in form.guarantor.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{form.guarantor(class="form-control custom-select",id="guar")}}
+                            {%endif%}
+
+                    </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Add Guarantor
+                </button>
+              </form>
+              <hr>
+              <div class="row">
+                <div class="col-sm-6 text-center">
+                    <a class="" href="{{url_for('member.add_collateral',loan_id=loan_id)}}">Add Collateral</a>
+                  </div>
+                  <div class="col-sm-6 text-center">
+                    <a class="" href="{{url_for('member.dashboard')}}">Go To Dashboard</a>
+                  </div>
+              </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card shadow mb-4 mt-5">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">LOAN GUARANTORS</h6>
+
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>National ID</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Email</th>
+                                                    <th>Phone Number</th>
+                                                    <th>Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {%for member in members%}
+                                                    <tr>
+                                                    <td>{{member.national_id}}</td>
+                                                    <td>{{member.first_name}}</td>
+                                                    <td>{{member.last_name}}</td>
+                                                    <td>{{member.email}}</td>
+                                                    <td>{{member.phone_number}}</td>
+                                                    <td> <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=guarantor.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
+                                                </tr>
+                                                {%endfor%}
+
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+
+
+
+                                                                                           <!-- Dashboard Tab Pane 2-->
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script type="text/javascript">
+          let nm=document.getElementById('name');
+          let gr=document.getElementById('guar');
+          nm.onchange=function(){
+            name=nm.value
+            fetch('/get/member/'+name).then(function(response){
+                response.json().then(function(data){
+                  let othtml='<option value ="">Select Guarantor </option>';
+                  for (var i = data.length - 1; i >= 0; i--) {
+                    othtml+='<option value ="'+data[i].id+'">' + data[i].name + '</option>';
+                  }
+                  gr.innerHTML =othtml;
+                });
+                });
+
+          }
+        </script>
+    {%endblock content%}

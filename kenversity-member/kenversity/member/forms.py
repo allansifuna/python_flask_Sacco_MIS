@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, PasswordField, BooleanField, SelectField, FloatField
+from wtforms import StringField, IntegerField, SubmitField, PasswordField, BooleanField, SelectField, FloatField,TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import TelField, DateField, EmailField
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -47,3 +47,12 @@ class ApplyLoanForm(FlaskForm):
         mxa = int(self.max_amount.data.split(" ")[1])
         if int(loan_amount.data) > mxa:
             raise ValidationError('Loan Amount should be less that the Max Amount')
+
+class SearchGuatantorForm(FlaskForm):
+    name = StringField('First Name or Last Name or Email or Phone Number')
+    guarantor=SelectField('Select Guarantor', choices=[('','')])
+
+class AddCollateralForm(FlaskForm):
+    name = StringField('Collateral Name')
+    description = TextAreaField('Collateral Description')
+    value = IntegerField("Collateral Value")
