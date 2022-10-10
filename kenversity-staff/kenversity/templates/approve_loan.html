@@ -1,0 +1,231 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  {%with messages= get_flashed_messages(with_categories=true)%}
+  {%if messages%}
+  {%for category,message in messages%}
+  <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+    {{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endfor%}
+  {%endif%}
+  {%endwith%}
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">LOAN PROFILE</h1>
+    <div class="d-none d-sm-inline-block">
+      <a href="{{url_for('staff.staff_verdict',loan_id=loan.id,verdict='DECLINED')}}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-3"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Reject Application</a>
+      <a href="{{url_for('staff.staff_verdict',loan_id=loan.id,verdict='APPROVED')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-right fa-sm text-white-50"></i> Approve Guarantors</a>
+    </div>
+
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+    <div class="col-md-6 col-xs-12">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Loan Applicant Profile</h6>
+
+          <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+
+          <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Exam Results</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Coach's Comments</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Game History</a>
+            </div>
+
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img class="img-profile rounded-circle shadow-sm" width="125px" height="125px" src="http://127.0.0.1:5000/static/ids/{{loan.loan_applier.photo}}">
+          </div>
+          <div class="card-body">
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Name:</span> <span class="text-gray-800 font-weight-bold ml-2"> {{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">National ID:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.national_id}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Phone Number:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.phone_number}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Email:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.email}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">School:</span> <span class="text-gray-800 font-weight-bold ml-2"></span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Hub:</span> <span class="text-gray-800 font-weight-bold ml-2"></span>
+              </li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-12 col-md-12 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Shares</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">KES 1000</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row m-auto">
+        <!-- Number of sessions -->
+        <div class="col-xl-6 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">number of Existing Loans</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- number of students trained monthly -->
+        <div class="col-xl-6 col-md-6 mb-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Loans Guarantor</div>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                      <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"> 7</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-sm-flex align-items-center justify-content-between mb-4 ml-2">
+        <h3 class="h4 mb-0 text-gray-800">LOAN INFO</h3>
+      </div>
+      <div class="row m-auto">
+        <!-- Number of sessions -->
+        <div class="col-xl-6 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">LOAN AMOUNT APPLIED</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{loan.amount}}</div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- number of students trained monthly -->
+        <div class="col-xl-6 col-md-6 mb-4">
+          <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">LOAN CATEGORY</div>
+                  <div class="row no-gutters align-items-center">
+                    <div class="col-auto">
+                      <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{loan.loan_cat.name}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-12 col-md-12 mb-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div class="text-xs font-weight-bold text-uppercase mb-1"><span class="text-primary">LOAN INTEREST: </span> <span class="h6 ml-1 mr-5 font-weight-bold text-gray-800">{{loan.loan_cat.interest_rate}}%</span>  <span class="text-success">REPAYMENT PERIOD:</span> <span class="h6 ml-1 mr-2 font-weight-bold text-gray-800">{{loan.loan_cat.repayment_duration}} Months</span> </div>
+
+                </div>
+                <div class="col-auto">
+                  <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+  <div class="container my-auto">
+    <div class="copyright text-center my-auto">
+      <span>Copyright &copy; KENVERSITY SACCO <span id="year"></span> </span>
+              <script>
+                  document.getElementById("year").innerHTML=new Date().getFullYear();
+              </script>
+    </div>
+  </div>
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+{%endblock content%}

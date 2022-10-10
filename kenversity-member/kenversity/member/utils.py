@@ -42,3 +42,11 @@ def simulate_pay(phone,amount):
         return resp
     return False
 
+
+def add_nums(data):
+    new_dict={}
+    i=1
+    for datum in data:
+        new_dict[i]=datum
+        i+=1
+    return new_dict

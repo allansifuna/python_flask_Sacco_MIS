@@ -1,0 +1,57 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+            <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">MY LOANS</h6>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No#</th>
+                            <th>Loan Category</th>
+                            <th>Interest Rate</th>
+                            <th>Applied Amount</th>
+                            <th>Date Applied</th>
+                            <th>Status</th>
+                            <th>Guarantors</th>
+                            <th>Collaterals</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for num,loan in loans.items()%}
+                            <tr>
+                            <td>{{num}}</td>
+                            <td>{{loan.loan_cat.name}}</td>
+                            <td>{{loan.loan_cat.interest_rate}}</td>
+                            <td>KES {{loan.amount}}</td>
+                            <td>{{loan.date_created.strftime("%d-%m-%Y")}}</td>
+                            <td>{{loan.status}}</td>
+                            <td> <a href="{{url_for('member.add_guarantor',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >VIEW</a></td>
+                            <td> <a href="{{url_for('member.add_collateral',loan_id=loan.id)}}" class="btn text-info btn-sm bg-light border-bottom-info border-top border-left border-right" >VIEW</a></td>
+                            </tr>
+                        {%endfor%}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

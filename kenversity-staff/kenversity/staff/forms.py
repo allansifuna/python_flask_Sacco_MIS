@@ -39,3 +39,6 @@ class ApproveMemberForm(FlaskForm):
     reg_fees=IntegerField('Registration Fees', validators=[DataRequired()])
     verdict=SelectField('Select Verdict', choices=[('', 'Select Verdict ...'),('APPROVE', 'Approve'), ('DISAPPROVE', 'Disapprove')])
     reason=TextAreaField("Reason if Disapproved")
+
+class DeclineLoanForm(FlaskForm):
+    reason=TextAreaField("Reason for Declining")

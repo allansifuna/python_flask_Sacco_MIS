@@ -100,7 +100,7 @@
                                                     <td>{{member.last_name}}</td>
                                                     <td>{{member.email}}</td>
                                                     <td>{{member.phone_number}}</td>
-                                                    <td> <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=guarantor.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
+                                                    <td> <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=member.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
                                                 </tr>
                                                 {%endfor%}
 

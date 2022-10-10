@@ -1,0 +1,79 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">PENDING LOAN APPROVALS</h6>
+
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>No#</th>
+                                                    <th>National ID</th>
+                                                    <th>Name</th>
+                                                    <th>Loan Category</th>
+                                                    <th>Amount</th>
+                                                    <th>Stage</th>
+                                                    <th>Approve</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {%for num,loan in loans.items()%}
+                                                    <tr>
+                                                    <td>{{num}}</td>
+                                                    <td>{{loan.loan_applier.national_id}}</td>
+                                                    <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
+                                                    <td>{{loan.loan_cat.name}}</td>
+                                                    <td>KES {{loan.amount}}</td>
+                                                    <td>{{loan.status}}</td>
+                                                    <td>
+                                                        {% if loan.status ==  "UNAPPROVED"%}
+                                                        <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Start Approval</a>
+                                                        {%elif loan.status == "APPROVED_PROFILE"%}
+                                                        <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Approve Guarantors</a>
+                                                        {%elif loan.status == "APPROVED_GUARANTOR"%}
+                                                        <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Approve Collaterals</a>
+                                                        {%elif loan.status == "APPROVED_COLLATERAL"%}
+                                                        <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Complete Approval</a>
+                                                        {%endif%}
+                                                    </td>
+                                                </tr>
+                                                {%endfor%}
+
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+
+
+
+                                                                                           <!-- Dashboard Tab Pane 2-->
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+{%endblock%}

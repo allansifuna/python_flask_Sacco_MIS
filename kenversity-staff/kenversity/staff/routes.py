@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm
-from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email
-from kenversity.models import Staff,Member,LoanCategory,Transaction
+from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,DeclineLoanForm
+from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
+from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 staff = Blueprint('staff', __name__)
@@ -11,8 +11,10 @@ staff = Blueprint('staff', __name__)
 @staff.route('/staff')
 @login_required
 def dashboard():
-    pending_member_approvals=len(Member.query.filter_by(memberNo=None).all())
-    return render_template('home.html',pending_member_approvals=pending_member_approvals)
+    pending_member_approvals=Member.query.filter_by(memberNo=None).count()
+    pending_loan_applications=Loan.query.filter_by(staffID=None).count()
+    pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").count()
+    return render_template('home.html',pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications)
 
 @staff.route('/staff/login', methods=["POST", "GET"])
 def login():
@@ -142,3 +144,52 @@ def member_approval(member_id):
     form.national_id.data=member.national_id
     form.reg_fees.data=reg_fees
     return render_template("member_approval.html",form=form,member=member)
+
+@staff.route('/staff/loans/view',methods=["POST","GET"])
+@login_required
+def view_loans():
+    loans=Loan.query.filter_by(staffID=None).all()
+    loans=add_nums(loans)
+    return render_template("view_loans.html",loans=loans)
+
+@staff.route('/staff/loan/<loan_id>/approve',methods=["POST","GET"])
+@login_required
+def approve_loan(loan_id):
+    loan=Loan.query.get_or_404(loan_id)
+    loan.staffID=current_user.id
+    loan.update()
+    return render_template("approve_loan.html",loan=loan)
+
+@staff.route('/staff/loan/<loan_id>/<verdict>/approve',methods=["POST","GET"])
+@login_required
+def staff_verdict(loan_id,verdict):
+    loan=Loan.query.get_or_404(loan_id)
+    if verdict == "DECLINED":
+        loan.status ="DECLINED"
+        loan.save()
+        return redirect(url_for("staff.decline_loan",loan_id=loan_id))
+    elif verdict == "APPROVED":
+        loan.status ="APPROVED_PROFILE"
+        loan.save()
+    else:
+        flash("Wrong Verdict. Please Try Again","danger")
+        return redirect(url_for("staff.approve_loan",loan_id=loan_id))
+
+@staff.route('/staff/loans/<loan_id>/decline',methods=["POST","GET"])
+@login_required
+def decline_loan(loan_id):
+    loan=Loan.query.get_or_404(loan_id)
+    form=DeclineLoanForm()
+    if form.validate_on_submit():
+        reason=form.reason.data
+        # send_loan_decline_email(loan.loan_applier,reason)
+        flash("Loan Application Successfully Declined.The Member will be duly Notified","success")
+        return redirect(url_for("staff.view_loans"))
+    return render_template("decline_loan.html",form=form)
+
+@staff.route('/staff/pending-loans/view',methods=["POST","GET"])
+@login_required
+def view_staff_loans():
+    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").all()
+    loans=add_nums(loans)
+    return render_template("view_staff_loans.html",loans=loans)

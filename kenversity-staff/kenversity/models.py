@@ -138,7 +138,7 @@ class LoanCategory(db.Model, CRUDMixin):
     repayment_duration=db.Column(db.Integer,nullable=False)
     qualification_duration=db.Column(db.Integer,nullable=False)
     interest_rate=db.Column(db.Float,nullable=False)
-    loans=db.relationship('Loan', backref='loan_category', lazy=True)
+    loans=db.relationship('Loan', backref='loan_cat', lazy=True)
 
     def __repr__(self):
         return f"<{self.id}|{self.name}>"

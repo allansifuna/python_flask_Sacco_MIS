@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
                     ApplyLoanForm,SearchGuatantorForm,AddCollateralForm)
-from .utils import save_picture,save_file,simulate_pay
+from .utils import save_picture,save_file,simulate_pay,add_nums
 from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -321,3 +321,10 @@ def confirm_request(guarantor_id,verdict):
     flash("You have successfuly updated the guarantor request status","success")
     return redirect(url_for('member.confirm_guarantor_request'))
 
+
+@member.route('/member/loans/view', methods=["POST", "GET"])
+@login_required
+def view_loans():
+    loans=Loan.query.filter_by(memberID=current_user.id).order_by(Loan.date_created.desc()).all()
+    loans=add_nums(loans)
+    return render_template("view_loans.html",loans=loans)

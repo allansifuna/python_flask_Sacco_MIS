@@ -66,7 +66,7 @@
         </a>
        </li>
        <li class="nav-item">
-        <a class="nav-link collapsed" href="" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="{{url_for('staff.view_loans')}}" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-school"></i>
           <span> Loans</span>
         </a>
@@ -80,7 +80,7 @@
            <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Click to View: </h6>
             <a class="collapse-item" href="{{url_for('staff.member_approvals')}}">Approve Members</a>
-            <a class="collapse-item" href="">Add Staff</a>
+            <a class="collapse-item" href="{{url_for('staff.view_staff_loans')}}">My Pending Loan Approvals</a>
             <a class="collapse-item" href="">Add User</a>
           </div>
         </div>

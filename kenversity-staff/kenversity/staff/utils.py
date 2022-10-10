@@ -103,3 +103,32 @@ def send_disapproval_email(member,reason,reg_fees):
         Kenversity Sacco Staff.
         '''
     mail.send(msg)
+
+def send_loan_decline_email(member,reason):
+    msg = Message('Loan Application Decline Email', sender=(
+        "Kenversity SACCO", "Ke"), recipients=[member.email])
+    msg.body = f'''
+    Dear {member.first_name},
+
+    Your Loan Application has been declined.
+
+    This is due to the following reasons cited by staff:-
+    {reason}.
+
+
+    Thank you.
+
+    Regards,
+    Kenversity Sacco Staff.
+    '''
+    mail.send(msg)
+
+
+
+def add_nums(data):
+    new_dict={}
+    i=1
+    for datum in data:
+        new_dict[i]=datum
+        i+=1
+    return new_dict
