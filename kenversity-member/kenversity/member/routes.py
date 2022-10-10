@@ -26,7 +26,8 @@ def dashboard():
     for dep in deps:
         if dep.amount:
             total_shares+=dep.amount
-    return render_template('home.html',total_shares=total_shares)
+    guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
+    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests)
 
 @member.route('/member/login', methods=["POST", "GET"])
 def login():
@@ -221,10 +222,10 @@ def get_loan_cat(loan_cat_id):
 @member.route('/get/member/<name>', methods=["POST", "GET"])
 @login_required
 def get_member(name):
-    members=Member.query.filter_by(first_name=name).all()
-    members.extend(Member.query.filter_by(last_name=name).all())
-    members.extend(Member.query.filter_by(email=name).all())
-    members.extend(Member.query.filter_by(phone_number=name).all())
+    members=Member.query.filter_by(first_name=name).filter(Member.id != current_user.id).all()
+    members.extend(Member.query.filter_by(last_name=name).filter(Member.id != current_user.id).all())
+    members.extend(Member.query.filter_by(email=name).filter(Member.id != current_user.id).all())
+    members.extend(Member.query.filter_by(phone_number=name).filter(Member.id != current_user.id).all())
     data=[]
     for member in members:
         datas={}
@@ -292,3 +293,31 @@ def remove_collateral(loan_id,collateral_id):
     collateral.delete()
     flash(" Successfully Deleted A Collateral","success")
     return redirect(url_for('member.add_collateral',loan_id=loan_id))
+
+@member.route('/member/guarantor/confirm', methods=["POST", "GET"])
+@login_required
+def confirm_guarantor_request():
+    reqs_=Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").all()
+    reqs={}
+    i=1
+    for req in reqs_:
+        reqs[i]=req
+        i+=1
+    return render_template("confirm_g_reqs.html",reqs=reqs)
+
+@member.route('/member/guarantor/confirm/<guarantor_id>/<verdict>', methods=["POST", "GET"])
+@login_required
+def confirm_request(guarantor_id,verdict):
+    req=Guarantor.query.get_or_404(guarantor_id)
+    if verdict == "CONFIRMED":
+        req.status="UNAPPROVED"
+        req.update()
+    elif verdict ==  "DECLINED":
+        req.status="DECLINED"
+        req.update()
+    else:
+        flash("Wrong verdict!!","warning")
+        return redirect(url_for('member.confirm_guarantor_request'))
+    flash("You have successfuly updated the guarantor request status","success")
+    return redirect(url_for('member.confirm_guarantor_request'))
+

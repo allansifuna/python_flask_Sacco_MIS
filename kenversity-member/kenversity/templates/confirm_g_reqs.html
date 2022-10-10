@@ -1,0 +1,73 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">GUARANTOR REQUESTS</h6>
+
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>No#</th>
+                                                    <th>National ID</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Phone Number</th>
+                                                    <th>Loan Amount</th>
+                                                    <th>Repayment Period</th>
+                                                    <th>Approve</th>
+                                                    <th>Decline</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {%for num,req in reqs.items()%}
+                                                    <tr>
+                                                    <td>{{num}}</td>
+                                                    <td>{{req.national_id}}</td>
+                                                    <td>{{req.first_name}}</td>
+                                                    <td>{{req.last_name}}</td>
+                                                    <td>{{req.phone_number}}</td>
+                                                    <td>{{req.loan_guarantor.amount}}</td>
+                                                    <td>{{req.loan_guarantor.loan_cat.repayment_duration}}</td>
+                                                    <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='CONFIRMED')}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >CONFIRM</a></td>
+                                                    <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='DECLINED')}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DECLINE</a></td>
+                                                </tr>
+                                                {%endfor%}
+
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+
+
+
+                                                                                           <!-- Dashboard Tab Pane 2-->
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+{%endblock%}
