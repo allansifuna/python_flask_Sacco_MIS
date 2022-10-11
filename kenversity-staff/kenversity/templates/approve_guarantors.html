@@ -1,9 +1,14 @@
 {%extends 'layout.html'%}
 {%block content%}
 <div class="container-fluid">
-  <div class="col-md-12 m-auto text-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800"> APPROVE GUARANTORS</h1>
-    <div class="col-lg-6 m-auto">
+  <div class="d-sm-flex align-items-center justify-content-between">
+    <h4 class="h4 mb-0 text-gray-800"> APPROVE GUARANTORS</h4>
+    <div class="d-none d-sm-inline-block">
+      <a href="{{url_for('staff.view_staff_loans')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-left fa-sm text-white-50"></i> Back</a>
+    </div>
+
+  </div>
+  <div class="col-lg-6 m-auto">
       {%with messages= get_flashed_messages(with_categories=true)%}
               {%if messages%}
               {%for category,message in messages%}
@@ -17,7 +22,6 @@
                 {%endif%}
                 {%endwith%}
     </div>
-  </div>
       <div class="card shadow mb-4 mt-2">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">LOAN GUARANTORS</h6>

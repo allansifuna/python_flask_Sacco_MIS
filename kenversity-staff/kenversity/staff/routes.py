@@ -121,7 +121,7 @@ def member_approval(member_id):
             member.memberNo=get_member_No()
             member.status="ACTIVE"
             member.update()
-            # send_approval_email(member.email)
+            send_approval_email(member.email)
             flash("Member Successfully Approved","success")
             return redirect(url_for('staff.member_approvals'))
         else:
@@ -129,10 +129,10 @@ def member_approval(member_id):
             member.update()
             if reg:
                 print(f"I was called {form.reason.data}")
-                # send_disapproval_email(member,form.reason.data,True)
+                send_disapproval_email(member,form.reason.data,True)
             else:
                 print(f"I was called {form.reason.data}")
-                # send_disapproval_email(member,form.reason.data,False)
+                send_disapproval_email(member,form.reason.data,False)
             flash("Member has been notified of the disapproval.","success")
             return redirect(url_for('staff.member_approvals'))
 
@@ -226,6 +226,7 @@ def approve_guarantor(loan_id,member_id):
 def guarantor_verdict(loan_id,member_id,verdict):
     guarantor=Guarantor.query.filter_by(loanID=loan_id).filter_by(memberID=member_id).first()
     loan=Loan.query.get_or_404(loan_id)
+    guarantor.staffID=current_user.id
     if verdict == "DECLINED":
         guarantor.status ="DECLINED"
         guarantor.update()
@@ -239,15 +240,59 @@ def guarantor_verdict(loan_id,member_id,verdict):
     guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
     approved_all=[]
     declined=[]
+    unconfirmed=[]
+    unapproved=[]
     for g in guarantors:
         approved_all.append(g.status=="APPROVED")
         declined.append(g.status=="DECLINED")
-    if all(approved_all):
-        loan.guarantor_status = "APPROVED"
-        loan.update()
+        unconfirmed.append(g.status == "UNCONFIRMED")
+        unapproved.append(g.status == "UNAPPROVED")
+    if not any(unconfirmed) and not any(unapproved):
+        if all(approved_all):
+            loan.guarantor_status = "APPROVED"
+            loan.update()
 
-    if any(declined):
-        loan.guarantor_status = "DECLINED"
-        loan.update()
+        if any(declined):
+            loan.guarantor_status = "DECLINED"
+            loan.update()
 
     return redirect(url_for("staff.view_guarantors",loan_id=loan_id))
+
+@staff.route('/staff/<loan_id>/collaterals/view',methods=["POST","GET"])
+@login_required
+def view_collaterals(loan_id):
+    collaterals=Collateral.query.filter_by(loanID=loan_id).all()
+    collaterals=add_nums(collaterals)
+    return render_template("approve_collaterals.html",collaterals=collaterals,loan_id=loan_id)
+
+@staff.route('/staff/collateral/<collateral_id>/<verdict>/approve',methods=["POST","GET"])
+@login_required
+def approve_collateral(collateral_id,verdict):
+    col=Collateral.query.get_or_404(collateral_id)
+    col.staffID=current_user.id
+    if verdict == "DECLINED":
+        col.status = "DECLINED"
+        col.update()
+        flash("Collateral has been declined.","success")
+    elif verdict == "APPROVED":
+        col.status = "APPROVED"
+        col.update()
+        flash("Collateral has been Approved.","success")
+    loan=Loan.query.get_or_404(col.loanID)
+    collaterals=Collateral.query.filter_by(loanID=col.loanID).all()
+    approved_all=[]
+    declined=[]
+    unapproved=[]
+    for g in collaterals:
+        approved_all.append(g.status=="APPROVED")
+        declined.append(g.status=="DECLINED")
+        unapproved.append(g.status == "UNAPPROVED")
+    if not any(unapproved):
+        if all(approved_all):
+            loan.collateral_status = "APPROVED"
+            loan.update()
+
+        if any(declined):
+            loan.collateral_status = "DECLINED"
+            loan.update()
+    return redirect(url_for('staff.view_collaterals',loan_id=col.loanID))

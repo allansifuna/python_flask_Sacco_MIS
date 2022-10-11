@@ -55,21 +55,29 @@
                                                             {%if loan.guarantor_status == "UNAPPROVED"%}
                                                                 <a href="{{url_for('staff.view_guarantors',loan_id=loan.id)}}" class="btn text-info btn-sm bg-light border-bottom-info border-top border-left border-right" >Approve Guarantors</a>
                                                             {%else%}
-                                                                <span class="text-info font-weight-bold ml-2">{{loan.guarantor_status}}</span>
+                                                              {%if loan.guarantor_status == "DECLINED"%}
+                                                                <span class="text-danger font-weight-bold ml-2">{{loan.guarantor_status}}</span>
+                                                              {%else%}
+                                                                <span class="text-success font-weight-bold ml-2">{{loan.guarantor_status}}</span>
+                                                              {%endif%}
                                                             {%endif%}
                                                         {%else%}
-                                                            <span class="text-danger font-weight-bold ml-2">No Guarantors</span>
+                                                            <span class="text-secondary font-weight-bold ml-2">NO GUARANTORS</span>
                                                         {%endif%}
                                                     </td>
                                                     <td>
                                                         {%if has_cols[num]%}
                                                             {%if loan.collateral_status == "UNAPPROVED"%}
-                                                                <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >Approve Collaterals</a>
+                                                                <a href="{{url_for('staff.view_collaterals',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >Approve Collaterals</a>
                                                             {%else%}
-                                                                <span class="text-success font-weight-bold ml-2">{{loan.collateral_status}}</span>
+                                                                {%if loan.collateral_status == "DECLINED"%}
+                                                                    <span class="text-danger font-weight-bold ml-2">{{loan.collateral_status}}</span>
+                                                                  {%else%}
+                                                                    <span class="text-success font-weight-bold ml-2">{{loan.collateral_status}}</span>
+                                                                  {%endif%}
                                                             {%endif%}
                                                         {%else%}
-                                                            <span class="text-danger font-weight-bold ml-2">No Collaterals</span>
+                                                            <span class="text-secondary font-weight-bold ml-2">NO COLLATERALS</span>
                                                         {%endif%}
                                                     </td>
 

@@ -259,6 +259,9 @@ def add_guarantor(loan_id):
 @login_required
 def remove_guarantor(loan_id,guarantor_id):
     guarantor=Guarantor.query.get_or_404(guarantor_id)
+    if guarantor.status == "APPROVED":
+        flash("Cannot delete an approved Guarantor","danger")
+        return redirect(url_for('member.add_collateral',loan_id=loan_id))
     guarantor.delete()
     flash("Successfully Deleted A Guarantor","success")
     return redirect(url_for('member.add_guarantor',loan_id=loan_id))
@@ -287,6 +290,9 @@ def add_collateral(loan_id):
 @login_required
 def remove_collateral(loan_id,collateral_id):
     collateral=Collateral.query.get_or_404(collateral_id)
+    if collateral.status == "APPROVED":
+        flash("Cannot delete an approved Collateral","danger")
+        return redirect(url_for('member.add_collateral',loan_id=loan_id))
     collateral.delete()
     flash(" Successfully Deleted A Collateral","success")
     return redirect(url_for('member.add_collateral',loan_id=loan_id))

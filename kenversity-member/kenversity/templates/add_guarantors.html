@@ -2,7 +2,7 @@
 {%block content%}
 <div class="container">
   <div class="col-md-12 m-auto text-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800"> ADD GUARANTORS</h1>
+    <h4 class="h3 mb-0 text-gray-800"> ADD GUARANTORS</h4>
     <div class="col-lg-6 m-auto">
       {%with messages= get_flashed_messages(with_categories=true)%}
               {%if messages%}
@@ -64,7 +64,7 @@
                     <a class="" href="{{url_for('member.add_collateral',loan_id=loan_id)}}">Add Collateral</a>
                   </div>
                   <div class="col-sm-6 text-center">
-                    <a class="" href="{{url_for('member.dashboard')}}">Go To Dashboard</a>
+                    <a class="" href="{{url_for('member.view_loans')}}">Back</a>
                   </div>
               </div>
 
