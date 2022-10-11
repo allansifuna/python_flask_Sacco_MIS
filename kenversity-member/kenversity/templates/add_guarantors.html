@@ -89,18 +89,25 @@
                                                     <th>Last Name</th>
                                                     <th>Email</th>
                                                     <th>Phone Number</th>
+                                                    <th>Status</th>
                                                     <th>Remove</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {%for member in members%}
+                                                {%for guarantor in guarantors%}
                                                     <tr>
-                                                    <td>{{member.national_id}}</td>
-                                                    <td>{{member.first_name}}</td>
-                                                    <td>{{member.last_name}}</td>
-                                                    <td>{{member.email}}</td>
-                                                    <td>{{member.phone_number}}</td>
-                                                    <td> <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=member.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
+                                                    <td>{{guarantor.applicant.national_id}}</td>
+                                                    <td>{{guarantor.applicant.first_name}}</td>
+                                                    <td>{{guarantor.applicant.last_name}}</td>
+                                                    <td>{{guarantor.applicant.email}}</td>
+                                                    <td>{{guarantor.applicant.phone_number}}</td>
+                                                    <td><span class="text-info font-weight-bold ml-2">{{guarantor.status}}</span></td>
+                                                    <td>
+                                                      {%if guarantor.status!="APPROVED" %}
+                                                      <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=guarantor.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
+                                                      {%else%}
+                                                      <span class="text-info font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                      {%endif%}
                                                 </tr>
                                                 {%endfor%}
 

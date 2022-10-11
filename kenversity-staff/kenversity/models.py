@@ -15,11 +15,15 @@ class CRUDMixin:
         db.session.commit()
         return self
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
 #staff=Staff(first_name="Admin",last_name="Strator",national_id="32452134",email="admin@kenversity.com",phone_number="254714812912",role="ADMINSTARTOR",status="Active")
 @lm.user_loader
 def load_staff(id):
     return Staff.query.get(str(id))
-
 
 def id_unique():
     return secrets.token_hex(8)
@@ -85,24 +89,25 @@ class Staff(db.Model,UserMixin, CRUDMixin):
 
     def get_reset_token(self, expires_sec=18000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'id': self.id}).decode('utf-8')
+        return s.dumps({'staffID': self.staffID}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            id = s.loads(token)['id']
+            staffID = s.loads(token)['staffID']
         except Exception as e:
             return None
-        return Staff.query.get(id)
+        return Staff.query.get(staffID)
 
 class Deposit(db.Model, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberID=db.Column(db.String(8), db.ForeignKey('member.id'),nullable=False)
     transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=True)
+    CheckoutRequestID=db.Column(db.String(30),nullable=True)
     deposit_date=db.Column(db.DateTime,default=datetime.now,nullable=False)
     amount=db.Column(db.Integer,nullable=True)
-    CheckoutRequestID=db.Column(db.String(30),nullable=True)
+
 
     def __repr__(self):
         return f"<{self.depositID}|{self.amount}>"
@@ -115,7 +120,7 @@ class Collateral(db.Model, CRUDMixin):
     description=db.Column(db.String(255),nullable=False)
     value=db.Column(db.Integer,nullable=False)
     status=db.Column(db.String(40),default="UNAPPROVED")
-    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=False)
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
 
     def __repr__(self):
         return f"<{self.collateralID}|{self.name}>"
@@ -124,8 +129,8 @@ class Guarantor(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
-    status=db.Column(db.String(40),default="UNAPPROVED")
-    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=False)
+    status=db.Column(db.String(40),default="UNCONFIRMED")
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
 
     def __repr__(self):
         return f"<{self.guarantorID}|{self.memberID}>"
@@ -141,7 +146,7 @@ class LoanCategory(db.Model, CRUDMixin):
     loans=db.relationship('Loan', backref='loan_cat', lazy=True)
 
     def __repr__(self):
-        return f"<{self.id}|{self.name}>"
+        return f"{self.id}"
 
 class OTP(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
@@ -151,7 +156,7 @@ class OTP(db.Model, CRUDMixin):
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
 
     def __repr__(self):
-        return f"<{self.otpID}|{self.password}>"
+        return f"<{self.id}|{self.password}>"
 
 class Loan(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
@@ -162,6 +167,10 @@ class Loan(db.Model, CRUDMixin):
     start_date=db.Column(db.Date,nullable=True)
     end_date=db.Column(db.Date,nullable=True)
     status=db.Column(db.String(40),default="UNAPPROVED")
+    profile_status=db.Column(db.String(40),default="UNAPPROVED")
+    collateral_status=db.Column(db.String(40),default="UNAPPROVED")
+    guarantor_status=db.Column(db.String(40),default="UNAPPROVED")
+    reason = db.Column(db.String(255))
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     guarantors=db.relationship('Guarantor', backref='loan_guarantor', lazy=True)
     repayments=db.relationship('Repayment', backref='loan_repayment', lazy=True)

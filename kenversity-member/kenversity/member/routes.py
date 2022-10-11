@@ -239,9 +239,6 @@ def get_member(name):
 def add_guarantor(loan_id):
     form = SearchGuatantorForm()
     guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
-    members=[]
-    for guarantor in guarantors:
-        members.append(Member.query.get(guarantor.memberID))
     if request.method == "POST":
         guarantor=form.guarantor.data
         if guarantor == "":
@@ -256,7 +253,7 @@ def add_guarantor(loan_id):
         flash("Added a guarantor","success")
         return redirect(url_for('member.add_guarantor',loan_id=loan_id))
     form.name.data=""
-    return render_template("add_guarantors.html",form=form,members=members,loan_id=loan_id)
+    return render_template("add_guarantors.html",form=form,guarantors=guarantors,loan_id=loan_id)
 
 @member.route('/member/guarantors/<loan_id>/<guarantor_id>/remove', methods=["POST", "GET"])
 @login_required

@@ -1,6 +1,9 @@
 {%extends 'layout.html'%}
 {%block content%}
 <div class="container-fluid">
+  <div class="col-md-12 m-auto text-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800"> APPROVE GUARANTORS</h1>
+    <div class="col-lg-6 m-auto">
       {%with messages= get_flashed_messages(with_categories=true)%}
               {%if messages%}
               {%for category,message in messages%}
@@ -13,11 +16,11 @@
                 {%endfor%}
                 {%endif%}
                 {%endwith%}
-            <!-- DataTales Example -->
-            <div class="card shadow mb-4">
+    </div>
+  </div>
+      <div class="card shadow mb-4 mt-2">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">GUARANTOR REQUESTS</h6>
-
+                    <h6 class="m-0 font-weight-bold text-primary">LOAN GUARANTORS</h6>
                 </div>
 
                 <div class="card-body">
@@ -29,25 +32,31 @@
                                                     <th>National ID</th>
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
+                                                    <th>Email</th>
                                                     <th>Phone Number</th>
-                                                    <th>Loan Amount</th>
-                                                    <th>Repayment Period</th>
                                                     <th>Approve</th>
-                                                    <th>Decline</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {%for num,req in reqs.items()%}
+                                                {%for num,guarantor in guarantors.items()%}
                                                     <tr>
                                                     <td>{{num}}</td>
-                                                    <td>{{req.loan_guarantor.loan_applier.national_id}}</td>
-                                                    <td>{{req.loan_guarantor.loan_applier.first_name}}</td>
-                                                    <td>{{req.loan_guarantor.loan_applier.last_name}}</td>
-                                                    <td>{{req.loan_guarantor.loan_applier.phone_number}}</td>
-                                                    <td>{{req.loan_guarantor.amount}}</td>
-                                                    <td>{{req.loan_guarantor.loan_cat.repayment_duration}}</td>
-                                                    <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='CONFIRMED')}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >CONFIRM</a></td>
-                                                    <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='DECLINED')}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DECLINE</a></td>
+                                                    <td>{{guarantor.applicant.national_id}}</td>
+                                                    <td>{{guarantor.applicant.first_name}}</td>
+                                                    <td>{{guarantor.applicant.last_name}}</td>
+                                                    <td>{{guarantor.applicant.email}}</td>
+                                                    <td>{{guarantor.applicant.phone_number}}</td>
+                                                    <td>
+                                                        {%if guarantor.status == "UNAPPROVED"%}
+                                                          <a href="{{url_for('staff.approve_guarantor',loan_id=loan_id,member_id=guarantor.memberID)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right" >Start Approval</a>
+                                                        {%else%}
+                                                          {%if guarantor.status == "DECLINED"%}
+                                                            <span class="text-danger font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                          {%else%}
+                                                            <span class="text-success font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                          {%endif%}
+                                                        {%endif%}
+                                                    </td>
                                                 </tr>
                                                 {%endfor%}
 
@@ -67,7 +76,5 @@
                     </div>
                 </div>
             </div>
-        </main>
-
     </div>
-{%endblock%}
+    {%endblock content%}

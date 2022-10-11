@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
 from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,DeclineLoanForm
 from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
-from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan
+from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets
 staff = Blueprint('staff', __name__)
@@ -166,11 +166,14 @@ def staff_verdict(loan_id,verdict):
     loan=Loan.query.get_or_404(loan_id)
     if verdict == "DECLINED":
         loan.status ="DECLINED"
-        loan.save()
+        loan.update()
         return redirect(url_for("staff.decline_loan",loan_id=loan_id))
     elif verdict == "APPROVED":
         loan.status ="APPROVED_PROFILE"
-        loan.save()
+        loan.profile_status="APPROVED"
+        loan.update()
+        flash("Member profile successfully Approved","success")
+        return redirect(url_for("staff.view_staff_loans"))
     else:
         flash("Wrong Verdict. Please Try Again","danger")
         return redirect(url_for("staff.approve_loan",loan_id=loan_id))
@@ -192,4 +195,59 @@ def decline_loan(loan_id):
 def view_staff_loans():
     loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").all()
     loans=add_nums(loans)
-    return render_template("view_staff_loans.html",loans=loans)
+    has_gs={}
+    has_cols={}
+    for i,loan in loans.items():
+        gs=Guarantor.query.filter_by(loanID=loan.id).count()
+        if gs > 0:
+            has_gs[i]=True
+        cols= Collateral.query.filter_by(loanID=loan.id).count()
+        if cols > 0:
+            has_cols[i]=True
+
+
+    return render_template("view_staff_loans.html",loans=loans,has_cols=has_cols,has_gs=has_gs)
+
+@staff.route('/staff/<loan_id>/guarantors/view',methods=["POST","GET"])
+@login_required
+def view_guarantors(loan_id):
+    guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
+    guarantors=add_nums(guarantors)
+    return render_template("approve_guarantors.html",guarantors=guarantors,loan_id=loan_id)
+
+@staff.route('/staff/<loan_id>/<member_id>/approve',methods=["POST","GET"])
+@login_required
+def approve_guarantor(loan_id,member_id):
+    member=Member.query.get_or_404(member_id)
+    return render_template("approve_guarantor.html",loan_id=loan_id,member=member)
+
+@staff.route('/staff/guarantor/<loan_id>/<member_id>/<verdict>/approve',methods=["POST","GET"])
+@login_required
+def guarantor_verdict(loan_id,member_id,verdict):
+    guarantor=Guarantor.query.filter_by(loanID=loan_id).filter_by(memberID=member_id).first()
+    loan=Loan.query.get_or_404(loan_id)
+    if verdict == "DECLINED":
+        guarantor.status ="DECLINED"
+        guarantor.update()
+        flash("Loan Guarantor successfully Declined","success")
+    elif verdict == "APPROVED":
+        guarantor.status="APPROVED"
+        guarantor.save()
+        flash("Loan Guarantor successfully Approved","success")
+    else:
+        flash("Wrong Verdict. Please Try Again","danger")
+    guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
+    approved_all=[]
+    declined=[]
+    for g in guarantors:
+        approved_all.append(g.status=="APPROVED")
+        declined.append(g.status=="DECLINED")
+    if all(approved_all):
+        loan.guarantor_status = "APPROVED"
+        loan.update()
+
+    if any(declined):
+        loan.guarantor_status = "DECLINED"
+        loan.update()
+
+    return redirect(url_for("staff.view_guarantors",loan_id=loan_id))

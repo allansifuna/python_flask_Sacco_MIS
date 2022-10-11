@@ -129,7 +129,7 @@ class Guarantor(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
-    status=db.Column(db.String(40),default="UNAPPROVED")
+    status=db.Column(db.String(40),default="UNCONFIRMED")
     staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
 
     def __repr__(self):
@@ -167,6 +167,10 @@ class Loan(db.Model, CRUDMixin):
     start_date=db.Column(db.Date,nullable=True)
     end_date=db.Column(db.Date,nullable=True)
     status=db.Column(db.String(40),default="UNAPPROVED")
+    profile_status=db.Column(db.String(40),default="UNAPPROVED")
+    collateral_status=db.Column(db.String(40),default="UNAPPROVED")
+    guarantor_status=db.Column(db.String(40),default="UNAPPROVED")
+    reason = db.Column(db.String(255))
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     guarantors=db.relationship('Guarantor', backref='loan_guarantor', lazy=True)
     repayments=db.relationship('Repayment', backref='loan_repayment', lazy=True)
