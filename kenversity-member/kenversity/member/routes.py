@@ -7,6 +7,8 @@ from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guar
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
+from flask_weasyprint import HTML, render_pdf
+from datetime import datetime
 REGISTRATION_FEE_AMOUNT=1
 
 member = Blueprint('member', __name__)
@@ -331,3 +333,29 @@ def view_loans():
     loans=Loan.query.filter_by(memberID=current_user.id).order_by(Loan.date_created.desc()).all()
     loans=add_nums(loans)
     return render_template("view_loans.html",loans=loans)
+
+@member.route('/member/transactions/<member_id>/download', methods=["POST", "GET"])
+@login_required
+def download_transactions(member_id):
+    member=Member.query.get(member_id)
+    transactions=Transaction.query.filter_by(phone_number=member.phone_number).order_by(Transaction.date_created.desc()).all()
+    i=1
+    ts={}
+    for transaction in transactions:
+        ts[i]=transaction
+        i+=1
+    html=render_template('table.html',ts=ts,member=member,date=datetime.today())
+    return render_pdf(HTML(string=html))
+
+@member.route('/member/deposits/<member_id>/download', methods=["POST", "GET"])
+@login_required
+def download_deposits(member_id):
+    member=Member.query.get(member_id)
+    transactions=Transaction.query.filter_by(phone_number=member.phone_number).filter_by(reason="DEP").order_by(Transaction.date_created.desc()).all()
+    i=1
+    ts={}
+    for transaction in transactions:
+        ts[i]=transaction
+        i+=1
+    html=render_template('table.html',ts=ts,member=member,date=datetime.today(),deposits=True)
+    return render_pdf(HTML(string=html))

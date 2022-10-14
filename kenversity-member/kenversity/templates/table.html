@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+    <style type="text/css">
+      td:last-of-type {
+        color: #1ee494;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    {%if deposits%}
+    <h4>MEMBER DEPOSITS REPORT</h4>
+    {%else%}
+    <h4>MEMBER TRANSACTIONS REPORT</h4>
+    {%endif%}
+
+    <aside>
+        Name: <span id="details">{{member.first_name}} {{member.last_name}}</span><br>
+        Email: <span id="details">{{member.email}}</span><br>
+        Phone Number: <span id="details">+{{member.phone_number}}</span><br>
+        National ID: <span id="details">{{member.national_id}}</span><br>
+    </aside>
+
+    <dl id="informations">
+      <dt>Date</dt>
+      <dd>{{date.strftime("%b, %d %Y ")}}</dd>
+    </dl>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No#</th>
+          <th>Transaction Date</th>
+          <th>Mpesa Code</th>
+          <th>Amount</th>
+          {%if not deposits%}
+          <th>Reason</th>
+          {%endif%}
+      </tr>
+      </thead>
+      <tbody>
+        {%for num,transaction in ts.items()%}
+            <tr>
+              <td>{{num}}</td>
+              <td>{{transaction.date_created.strftime('%Y-%m-%d %I:%M %p')}}</td>
+              <td>{{transaction.transaction_code}}</td>
+              <td>KES {{transaction.amount}}.00</td>
+              {%if not deposits%}
+              <td>
+                  {%if transaction.reason == "REG" %}
+                  <span class="text-info">REGISTRATION</span>
+                  {%elif transaction.reason == "DEP" %}
+                  <span class="text-success">DEPOSIT</span>
+                  {%elif transaction.reason == "REP"%}
+                    REPAYMENT
+                  {%else%}
+                    Miscalleneous
+                  {%endif%}
+              </td>
+              {%endif%}
+            </tr>
+        {%endfor%}
+
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -26,93 +26,93 @@
                     {{form.hidden_tag()}}
                     <div class="form-group">
                       {%if form.first_name.errors%}
-                            {{form.first_name(class="form-control form-control-user is-invalid",id="exampleInputfirst_name")}}
+                            {{form.first_name(class="form-control is-invalid",id="exampleInputfirst_name")}}
                             <div class="invalid-feedback">
                               {%for error in form.first_name.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.first_name(class="form-control form-control-user",id="exampleInputfirst_name",placeholder="Enter First Name...")}}
+                            {{form.first_name(class="form-control",id="exampleInputfirst_name",placeholder="Enter First Name...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                       {%if form.last_name.errors%}
-                            {{form.last_name(class="form-control form-control-user is-invalid",id="exampleInputlast_name")}}
+                            {{form.last_name(class="form-control is-invalid",id="exampleInputlast_name")}}
                             <div class="invalid-feedback">
                               {%for error in form.last_name.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.last_name(class="form-control form-control-user",id="exampleInputlast_name",placeholder="Enter Last Name...")}}
+                            {{form.last_name(class="form-control",id="exampleInputlast_name",placeholder="Enter Last Name...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                       {%if form.email.errors%}
-                            {{form.email(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                            {{form.email(class="form-control is-invalid",id="exampleInputEmail")}}
                             <div class="invalid-feedback">
                               {%for error in form.email.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.email(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {{form.email(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                       {%if form.phone.errors%}
-                            {{form.phone(class="form-control form-control-user is-invalid",id="exampleInputphone")}}
+                            {{form.phone(class="form-control is-invalid",id="exampleInputphone")}}
                             <div class="invalid-feedback">
                               {%for error in form.phone.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.phone(class="form-control form-control-user",id="exampleInputphone",placeholder="Enter Phone Number...")}}
+                            {{form.phone(class="form-control",id="exampleInputphone",placeholder="Enter Phone Number...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                       {%if form.national_id.errors%}
-                            {{form.national_id(class="form-control form-control-user is-invalid",id="exampleInputnational_id")}}
+                            {{form.national_id(class="form-control is-invalid",id="exampleInputnational_id")}}
                             <div class="invalid-feedback">
                               {%for error in form.national_id.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.national_id(class="form-control form-control-user",id="exampleInputnational_id",placeholder="Enter National ID...")}}
+                            {{form.national_id(class="form-control",id="exampleInputnational_id",placeholder="Enter National ID...")}}
                             {%endif%}
 
                     </div>
 
                     <div class="form-group">
                       {%if form.password.errors%}
-                            {{form.password(class="form-control form-control-user is-invalid")}}
+                            {{form.password(class="form-control is-invalid")}}
                             <div class="invalid-feedback">
                               {%for error in form.password.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.password(class="form-control form-control-user",id="exampleInputPassword",placeholder="Enter Password...")}}
+                            {{form.password(class="form-control",id="exampleInputPassword",placeholder="Enter Password...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                       {%if form.confirm_password.errors%}
-                            {{form.confirm_password(class="form-control form-control-user is-invalid")}}
+                            {{form.confirm_password(class="form-control is-invalid")}}
                             <div class="invalid-feedback">
                               {%for error in form.confirm_password.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.confirm_password(class="form-control form-control-user",id="exampleInputconfirm_password",placeholder="Confirm Password...")}}
+                            {{form.confirm_password(class="form-control",id="exampleInputconfirm_password",placeholder="Confirm Password...")}}
                             {%endif%}
 
                     </div>
@@ -120,12 +120,9 @@
                       Save
                     </button>
                     <hr>
-
-
                   </form>
-                  <hr>
                   <div class="text-center">
-                    <a class="small" href="{{url_for('member.dashboard')}}">Forgot Password?</a>
+                    <a class="small" href="{{url_for('member.login')}}">Already a Member?</a>
                   </div>
                   {% elif stage == "user_data"%}
                     <form class="user" method="POST" enctype="multipart/form-data">
@@ -186,14 +183,14 @@
                     {{form.hidden_tag()}}
                     <div class="form-group">
                       {%if form.phone.errors%}
-                            {{form.phone(class="form-control form-control-user is-invalid",id="exampleInputphone")}}
+                            {{form.phone(class="form-control is-invalid",id="exampleInputphone")}}
                             <div class="invalid-feedback">
                               {%for error in form.phone.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.phone(class="form-control form-control-user",id="exampleInputphone",placeholder="Enter National ID...", hidden=True)}}
+                            {{form.phone(class="form-control",id="exampleInputphone",placeholder="Enter National ID...", hidden=True)}}
                             {%endif%}
 
                     </div>
