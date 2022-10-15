@@ -15,11 +15,19 @@
 
 @page {
   font-family: Pacifico;
-  margin: 1.5cm;
-  margin-top: 1cm;
+  margin: 1.3cm;
+  margin-top: 0.7cm;
+  @bottom-center{
+    background: #14213d;
+    content: counter(page);
+    height: 0.7cm;
+    color:#FFFFFF;
+    text-align: center;
+    width: 0.7cm; }
+
   @bottom-left {
     color: #1ee494;
-    content: 'Kenversity Sacco @ 2022 ♥ Thank you!';
+    content: 'Kenversity Sacco ♥ | 2022';
   }
   @bottom-right {
     color: #a9a;

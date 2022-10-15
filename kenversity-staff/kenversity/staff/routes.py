@@ -4,7 +4,9 @@ from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,
 from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
 from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_weasyprint import HTML, render_pdf
 import secrets
+from datetime import datetime
 staff = Blueprint('staff', __name__)
 
 @staff.route('/')
@@ -121,7 +123,7 @@ def member_approval(member_id):
             member.memberNo=get_member_No()
             member.status="ACTIVE"
             member.update()
-            send_approval_email(member.email)
+            # send_approval_email(member)
             flash("Member Successfully Approved","success")
             return redirect(url_for('staff.member_approvals'))
         else:
@@ -296,3 +298,18 @@ def approve_collateral(collateral_id,verdict):
             loan.collateral_status = "DECLINED"
             loan.update()
     return redirect(url_for('staff.view_collaterals',loan_id=col.loanID))
+
+@staff.route('/staff/members/view',methods=["POST","GET"])
+@login_required
+def view_members():
+    members=Member.query.filter_by(status="ACTIVE").all()
+    members=add_nums(members)
+    return render_template("view_members.html",members=members)
+
+@staff.route('/staff/members/download',methods=["POST","GET"])
+@login_required
+def download_members():
+    members=Member.query.filter_by(status="ACTIVE").all()
+    members=add_nums(members)
+    html=render_template("download_members.html",members=members,date=datetime.today(),title="Kenversity_Sacco_members.pdf")
+    return render_pdf(HTML(string=html))

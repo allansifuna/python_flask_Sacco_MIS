@@ -1,0 +1,68 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 h6 font-weight-bold text-primary">MEMBERS</h6>
+            <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+
+          <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="{{url_for('staff.download_members')}}">Download Report</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Coach's Comments</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Game History</a>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No#</th>
+                            <th>Member No</th>
+                            <th>National ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for num,member in members.items()%}
+                            <tr>
+                            <td>{{num}}</td>
+                            <td>{{member.memberNo}}</td>
+                            <td>{{member.national_id}}</td>
+                            <td>{{member.first_name}} {{member.last_name}}</td>
+                            <td>{{member.email}}</td>
+                            <td>+ {{member.phone_number}}</td>
+                        </tr>
+                        {%endfor%}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

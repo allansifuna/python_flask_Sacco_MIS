@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    <h4>SACCO MEMBERS</h4>
+
+    <dl id="informations">
+      <dt>Date</dt>
+      <dd>{{date.strftime("%b, %d %Y %I:%M %p ")}}</dd>
+    </dl>
+
+    <table>
+      <thead>
+          <tr>
+              <th>No#</th>
+              <th>Member No</th>
+              <th>National ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone Number</th>
+          </tr>
+      </thead>
+      <tbody>
+          {%for num,member in members.items()%}
+              <tr>
+              <td>{{num}}</td>
+              <td>{{member.memberNo}}</td>
+              <td>{{member.national_id}}</td>
+              <td>{{member.first_name}} {{member.last_name}}</td>
+              <td>{{member.email}}</td>
+              <td>+ {{member.phone_number}}</td>
+          </tr>
+          {%endfor%}
+
+      </tbody>
+    </table>
+  </body>
+</html>
