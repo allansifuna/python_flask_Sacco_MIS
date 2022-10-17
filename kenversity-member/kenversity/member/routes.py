@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app,jsonify
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
-                    ApplyLoanForm,SearchGuatantorForm,AddCollateralForm)
+                    ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm)
 from .utils import save_picture,save_file,simulate_pay,add_nums
 from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral
 from flask_login import login_user, current_user, logout_user, login_required
@@ -359,3 +359,17 @@ def download_deposits(member_id):
         i+=1
     html=render_template('table.html',ts=ts,member=member,date=datetime.today(),deposits=True)
     return render_pdf(HTML(string=html))
+
+@member.route('/member/profile', methods=["POST", "GET"])
+@login_required
+def member_profile():
+    register_form=MemberRegistrationForm()
+    docs_form=MemberDataForm()
+    biodata_form=MemberBioDataForm()
+    empl_form=MemberEmplDataForm()
+    register_form.first_name.data=current_user.first_name
+    register_form.last_name.data=current_user.last_name
+    register_form.email.data=current_user.email
+    register_form.phone.data=current_user.phone_number
+    register_form.national_id.data=current_user.national_id
+    return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form)

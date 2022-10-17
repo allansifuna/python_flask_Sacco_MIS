@@ -13,7 +13,6 @@
 
   <!-- Custom fonts for this template-->
   <link href="{{url_for('static',filename='vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
-  <link rel="manifest" href="{{url_for('static',filename='manifest.webmanifest')}}">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
@@ -58,38 +57,56 @@
       <div class="sidebar-heading">
         Interface
       </div>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{{url_for('member.view_deposits')}}" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-school"></i>
-          <span> Deposits</span>
-        </a>
-       </li>
        <li class="nav-item">
-        <a class="nav-link collapsed" href="{{url_for('member.view_loans')}}" data-toggle="" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-school"></i>
-          <span> Loans</span>
+        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#deposits" aria-expanded="true" aria-controls="deposits">
+          <i class="fas fa-fw fa-baseball-ball"></i>
+          <span>Deposits:</span>
         </a>
-       </li>
+        <div id="deposits" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+           <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header text-primary">Click to Make: </h6>
+            <a class="collapse-item" href="{{url_for('member.make_deposit')}}">Make a Deposit</a>
+            <h6 class="collapse-header text-primary">Click to View: </h6>
+            <a class="collapse-item" href="{{url_for('member.view_deposits')}}">View Deposits</a>
+          </div>
+        </div>
+      </li>
        <li class="nav-item">
-        <a class="nav-link collapsed" href="" data-toggle="" data-target="s#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-user"></i>
-          <span>Statements</span>
+        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#loans" aria-expanded="true" aria-controls="loans">
+          <i class="fas fa-fw fa-baseball-ball"></i>
+          <span>Loans:</span>
         </a>
-       </li>
+        <div id="loans" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+           <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header text-primary">Click to Apply: </h6>
+            <a class="collapse-item" href="{{url_for('member.apply_loan')}}">Apply for a Loan</a>
+            <a class="collapse-item" href="{{url_for('member.confirm_guarantor_request')}}">Confirm Guarantor Requests</a>
+            <h6 class="collapse-header text-primary">Click to View: </h6>
+            <a class="collapse-item" href="{{url_for('member.view_loans')}}">Loan History</a>
+          </div>
+        </div>
+      </li>
        <li class="nav-item">
-        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#hubgames" aria-expanded="true" aria-controls="hubgames">
+        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#transactions" aria-expanded="true" aria-controls="transactions">
           <i class="fas fa-fw fa-baseball-ball"></i>
           <span>Transactions:</span>
         </a>
-        <div id="hubgames" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div id="transactions" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
            <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Click to View: </h6>
-            <a class="collapse-item" href="{{url_for('member.make_deposit')}}">Make a Deposit</a>
-            <a class="collapse-item" href="">Make a Repayment</a>
-            <a class="collapse-item" href="{{url_for('member.confirm_guarantor_request')}}">Confirm Guarantor Requests</a>
-            <a class="collapse-item" href="{{url_for('member.apply_loan')}}">Apply for a Loan</a>
+            <h6 class="collapse-header text-primary">Click to View: </h6>
             <a class="collapse-item" href="{{url_for('member.view_transactions')}}">View Transactions</a>
+          </div>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#repayments" aria-expanded="true" aria-controls="repayments">
+          <i class="fas fa-fw fa-baseball-ball"></i>
+          <span>Repayments:</span>
+        </a>
+        <div id="repayments" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+           <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header text-primary">Click to Make: </h6>
+            <a class="collapse-item" href="">Make a Repayment</a>
           </div>
         </div>
       </li>

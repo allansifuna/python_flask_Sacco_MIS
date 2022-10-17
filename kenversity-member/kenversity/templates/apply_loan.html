@@ -176,11 +176,11 @@
                 });
                 lm.onchange=function(){
                   v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
-                  rm.value = "KES "+ v
+                  rm.value = "KES "+ parseInt(v)
                 }
                 lm2.onchange=function(){
                   v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
-                  rm.value = "KES "+ v
+                  rm.value = "KES "+ parseInt(v)
                 }
             }
 

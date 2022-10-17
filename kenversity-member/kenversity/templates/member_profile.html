@@ -1,0 +1,525 @@
+{%extends 'layout.html'%}
+{%block content%}
+    <div class="container">
+        <div class="col-md-12 m-auto text-center mb-4">
+            <h4 class="h3 mb-3 text-gray-800"> MEMBER PROFILE</h4>
+            <div class="col-lg-6 m-auto">
+                {%with messages= get_flashed_messages(with_categories=true)%}
+                    {%if messages%}
+                        {%for category,message in messages%}
+                            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                                {{message}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {%endfor%}
+                    {%endif%}
+                {%endwith%}
+            </div>
+        </div>
+        <div class="col-lg-8 m-auto mt-4">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#collapseCardExamplec" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExamplec">
+                    <h6 class="m-0 font-weight-bold text-Primary">Registration Data</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse show" id="collapseCardExamplec">
+                    <div class="card-body col-lg-10 m-auto">
+                        <form class="user" method="POST" enctype="multipart/form-data">
+                    {{register_form.hidden_tag()}}
+                    <div class="form-group">
+                        {{ register_form.first_name.label() }}
+                      {%if register_form.first_name.errors%}
+                            {{register_form.first_name(class="form-control is-invalid",id="exampleInputfirst_name")}}
+                            <div class="invalid-feedback">
+                              {%for error in register_form.first_name.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{register_form.first_name(class="form-control",id="exampleInputfirst_name",placeholder="Enter First Name...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.last_name.label() }}
+                      {%if register_form.last_name.errors%}
+                            {{register_form.last_name(class="form-control is-invalid",id="exampleInputlast_name")}}
+                            <div class="invalid-feedback">
+                              {%for error in register_form.last_name.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{register_form.last_name(class="form-control",id="exampleInputlast_name",placeholder="Enter Last Name...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.email.label() }}
+                      {%if register_form.email.errors%}
+                            {{register_form.email(class="form-control is-invalid",id="exampleInputEmail")}}
+                            <div class="invalid-feedback">
+                              {%for error in register_form.email.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{register_form.email(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.phone.label() }}
+                      {%if register_form.phone.errors%}
+                            {{register_form.phone(class="form-control is-invalid",id="exampleInputphone")}}
+                            <div class="invalid-feedback">
+                              {%for error in register_form.phone.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{register_form.phone(class="form-control",id="exampleInputphone",placeholder="Enter Phone Number...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                        {{ register_form.national_id.label() }}
+                      {%if register_form.national_id.errors%}
+                            {{register_form.national_id(class="form-control is-invalid",id="exampleInputnational_id")}}
+                            <div class="invalid-feedback">
+                              {%for error in register_form.national_id.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{register_form.national_id(class="form-control",id="exampleInputnational_id",readonly="readonly")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                          Save
+                        </button>
+                    </div>
+                    <hr>
+                  </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 m-auto mt-4">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#card2" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="card2">
+                    <h6 class="m-0 font-weight-bold text-primary">Bio Data</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse" id="card2">
+                    <div class="card-body col-lg-10 m-auto">
+                        <form class="user" method="POST" enctype="multipart/form-data">
+                    {{biodata_form.hidden_tag()}}
+                    <div class="form-group">
+                        {{ biodata_form.dob.label() }}
+                      {%if biodata_form.dob.errors%}
+                            {{biodata_form.dob(class="form-control is-invalid",id="exampleInputdob")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.dob.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.dob(class="form-control",id="exampleInputlast_name",placeholder="Enter Date Of Birth...")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                      {{ biodata_form.gender.label() }}
+                          {%if biodata_form.gender.errors%}
+                                {{biodata_form.gender(class="form-control is-invalid",id="loancat")}}
+                                <div class="invalid-feedback">
+                                  {%for error in biodata_form.gender.errors%}
+                                  <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.gender(class="form-control custom-select",id="loancat")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="col-sm-6">
+                      {{ biodata_form.marital_status.label() }}
+                          {%if biodata_form.marital_status.errors%}
+                                {{biodata_form.marital_status(class="form-control is-invalid",id="loancat")}}
+                                <div class="invalid-feedback">
+                                  {%for error in biodata_form.marital_status.errors%}
+                                  <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.marital_status(class="form-control custom-select",id="loancat")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ biodata_form.number_of_dependants.label() }}
+                      {%if biodata_form.number_of_dependants.errors%}
+                            {{biodata_form.number_of_dependants(class="form-control is-invalid",id="exampleInputnumber_of_dependants")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.number_of_dependants.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.number_of_dependants(class="form-control",id="exampleInputfirst_name")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ biodata_form.address.label() }}
+                      {%if biodata_form.address.errors%}
+                            {{biodata_form.address(class="form-control is-invalid",id="exampleInputaddress")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.address.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.address(class="form-control",id="exampleInputlast_name")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="col-sm-6">
+                        {{ biodata_form.town.label() }}
+                      {%if biodata_form.town.errors%}
+                            {{biodata_form.town(class="form-control is-invalid",id="exampleInputtown")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.town.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.town(class="form-control",id="exampleInputEmail")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+                    <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ biodata_form.estate.label() }}
+                      {%if biodata_form.estate.errors%}
+                            {{biodata_form.estate(class="form-control is-invalid",id="exampleInputestate")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.estate.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.estate(class="form-control",id="exampleInputstreet")}}
+                            {%endif%}
+
+                    </div>
+                     <div class="col-sm-6">
+                        {{ biodata_form.street.label() }}
+                      {%if biodata_form.street.errors%}
+                            {{biodata_form.street(class="form-control is-invalid",id="exampleInputstreet")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.street.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.street(class="form-control",id="exampleInputstreet")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        {{ biodata_form.house_number.label() }}
+                      {%if biodata_form.house_number.errors%}
+                            {{biodata_form.house_number(class="form-control is-invalid",id="exampleInputhouse_number")}}
+                            <div class="invalid-feedback">
+                              {%for error in biodata_form.house_number.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.house_number(class="form-control",id="exampleInputnational_id")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group">
+                      {{ biodata_form.house_ownership.label() }}
+                          {%if biodata_form.house_ownership.errors%}
+                                {{biodata_form.house_ownership(class="form-control is-invalid",id="loancat")}}
+                                <div class="invalid-feedback">
+                                  {%for error in biodata_form.house_ownership.errors%}
+                                  <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{biodata_form.house_ownership(class="form-control custom-select",id="loancat")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                          Save
+                        </button>
+                    </div>
+                    <hr>
+                  </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 m-auto mt-4">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#card3" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="card3">
+                    <h6 class="m-0 font-weight-bold text-primary">Employment Details</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse" id="card3">
+                    <div class="card-body col-lg-10 m-auto">
+                        <form class="user" method="POST" enctype="multipart/form-data">
+                    {{empl_form.hidden_tag()}}
+                    <div class="form-group">
+                      {{ empl_form.employment_status.label() }}
+                          {%if empl_form.employment_status.errors%}
+                                {{empl_form.employment_status(class="form-control is-invalid",id="empst")}}
+                                <div class="invalid-feedback">
+                                  {%for error in empl_form.employment_status.errors%}
+                                  <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.employment_status(class="form-control custom-select",id="empst")}}
+                            {%endif%}
+                    </div>
+
+                    <div class="form-group" id="emp3">
+                        {{ empl_form.name.label() }}
+                      {%if empl_form.name.errors%}
+                            {{empl_form.name(class="form-control is-invalid",id="name")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.name.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.name(class="form-control",id="name")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group row" id="emp2">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ empl_form.address.label() }}
+                      {%if empl_form.address.errors%}
+                            {{empl_form.address(class="form-control is-invalid",id="addr")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.address.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.address(class="form-control",id="addr")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="col-sm-6">
+                        {{ empl_form.phone.label() }}
+                      {%if empl_form.phone.errors%}
+                            {{empl_form.phone(class="form-control is-invalid",id="phone")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.phone.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.phone(class="form-control",id="phone")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+                    <div class="form-group row" id="emp1">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ empl_form.retirement_date.label() }}
+                      {%if empl_form.retirement_date.errors%}
+                            {{empl_form.retirement_date(class="form-control is-invalid",id="dt")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.retirement_date.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.retirement_date(class="form-control",id="dt")}}
+                            {%endif%}
+
+                    </div>
+                     <div class="col-sm-6">
+                        {{ empl_form.employment_terms.label() }}
+                          {%if empl_form.employment_terms.errors%}
+                                {{empl_form.employment_terms(class="form-control is-invalid",id="terms")}}
+                                <div class="invalid-feedback">
+                                  {%for error in empl_form.employment_terms.errors%}
+                                  <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.employment_terms(class="form-control custom-select",id="terms")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+                    <div class="form-group row" hidden="True" id="biz">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        {{ empl_form.business_type.label() }}
+                      {%if empl_form.business_type.errors%}
+                            {{empl_form.business_type(class="form-control is-invalid",id="biz")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.business_type.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.business_type(class="form-control",id="biz")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="col-sm-6" >
+                        {{ empl_form.years_of_operation.label() }}
+                      {%if empl_form.years_of_operation.errors%}
+                            {{empl_form.years_of_operation(class="form-control is-invalid",id="yoo")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.years_of_operation.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.years_of_operation(class="form-control",id="yoo")}}
+                            {%endif%}
+
+                    </div>
+                    </div>
+                    <div class="form-group" hidden="True" id="income">
+                        {{ empl_form.business_income.label() }}
+                      {%if empl_form.business_income.errors%}
+                            {{empl_form.business_income(class="form-control is-invalid",id="income")}}
+                            <div class="invalid-feedback">
+                              {%for error in empl_form.business_income.errors%}
+                              <span>{{error}}</span><br />
+                              {%endfor%}
+                            </div>
+                            {%else%}
+                            {{empl_form.business_income(class="form-control",id="income")}}
+                            {%endif%}
+
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                          Save
+                        </button>
+                    </div>
+                    <hr>
+                  </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 m-auto mt-4">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#card4" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="card4">
+                    <h6 class="m-0 font-weight-bold text-primary">Documents</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse" id="card4">
+                    <div class="card-body col-lg-10 m-auto">
+                        <form class="user" method="POST" enctype="multipart/form-data">
+                    {{docs_form.hidden_tag()}}
+                    <div class="form-group">
+                      {{ docs_form.photo.label() }}
+                      {{ docs_form.photo(class="form-control form-control-file") }}
+                      {% if docs_form.photo.errors %}
+                      {% for error in docs_form.photo.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{ docs_form.id_front.label() }}
+                      {{ docs_form.id_front(class="form-control form-control-file") }}
+                      {% if docs_form.id_front.errors %}
+                      {% for error in docs_form.id_front.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {{ docs_form.id_back.label() }}
+                      {{ docs_form.id_back(class="form-control form-control-file") }}
+                      {% if docs_form.id_back.errors %}
+                      {% for error in docs_form.id_back.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                      {{ docs_form.kra_pin.label() }}
+                      {{ docs_form.kra_pin(class="form-control form-control-file") }}
+                      {% if docs_form.kra_pin.errors %}
+                      {% for error in docs_form.kra_pin.errors %}
+                      <span class="text-danger">{{ error }}</span></br>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                          Save
+                        </button>
+                    </div>
+                    <hr>
+                  </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+    let em1=document.getElementById('emp1');
+    let em2=document.getElementById('emp2');
+    let em3=document.getElementById('emp3');
+    let bz=document.getElementById('biz');
+    let inc=document.getElementById('income');
+    let emst=document.getElementById('empst');
+    emst.onchange=function(){
+            st=emst.value;
+            if(st == "Employed"){
+                em1.hidden = false;
+                em2.hidden = false;
+                em3.hidden = false;
+                bz.hidden = true;
+                inc.hidden = true;
+            }else if(st == "Self-Employed"){
+                em1.hidden = true;
+                em2.hidden = true;
+                em3.hidden = true;
+                bz.hidden = false;
+                inc.hidden = false;
+
+            }
+        }
+</script>
+{%endblock content%}

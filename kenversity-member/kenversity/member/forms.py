@@ -56,3 +56,26 @@ class AddCollateralForm(FlaskForm):
     name = StringField('Collateral Name')
     description = TextAreaField('Collateral Description')
     value = IntegerField("Collateral Value")
+
+class MemberBioDataForm(FlaskForm):
+    dob=DateField("Enter Date Of Birth")
+    gender = SelectField('Select Gender', choices=[('','Select Gender'),('Male','Male'),('Female','Female')])
+    marital_status = SelectField('Select Marital Status', choices=[('','Select Marital Status'),('Single','Single'),('Married','Married'),('Married','Married'),('Widowed','Widowed')])
+    number_of_dependants = IntegerField('Number of dependants')
+    address = StringField('Physical Address')
+    town = StringField('Town')
+    estate = StringField('Estate')
+    street = StringField('Street')
+    house_number = StringField('Enter House Number')
+    house_ownership = SelectField('Select House Ownership', choices=[('','Select House Ownership'),('Rented','Rented'),('Owned','Owned')])
+
+class MemberEmplDataForm(FlaskForm):
+    employment_status = SelectField('Select Employement Status', choices=[('','Select Employment Status'),('Employed','Employed'),('Self-Employed','Self-Employed')])
+    name=StringField("Employer Name")
+    address=StringField("Employer Address")
+    phone=TelField("Employer Tel.")
+    retirement_date=DateField("Enter Date Of Retirement")
+    business_type=StringField("Business Type")
+    years_of_operation=IntegerField("Years of Operation")
+    business_income=IntegerField("Business Income in KES")
+    employment_terms = SelectField('Select Employment Terms', choices=[('','Select Employment Terms'),('Permanent','Permanent'),('Casual','Casual'),('Contarct','Contarct')])
