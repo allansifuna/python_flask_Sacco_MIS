@@ -30,7 +30,7 @@ def id_unique():
 
 class Member(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
-    memberNo=db.Column(db.String(5),nullable=True)
+    memberNo=db.Column(db.String(7),nullable=True)
     first_name=db.Column(db.String(40),nullable=True)
     last_name=db.Column(db.String(40),nullable=True)
     national_id=db.Column(db.String(8),nullable=True)
@@ -43,12 +43,29 @@ class Member(db.Model,UserMixin, CRUDMixin):
     phone_number=db.Column(db.String(12),nullable=True,unique=True)
     created_at=db.Column(db.DateTime,default=datetime.now,nullable=False)
     status=db.Column(db.String(40),default="INACTIVE")
-    email_confirmed=db.Column(db.String(40),default="FALSE")
+    dob=db.Column(db.Date,nullable=True)
+    gender=db.Column(db.String(10),nullable=True)
+    marital_status=db.Column(db.String(20),nullable=True)
+    number_of_dependants=db.Column(db.Integer,nullable=True)
+    address=db.Column(db.String(50),nullable=True)
+    town=db.Column(db.String(50),nullable=True)
+    estate=db.Column(db.String(50),nullable=True)
+    street=db.Column(db.String(50),nullable=True)
+    house_number=db.Column(db.String(50),nullable=True)
+    house_ownership=db.Column(db.String(50),nullable=True)
+    employment_status=db.Column(db.String(50),nullable=True)
+    employer_name=db.Column(db.String(50),nullable=True)
+    employer_address=db.Column(db.String(50),nullable=True)
+    employer_phone=db.Column(db.String(50),nullable=True)
+    retirement_date=db.Column(db.Date,nullable=True)
+    business_type=db.Column(db.String(50),nullable=True)
+    years_of_operation=db.Column(db.Integer,nullable=True)
+    business_income=db.Column(db.Integer,nullable=True)
+    employment_terms=db.Column(db.String(50),nullable=True)
     staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
     deposits = db.relationship('Deposit', backref='member', lazy=True)
     collaterals = db.relationship('Collateral', backref='member', lazy=True)
     guarantors=db.relationship('Guarantor', backref='applicant', lazy=True)
-    otps=db.relationship('OTP', backref='member', lazy=True)
     loans=db.relationship('Loan', backref='loan_applier', lazy=True)
     repayments=db.relationship('Repayment', backref='member', lazy=True)
 
@@ -114,6 +131,7 @@ class Deposit(db.Model, CRUDMixin):
 
 class Collateral(db.Model, CRUDMixin):
     id= db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    collateralNo=db.Column(db.String(7),nullable=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
     name=db.Column(db.String(50),nullable=False)
@@ -127,6 +145,7 @@ class Collateral(db.Model, CRUDMixin):
 
 class Guarantor(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    guarantorNo=db.Column(db.String(7),nullable=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
     status=db.Column(db.String(40),default="UNCONFIRMED")
@@ -148,18 +167,9 @@ class LoanCategory(db.Model, CRUDMixin):
     def __repr__(self):
         return f"{self.id}"
 
-class OTP(db.Model, CRUDMixin):
-    id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
-    memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
-    password=db.Column(db.String(4),nullable=False)
-    status=db.Column(db.String(40),default="UNUSED")
-    date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
-
-    def __repr__(self):
-        return f"<{self.id}|{self.password}>"
-
 class Loan(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    loanNo=db.Column(db.String(7),nullable=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loan_categoryID=db.Column(db.String(8),db.ForeignKey('loan_category.id'),nullable=False)
     staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
@@ -170,7 +180,9 @@ class Loan(db.Model, CRUDMixin):
     profile_status=db.Column(db.String(40),default="UNAPPROVED")
     collateral_status=db.Column(db.String(40),default="UNAPPROVED")
     guarantor_status=db.Column(db.String(40),default="UNAPPROVED")
-    reason = db.Column(db.String(255))
+    loan_reason=db.Column(db.String(255))
+    supporting_documents= db.Column(db.String(40))
+    rejection_reason = db.Column(db.String(255))
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     guarantors=db.relationship('Guarantor', backref='loan_guarantor', lazy=True)
     repayments=db.relationship('Repayment', backref='loan_repayment', lazy=True)
@@ -182,6 +194,7 @@ class Loan(db.Model, CRUDMixin):
 
 class Transaction(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    transactionNo=db.Column(db.String(9),nullable=True)
     phone_number=db.Column(db.String(12),nullable=False)
     transaction_code=db.Column(db.String(40),nullable=False)
     amount=db.Column(db.Integer,nullable=False)
@@ -197,6 +210,7 @@ class Transaction(db.Model, CRUDMixin):
 
 class Repayment(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    repaymentNo=db.Column(db.String(7),nullable=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
     transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=False)

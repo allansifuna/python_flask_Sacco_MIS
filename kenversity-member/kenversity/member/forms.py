@@ -5,6 +5,21 @@ from wtforms.fields.html5 import TelField, DateField, EmailField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileAllowed
 
+class NullableDateField(DateField):
+    """Native WTForms DateField throws error for empty dates.
+    Let's fix this so that we could have DateField nullable."""
+    def process_formdata(self, valuelist):
+        if valuelist:
+            date_str = ' '.join(valuelist).strip()
+            if date_str == '':
+                self.data = None
+                return
+            try:
+                self.data = datetime.datetime.strptime(date_str, self.format).date()
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid date value'))
+
 class LoginForm(FlaskForm):
     email = StringField('Email Address', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[
@@ -74,8 +89,9 @@ class MemberEmplDataForm(FlaskForm):
     name=StringField("Employer Name")
     address=StringField("Employer Address")
     phone=TelField("Employer Tel.")
-    retirement_date=DateField("Enter Date Of Retirement")
+    retirement_date=NullableDateField("Enter Date Of Retirement")
     business_type=StringField("Business Type")
     years_of_operation=IntegerField("Years of Operation")
     business_income=IntegerField("Business Income in KES")
     employment_terms = SelectField('Select Employment Terms', choices=[('','Select Employment Terms'),('Permanent','Permanent'),('Casual','Casual'),('Contarct','Contarct')])
+

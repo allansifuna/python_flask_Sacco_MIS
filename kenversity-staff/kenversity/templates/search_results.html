@@ -1,0 +1,85 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  {%with messages= get_flashed_messages(with_categories=true)%}
+  {%if messages%}
+  {%for category,message in messages%}
+  <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+    {{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endfor%}
+  {%endif%}
+  {%endwith%}
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Search results... found({{found}} Matches)</h1>
+    <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+  </div>
+
+  <!-- Content Row -->
+
+  <div class="row">
+
+    <!-- Content Column -->
+    <div class="col-md-12">
+
+      <div class="card shadow mb-4">
+        <!-- Card Header - Accordion -->
+        <a  class="d-block card-header py-3" data-toggle="" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+          <h6 class="m-0 font-weight-bold text-primary">search results </h6>
+        </a>
+        <!-- Card Content - Collapse -->
+        <div class="collapse show" id="collapseCardExample">
+          <div class="card-body">
+            <div class="list-group">
+              {%if matches==False%}
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <h5 class="m-0 text-gray-800">No Result Matches found...! </h5>
+              </li>
+              {%else%}
+              {%for member in members%}
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="text-success">Name: </span><span class="text-gray-800 font-weight-bold ml-2 mr-2"><a href="{{url_for('staff.member_profile',member_id=member.id)}}">{{member.first_name}} {{member.last_name}}</a> </span>
+                <span class="text-primary ml-4">Member No: </span><span class="font-weight-bold">{{member.memberNo}}</span>
+                <span class="text-primary ml-4">Email: </span><span class="font-weight-bold">{{member.email}}</span>
+                <span class="text-primary ml-4">Phone Number: </span><span class="font-weight-bold">{{member.phone_number}}</span>
+              </li>
+              {%endfor%}
+              {%endif%}
+            </li>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
+</div>
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; KENVERSITY SACCO <span id="year"></span> </span>
+              <script>
+                  document.getElementById("year").innerHTML=new Date().getFullYear();
+              </script>
+          </div>
+        </div>
+      </footer>
+      <!-- End of
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+{%endblock content%}

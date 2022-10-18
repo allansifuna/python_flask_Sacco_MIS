@@ -367,9 +367,74 @@ def member_profile():
     docs_form=MemberDataForm()
     biodata_form=MemberBioDataForm()
     empl_form=MemberEmplDataForm()
+
+    if register_form.validate_on_submit():
+        current_user.first_name=register_form.first_name.data
+        current_user.last_name=register_form.last_name.data
+        current_user.email=register_form.email.data
+        current_user.phone_number=register_form.phone.data
+        current_user.national_id=register_form.national_id.data
+        db.session.commit()
+        flash("Successfully Updated Registration Data","success")
+        return redirect(url_for('member.member_profile'))
+
+    if biodata_form.validate_on_submit():
+        current_user.dob=biodata_form.dob.data
+        current_user.gender=biodata_form.gender.data
+        current_user.marital_status=biodata_form.marital_status.data
+        current_user.number_of_dependants=biodata_form.number_of_dependants.data
+        current_user.address=biodata_form.address.data
+        current_user.town=biodata_form.town.data
+        current_user.estate=biodata_form.estate.data
+        current_user.street=biodata_form.street.data
+        current_user.house_number=biodata_form.house_number.data
+        current_user.house_ownership=biodata_form.house_ownership.data
+        db.session.commit()
+        flash("Successfully Updated Bio Data","success")
+        return redirect(url_for('member.member_profile'))
+
+    if empl_form.validate_on_submit():
+        if empl_form.employment_status.data == "Employed":
+            current_user.employment_status=empl_form.employment_status.data
+            current_user.employer_name=empl_form.name.data
+            current_user.employer_address=empl_form.address.data
+            current_user.employer_phone=empl_form.phone.data
+            current_user.employment_terms=empl_form.employment_terms.data
+            current_user.retirement_date=empl_form.retirement_date.data
+        if empl_form.employment_status.data == "Self-Employed":
+            current_user.employment_status=empl_form.employment_status.data
+            current_user.business_type=empl_form.business_type.data
+            current_user.years_of_operation=empl_form.years_of_operation.data
+            current_user.business_income=empl_form.business_income.data
+        db.session.commit()
+        flash("Successfully Updated Employment Data","success")
+        return redirect(url_for('member.member_profile'))
+
     register_form.first_name.data=current_user.first_name
     register_form.last_name.data=current_user.last_name
     register_form.email.data=current_user.email
     register_form.phone.data=current_user.phone_number
     register_form.national_id.data=current_user.national_id
+
+    biodata_form.dob.data=current_user.dob
+    biodata_form.gender.data=current_user.gender
+    biodata_form.marital_status.data=current_user.marital_status
+    biodata_form.number_of_dependants.data=current_user.number_of_dependants
+    biodata_form.address.data=current_user.address
+    biodata_form.town.data=current_user.town
+    biodata_form.estate.data=current_user.estate
+    biodata_form.street.data=current_user.street
+    biodata_form.house_number.data=current_user.house_number
+    biodata_form.house_ownership.data=current_user.house_ownership
+
+    empl_form.employment_status.data=current_user.employment_status
+    empl_form.name.data=current_user.employer_name
+    empl_form.address.data=current_user.employer_address
+    empl_form.phone.data=current_user.employer_phone
+    empl_form.retirement_date.data=current_user.retirement_date
+    empl_form.business_type.data=current_user.business_type
+    empl_form.years_of_operation.data=current_user.years_of_operation
+    empl_form.business_income.data=current_user.business_income
+    empl_form.employment_terms.data=current_user.employment_terms
+
     return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form)

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
-from .forms import LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,DeclineLoanForm
+from .forms import (LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,
+        DeclineLoanForm,SearchForm)
 from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
 from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor
 from flask_login import login_user, current_user, logout_user, login_required
@@ -9,15 +10,32 @@ import secrets
 from datetime import datetime
 staff = Blueprint('staff', __name__)
 
-@staff.route('/')
-@staff.route('/staff')
+@staff.route('/',methods=["POST","GET"])
+@staff.route('/staff',methods=["POST","GET"])
 @login_required
 def dashboard():
     pending_member_approvals=Member.query.filter_by(memberNo=None).count()
     pending_loan_applications=Loan.query.filter_by(staffID=None).count()
     pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").count()
-    return render_template('home.html',pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('home.html',pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications,search=search)
 
+@staff.route('/search/<string:data>', methods=["POST", "GET"])
+@login_required
+def searches(data):
+    members=Member.query.filter_by(first_name=data).all()
+    members.extend(Member.query.filter_by(last_name=data).all())
+    members.extend(Member.query.filter_by(memberNo=data).all())
+    members.extend(Member.query.filter_by(email=data).all())
+    members.extend(Member.query.filter_by(phone_number=data).all())
+    matches=len(members)>0
+    found=len(members)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('search_results.html',members=members,matches=matches,found=found,search=search)
 @staff.route('/staff/login', methods=["POST", "GET"])
 def login():
     if current_user.is_authenticated:
@@ -60,7 +78,10 @@ def add_loan_categories():
         loan_category.save()
         flash("Loan Category Successfully Added.","success")
         return redirect(url_for("staff.dashboard"))
-    return render_template('loan_categories.html', form=form)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('loan_categories.html', form=form,search=search)
 
 @staff.route('/staff/add/new',methods=["POST","GET"])
 @login_required
@@ -78,7 +99,10 @@ def add_staff():
         send_set_password_email(staff)
         flash("New Staff Successfully Added.","success")
         return redirect(url_for("staff.dashboard"))
-    return render_template('add_staff.html', form=form)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('add_staff.html', form=form,search=search)
 
 @staff.route('/set_password/<token>', methods=['POST', 'GET'])
 def set_password(token):
@@ -95,6 +119,7 @@ def set_password(token):
         db.session.commit()
         flash(f'Your password has been set. You can now log in', 'success')
         return redirect(url_for('staff.login'))
+
     return render_template("set_password.html", form=form)
 
 
@@ -107,7 +132,10 @@ def member_approvals():
     for member in members:
         ms[i]=member
         i+=1
-    return render_template("member_approvals.html", ms=ms)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("member_approvals.html", ms=ms,search=search)
 
 @staff.route('/staff/<member_id>/approve',methods=["POST","GET"])
 @login_required
@@ -145,14 +173,20 @@ def member_approval(member_id):
     form.last_name.data=member.last_name
     form.national_id.data=member.national_id
     form.reg_fees.data=reg_fees
-    return render_template("member_approval.html",form=form,member=member)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("member_approval.html",form=form,member=member,search=search)
 
 @staff.route('/staff/loans/view',methods=["POST","GET"])
 @login_required
 def view_loans():
     loans=Loan.query.filter_by(staffID=None).all()
     loans=add_nums(loans)
-    return render_template("view_loans.html",loans=loans)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_loans.html",loans=loans,search=search)
 
 @staff.route('/staff/loan/<loan_id>/approve',methods=["POST","GET"])
 @login_required
@@ -160,7 +194,10 @@ def approve_loan(loan_id):
     loan=Loan.query.get_or_404(loan_id)
     loan.staffID=current_user.id
     loan.update()
-    return render_template("approve_loan.html",loan=loan)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("approve_loan.html",loan=loan,search=search)
 
 @staff.route('/staff/loan/<loan_id>/<verdict>/approve',methods=["POST","GET"])
 @login_required
@@ -190,7 +227,10 @@ def decline_loan(loan_id):
         # send_loan_decline_email(loan.loan_applier,reason)
         flash("Loan Application Successfully Declined.The Member will be duly Notified","success")
         return redirect(url_for("staff.view_loans"))
-    return render_template("decline_loan.html",form=form)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("decline_loan.html",form=form,search=search)
 
 @staff.route('/staff/pending-loans/view',methods=["POST","GET"])
 @login_required
@@ -207,21 +247,29 @@ def view_staff_loans():
         if cols > 0:
             has_cols[i]=True
 
-
-    return render_template("view_staff_loans.html",loans=loans,has_cols=has_cols,has_gs=has_gs)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_staff_loans.html",loans=loans,has_cols=has_cols,has_gs=has_gs,search=search)
 
 @staff.route('/staff/<loan_id>/guarantors/view',methods=["POST","GET"])
 @login_required
 def view_guarantors(loan_id):
     guarantors=Guarantor.query.filter_by(loanID=loan_id).all()
     guarantors=add_nums(guarantors)
-    return render_template("approve_guarantors.html",guarantors=guarantors,loan_id=loan_id)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("approve_guarantors.html",guarantors=guarantors,loan_id=loan_id,search=search)
 
 @staff.route('/staff/<loan_id>/<member_id>/approve',methods=["POST","GET"])
 @login_required
 def approve_guarantor(loan_id,member_id):
     member=Member.query.get_or_404(member_id)
-    return render_template("approve_guarantor.html",loan_id=loan_id,member=member)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("approve_guarantor.html",loan_id=loan_id,member=member,search=search)
 
 @staff.route('/staff/guarantor/<loan_id>/<member_id>/<verdict>/approve',methods=["POST","GET"])
 @login_required
@@ -265,7 +313,10 @@ def guarantor_verdict(loan_id,member_id,verdict):
 def view_collaterals(loan_id):
     collaterals=Collateral.query.filter_by(loanID=loan_id).all()
     collaterals=add_nums(collaterals)
-    return render_template("approve_collaterals.html",collaterals=collaterals,loan_id=loan_id)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("approve_collaterals.html",collaterals=collaterals,loan_id=loan_id,search=search)
 
 @staff.route('/staff/collateral/<collateral_id>/<verdict>/approve',methods=["POST","GET"])
 @login_required
@@ -302,14 +353,26 @@ def approve_collateral(collateral_id,verdict):
 @staff.route('/staff/members/view',methods=["POST","GET"])
 @login_required
 def view_members():
-    members=Member.query.filter_by(status="ACTIVE").all()
+    members=Member.query.filter_by(status="ACTIVE").filter(Member.memberNo!=None).order_by(Member.memberNo.asc()).all()
     members=add_nums(members)
-    return render_template("view_members.html",members=members)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_members.html",members=members,search=search)
 
 @staff.route('/staff/members/download',methods=["POST","GET"])
 @login_required
 def download_members():
-    members=Member.query.filter_by(status="ACTIVE").all()
+    members=Member.query.filter_by(status="ACTIVE").filter(Member.memberNo!=None).order_by(Member.memberNo.asc()).all()
     members=add_nums(members)
     html=render_template("download_members.html",members=members,date=datetime.today(),title="Kenversity_Sacco_members.pdf")
     return render_pdf(HTML(string=html))
+
+@staff.route('/staff/member/<member_id>/profile',methods=["POST","GET"])
+@login_required
+def member_profile(member_id):
+    member=Member.query.get_or_404(member_id)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('member_profile.html',member=member,Member=Member,search=search)

@@ -305,8 +305,11 @@
                             {{empl_form.employment_status(class="form-control custom-select",id="empst")}}
                             {%endif%}
                     </div>
-
+                    {% if empl_form.employment_status.data == "Self-Employed"%}
+                    <div class="form-group" id="emp3" hidden="True">
+                    {%else%}
                     <div class="form-group" id="emp3">
+                    {%endif%}
                         {{ empl_form.name.label() }}
                       {%if empl_form.name.errors%}
                             {{empl_form.name(class="form-control is-invalid",id="name")}}
@@ -320,7 +323,12 @@
                             {%endif%}
 
                     </div>
+                    {% if empl_form.employment_status.data == "Self-Employed"%}
+                    <div class="form-group row" id="emp2" hidden="True">
+                    {%else%}
                     <div class="form-group row" id="emp2">
+                    {%endif%}
+
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         {{ empl_form.address.label() }}
                       {%if empl_form.address.errors%}
@@ -350,7 +358,11 @@
 
                     </div>
                     </div>
+                    {% if empl_form.employment_status.data == "Self-Employed"%}
+                    <div class="form-group row" id="emp1" hidden="True">
+                    {%else%}
                     <div class="form-group row" id="emp1">
+                    {%endif%}
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         {{ empl_form.retirement_date.label() }}
                       {%if empl_form.retirement_date.errors%}
@@ -380,7 +392,12 @@
 
                     </div>
                     </div>
+                    {% if empl_form.employment_status.data == "Self-Employed"%}
+                    <div class="form-group row" id="biz">
+                    {%else%}
                     <div class="form-group row" hidden="True" id="biz">
+                    {%endif%}
+
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         {{ empl_form.business_type.label() }}
                       {%if empl_form.business_type.errors%}
@@ -410,7 +427,12 @@
 
                     </div>
                     </div>
+                    {% if empl_form.employment_status.data == "Self-Employed"%}
+                    <div class="form-group" id="income">
+                    {%else%}
                     <div class="form-group" hidden="True" id="income">
+                    {%endif%}
+
                         {{ empl_form.business_income.label() }}
                       {%if empl_form.business_income.errors%}
                             {{empl_form.business_income(class="form-control is-invalid",id="income")}}

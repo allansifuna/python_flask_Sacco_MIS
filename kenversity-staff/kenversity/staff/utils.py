@@ -23,14 +23,14 @@ def send_set_password_email(user):
     mail.send(msg)
 
 def get_member_No():
-    members=Member.query.filter(Member.memberNo!=None).all()
+    members=Member.query.filter(Member.memberNo!=None).order_by(Member.memberNo.asc()).all()
     if len(members) == 0 :
-        return "KV001"
+        return "MB00001"
     else:
         num=members[-1].memberNo
         num=int(num[2:])+1
-        num=str(num).zfill(3)
-        return f"KV{num}"
+        num=str(num).zfill(5)
+        return f"MB{num}"
 
 
 def send_approval_email(member):

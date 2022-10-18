@@ -42,3 +42,6 @@ class ApproveMemberForm(FlaskForm):
 
 class DeclineLoanForm(FlaskForm):
     reason=TextAreaField("Reason for Declining")
+
+class SearchForm(FlaskForm):
+    text=StringField("Search")

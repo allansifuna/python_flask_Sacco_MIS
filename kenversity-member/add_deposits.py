@@ -13,7 +13,7 @@ for i in range(16):
     for i in range(5):
         chrid.append(str(choice(vs)))
     chrid="".join(chrid)
-    transaction=Transaction(transaction_code="".join(code),phone_number="254712135643",amount=choice([1000,500,700,600,1500]),reason="DEP")
+    transaction=Transaction(transaction_code="".join(code),phone_number="254713812939",amount=choice([1000,500,700,600,1500]),reason="DEP")
     transaction.save()
-    dep=Deposit(memberID="a8a62f11d7bb5660",CheckoutRequestID=f"ws_CO_061020222032{chrid}{transaction.phone_number[3:]}",transactionID=transaction.id,amount=transaction.amount)
+    dep=Deposit(memberID="24eb195def9696b5",CheckoutRequestID=f"ws_CO_061020222032{chrid}{transaction.phone_number[3:]}",transactionID=transaction.id,amount=transaction.amount)
     dep.save()
