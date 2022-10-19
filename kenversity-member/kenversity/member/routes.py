@@ -224,10 +224,10 @@ def get_loan_cat(loan_cat_id):
 @member.route('/get/member/<name>', methods=["POST", "GET"])
 @login_required
 def get_member(name):
-    members=Member.query.filter_by(first_name=name).filter(Member.id != current_user.id).all()
-    members.extend(Member.query.filter_by(last_name=name).filter(Member.id != current_user.id).all())
-    members.extend(Member.query.filter_by(email=name).filter(Member.id != current_user.id).all())
-    members.extend(Member.query.filter_by(phone_number=name).filter(Member.id != current_user.id).all())
+    members=Member.query.filter_by(first_name=name).filter_by(status="ACTIVE").filter(Member.id != current_user.id).all()
+    members.extend(Member.query.filter_by(last_name=name).filter_by(status="ACTIVE").filter(Member.id != current_user.id).all())
+    members.extend(Member.query.filter_by(email=name).filter_by(status="ACTIVE").filter(Member.id != current_user.id).all())
+    members.extend(Member.query.filter_by(phone_number=name).filter_by(status="ACTIVE").filter(Member.id != current_user.id).all())
     data=[]
     for member in members:
         datas={}

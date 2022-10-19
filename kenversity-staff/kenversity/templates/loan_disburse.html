@@ -1,0 +1,72 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+      {%with messages= get_flashed_messages(with_categories=true)%}
+              {%if messages%}
+              {%for category,message in messages%}
+              <div class="alert alert-{{category}} alert-dismissible fade show",role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span
+                  </button>
+                </div>
+                {%endfor%}
+                {%endif%}
+                {%endwith%}
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">PENDING LOAN DISBURSEMENTS</h6>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <table class="table table-bordered small" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Member No</th>
+                                                    <th>National ID</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Phone Number</th>
+                                                    <th>Loan Number</th>
+                                                    <th>Loan Type</th>
+                                                    <th>Loan Amount</th>
+                                                    <th>Disburse</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {%for num,loan in approved_loans.items()%}
+                                                    <tr>
+                                                    <td>{{loan.loan_applier.memberNo}}</td>
+                                                    <td>{{loan.loan_applier.national_id}}</td>
+                                                    <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
+                                                    <td>{{loan.loan_applier.email}}</td>
+                                                    <td>{{loan.loan_applier.phone_number}}</td>
+                                                    <td>{{loan.loanNo}}</td>
+                                                    <td>{{loan.loan_cat.name}}</td>
+                                                    <td>{{loan.amount}}</td>
+                                                    <td> <a href="{{url_for('staff.disburse_loan',loan_id=loan.id)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right" >Disburse</a></td>
+                                                </tr>
+                                                {%endfor%}
+
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+
+
+
+                                                                                           <!-- Dashboard Tab Pane 2-->
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+{%endblock%}

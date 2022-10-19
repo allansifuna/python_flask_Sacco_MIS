@@ -22,23 +22,24 @@
 
                 <div class="card-body">
                     <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered small" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                    <th>No#</th>
+                                                    <th>Loan No</th>
                                                     <th>National ID</th>
                                                     <th>Name</th>
                                                     <th>Loan Category</th>
                                                     <th>Amount</th>
-                                                    <th>Approve Profile</th>
-                                                    <th>Approve Guarantors</th>
-                                                    <th>Approve Collaterals</th>
+                                                    <th>Profile</th>
+                                                    <th>Guarantors</th>
+                                                    <th>Collaterals</th>
+                                                    <th>Approve For Disbursement</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {%for num,loan in loans.items()%}
                                                     <tr>
-                                                    <td>{{num}}</td>
+                                                    <td>{{loan.loanNo}}</td>
                                                     <td>{{loan.loan_applier.national_id}}</td>
                                                     <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
                                                     <td>{{loan.loan_cat.name}}</td>
@@ -78,6 +79,17 @@
                                                             {%endif%}
                                                         {%else%}
                                                             <span class="text-secondary font-weight-bold ml-2">NO COLLATERALS</span>
+                                                        {%endif%}
+                                                    </td>
+                                                    <td>
+                                                        {%if loan.status !=  "APPROVED"%}
+                                                            {%if loan.profile_status == "APPROVED" and loan.guarantor_status == "APPROVED" %}
+                                                                <a href="{{url_for('staff.recommend_disbursement',loan_id=loan.id)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right m-auto m-0" >Approve</a>
+                                                            {%else%}
+                                                                <span class="text-primary font-weight-bold ml-2">--</span>
+                                                            {%endif%}
+                                                        {%else%}
+                                                            <span class="text-secondary font-weight-bold ml-2">APPROVED</span>
                                                         {%endif%}
                                                     </td>
 

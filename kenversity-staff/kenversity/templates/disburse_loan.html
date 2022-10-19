@@ -1,0 +1,159 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  {%with messages= get_flashed_messages(with_categories=true)%}
+  {%if messages%}
+  {%for category,message in messages%}
+  <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {%endfor%}
+  {%endif%}
+  {%endwith%}
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">DISBURSE LOAN</h1>
+    <div class="d-none d-sm-inline-block">
+      <a href="{{url_for('staff.disbursement_verdict',loan_id=loan.id,verdict='DECLINED')}}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm mr-3"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Decline Loan</a>
+      <a href="{{url_for('staff.disbursement_verdict',loan_id=loan.id,verdict='DISBURSED')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-right fa-sm text-white-50"></i> Disburse Loan</a>
+    </div>
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+    <div class="col-md-6 col-xs-12">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Member Profile</h6>
+
+          <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+
+          <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Exam Results</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Coach's Comments</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-primary" href="">Game History</a>
+            </div>
+
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img class="img-profile rounded-circle shadow-sm" width="125px" height="125px" src="http://127.0.0.1:5000/static/ids/{{loan.loan_applier.photo}}">
+          </div>
+          <div class="card-body">
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Name:</span> <span class="text-gray-800 font-weight-bold ml-2"> {{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">National ID:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.national_id}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Phone Number:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.phone_number}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Email:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.email}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Bank :</span> <span class="text-gray-800 font-weight-bold ml-2">KCB Bank</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Account Number:</span> <span class="text-gray-800 font-weight-bold ml-2">1133224498</span>
+              </li>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-md-6 col-xs-12">
+      <div class="card shadow mb-2">
+        <div class="card-header py-3 py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Loan Info</h6>
+        </div>
+        <div class="card-body">
+          <div class="card-body">
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Loan No:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loanNo}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Loan Amount:</span> <span class="text-gray-800 font-weight-bold ml-2"> KES {{loan.amount | format_currency}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Interest:</span> <span class="text-gray-800 font-weight-bold ml-2">KES {{(loan.amount*(loan.loan_cat.interest_rate/100)) | format_currency }}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Total Amount:</span> <span class="text-gray-800 font-weight-bold ml-2">KES {{(loan.amount*(1+(loan.loan_cat.interest_rate/100))) | format_currency}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Repayment Period:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_cat.repayment_duration}} Months</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Monthly Installments:</span> <span class="text-gray-800 font-weight-bold ml-2">KES {{((loan.amount*(1+(loan.loan_cat.interest_rate/100)))/loan.loan_cat.repayment_duration) | format_currency}}</span>
+              </li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- End of Main Content -->
+
+<!-- Footer -->
+<footer class="sticky-footer bg-white">
+  <div class="container my-auto">
+    <div class="copyright text-center my-auto">
+      <span>Copyright &copy; KENVERSITY SACCO <span id="year"></span> </span>
+              <script>
+                  document.getElementById("year").innerHTML=new Date().getFullYear();
+              </script>
+    </div>
+  </div>
+</footer>
+<!-- End of Footer -->
+
+</div>
+<!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+{%endblock content%}

@@ -8,6 +8,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
 import secrets
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 staff = Blueprint('staff', __name__)
 
 @staff.route('/',methods=["POST","GET"])
@@ -25,11 +26,11 @@ def dashboard():
 @staff.route('/search/<string:data>', methods=["POST", "GET"])
 @login_required
 def searches(data):
-    members=Member.query.filter_by(first_name=data).all()
-    members.extend(Member.query.filter_by(last_name=data).all())
-    members.extend(Member.query.filter_by(memberNo=data).all())
-    members.extend(Member.query.filter_by(email=data).all())
-    members.extend(Member.query.filter_by(phone_number=data).all())
+    members=Member.query.filter_by(first_name=data).filter_by(status="ACTIVE").all()
+    members.extend(Member.query.filter_by(last_name=data).filter_by(status="ACTIVE").all())
+    members.extend(Member.query.filter_by(memberNo=data).filter_by(status="ACTIVE").all())
+    members.extend(Member.query.filter_by(email=data).filter_by(status="ACTIVE").all())
+    members.extend(Member.query.filter_by(phone_number=data).filter_by(status="ACTIVE").all())
     matches=len(members)>0
     found=len(members)
     search=SearchForm()
@@ -235,7 +236,7 @@ def decline_loan(loan_id):
 @staff.route('/staff/pending-loans/view',methods=["POST","GET"])
 @login_required
 def view_staff_loans():
-    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").all()
+    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").all()
     loans=add_nums(loans)
     has_gs={}
     has_cols={}
@@ -376,3 +377,47 @@ def member_profile(member_id):
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
     return render_template('member_profile.html',member=member,Member=Member,search=search)
+
+@staff.route('/staff/loan/<loan_id>/recommend',methods=["POST","GET"])
+@login_required
+def recommend_disbursement(loan_id):
+    loan=Loan.query.get_or_404(loan_id)
+    loan.status="APPROVED"
+    loan.update()
+    flash("Loan has been fowarded to the credit manager for Disbursment.","success")
+    return redirect(url_for('staff.view_staff_loans'))
+
+@staff.route('/admin/loans/disburse',methods=["POST","GET"])
+@login_required
+def loan_disburse():
+    approved_loans=Loan.query.filter_by(status="APPROVED").all()
+    approved_loans=add_nums(approved_loans)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('loan_disburse.html',search=search,approved_loans=approved_loans)
+
+@staff.route('/admin/loan/<loan_id>/disburse',methods=["POST","GET"])
+@login_required
+def disburse_loan(loan_id):
+    loan=Loan.query.get_or_404(loan_id)
+    return render_template("disburse_loan.html",loan=loan)
+
+@staff.route('/admin/loan/<loan_id>/<verdict>',methods=["POST","GET"])
+@login_required
+def disbursement_verdict(loan_id,verdict):
+    loan=Loan.query.get_or_404(loan_id)
+    if verdict == "DISBURSED":
+        tdelta=relativedelta(months=loan.loan_cat.repayment_duration)
+        loan.status="DISBURSED"
+        loan.start_date=datetime.today()
+        loan.end_date= datetime.today()+tdelta
+        loan.amount=int(loan.amount*(1+(loan.loan_cat.interest_rate/100)))
+        loan.update()
+        flash("Loan successfully disbursed.","success")
+        return redirect(url_for('staff.loan_disburse'))
+    else:
+        loan.status="DECLINED"
+        loan.update()
+        flash("Loan Application has been Declined. The Loan Applicant will be duly informed","info")
+        return redirect(url_for('staff.loan_disburse'))
