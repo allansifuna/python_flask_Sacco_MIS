@@ -41,6 +41,31 @@ def create_app(conf_method):
 
     app.register_blueprint(member)
 
+    @app.template_filter()
+    def format_currency(value):
+        value=int(value)
+        vals=str(value)
+        num=vals[::-1]
+        split_nums=[]
+        nums=""
+        for i in range(len(num)):
+            if (i+1)%3==0:
+                nums+=num[i]
+                split_nums.append(nums)
+                nums=""
+            else:
+                nums+=num[i]
+
+        if nums!="":
+            split_nums.append(nums)
+        new_nums=",".join(split_nums)
+        new_nums=new_nums[::-1]
+        return f"{new_nums}.00"
+
+    @app.template_filter()
+    def format_float(value):
+        return f"{value:.2f}"
+
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
             auth = None

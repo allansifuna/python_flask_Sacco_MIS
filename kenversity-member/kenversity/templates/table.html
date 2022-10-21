@@ -50,7 +50,7 @@
               <td>{{num}}</td>
               <td>{{transaction.date_created.strftime('%Y-%m-%d %I:%M %p')}}</td>
               <td>{{transaction.transaction_code}}</td>
-              <td>KES {{transaction.amount}}.00</td>
+              <td>KES {{transaction.amount | format_currency}}</td>
               {%if not deposits%}
               <td>
                   {%if transaction.reason == "REG" %}
@@ -58,7 +58,8 @@
                   {%elif transaction.reason == "DEP" %}
                   <span class="text-success">DEPOSIT</span>
                   {%elif transaction.reason == "REP"%}
-                    REPAYMENT
+                  <span class="text-primary">LOAN REPAYMENT</span>
+
                   {%else%}
                     Miscalleneous
                   {%endif%}

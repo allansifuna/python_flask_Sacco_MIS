@@ -4,6 +4,7 @@ from PIL import Image
 from flask import render_template, url_for,current_app
 from flask_mail import Message
 from kenversity import mail,mpesa
+from kenversity.models import Loan,Repayment
 
 
 def save_picture(form_picture):
@@ -50,3 +51,23 @@ def add_nums(data):
         new_dict[i]=datum
         i+=1
     return new_dict
+
+def get_loan_No():
+    loans=Loan.query.order_by(Loan.loanNo.asc()).all()
+    if len(loans) == 0 :
+        return "LN00001"
+    else:
+        num=loans[-1].loanNo
+        num=int(num[2:])+1
+        num=str(num).zfill(5)
+        return f"LN{num}"
+
+def get_repayment_No():
+    repayments=Repayment.query.order_by(Repayment.repaymentNo.asc()).all()
+    if len(repayments) == 0 :
+        return "RP00001"
+    else:
+        num=repayments[-1].repaymentNo
+        num=int(num[2:])+1
+        num=str(num).zfill(5)
+        return f"RP{num}"

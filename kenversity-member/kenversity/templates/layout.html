@@ -82,7 +82,8 @@
             <a class="collapse-item" href="{{url_for('member.apply_loan')}}">Apply for a Loan</a>
             <a class="collapse-item" href="{{url_for('member.confirm_guarantor_request')}}">Confirm Guarantor Requests</a>
             <h6 class="collapse-header text-primary">Click to View: </h6>
-            <a class="collapse-item" href="{{url_for('member.view_loans')}}">Loan History</a>
+            <a class="collapse-item" href="{{url_for('member.view_loans')}}">Loan Applications</a>
+            <a class="collapse-item" href="{{url_for('member.view_disbursed_loans')}}">Disbursed Loans</a>
           </div>
         </div>
       </li>
@@ -106,7 +107,8 @@
         <div id="repayments" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
            <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header text-primary">Click to Make: </h6>
-            <a class="collapse-item" href="">Make a Repayment</a>
+            <a class="collapse-item" href="{{url_for('member.make_repayment')}}">Make a Repayment</a>
+            <a class="collapse-item" href="{{url_for('member.view_repayments')}}">View a Repayments</a>
           </div>
         </div>
       </li>

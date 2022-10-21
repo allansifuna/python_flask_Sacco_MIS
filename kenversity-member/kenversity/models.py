@@ -190,7 +190,16 @@ class Loan(db.Model, CRUDMixin):
     transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=True)
 
     def __repr__(self):
-        return f"<{self.id}|{self.amount}>"
+        return f"{self.loanNo}"
+
+    @staticmethod
+    def get_remaining_amount(loan_id):
+        amount=0
+        loan=Loan.query.get(loan_id)
+        repayments=Repayment.query.filter_by(loanID=loan_id).all()
+        for repayment in repayments:
+            amount+=repayment.amount
+        return loan.amount - amount
 
 class Transaction(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
@@ -205,7 +214,7 @@ class Transaction(db.Model, CRUDMixin):
     loans=db.relationship('Loan', backref='loan_transaction', lazy=True)
 
     def __repr__(self):
-        return f"<{self.transactionID}|{self.amount}>"
+        return f"<{self.id}|{self.amount}>"
 
 
 class Repayment(db.Model, CRUDMixin):
@@ -213,10 +222,10 @@ class Repayment(db.Model, CRUDMixin):
     repaymentNo=db.Column(db.String(7),nullable=True)
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     loanID=db.Column(db.String(8),db.ForeignKey('loan.id'),nullable=False)
-    transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=False)
+    transactionID=db.Column(db.String(8),db.ForeignKey('transaction.id'),nullable=True)
     amount=db.Column(db.Integer,nullable=False)
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     CheckoutRequestID=db.Column(db.String(30),nullable=True)
 
     def __repr__(self):
-        return f"<{self.repaymentID}|{self.amount}>"
+        return f"<{self.id}|{self.amount}>"

@@ -2,9 +2,9 @@
 {%block content%}
 <div class="container-fluid mt-n10">
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
-    <h4 class="h4 mb-0 text-gray-800"> MEMBER DEPOSITS</h4>
+    <h4 class="h4 mb-0 text-gray-800"> LOAN REPAYMENTS( <span class="font-weight-bold">{{loan.loanNo}} </span>) </h4>
     <div class="d-none d-sm-inline-block">
-      <a href="{{url_for('member.download_deposits',member_id=current_user.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Download</a>
+      <a href="{{url_for('member.download_transactions',member_id=current_user.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Download</a>
     </div>
 
   </div>
@@ -19,20 +19,23 @@
                             <thead>
                                 <tr>
                                     <th>No#</th>
-                                    <th>Date Deposited</th>
+                                    <th>Loan No</th>
+                                    <th>Repayment Date</th>
                                     <th>Mpesa Code</th>
                                     <th>Amount</th>
+                                    <th>Outstanding Loan Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {%for num,deposit in ds.items()%}
+                                {%for num,repayment in repayments.items()%}
                                     <tr>
-                                        <td>{{num}}</td>
-                                    <td>{{deposit.deposit_date.strftime('%Y-%m-%d %I:%M %p')}}</td>
-                                    <td>
-                                        {{deposit.deposit_transaction.transaction_code}}
-                                    </td>
-                                    <td>KES {{deposit.amount | format_currency}} </td>
+                                    <td>{{num}}</td>
+                                    <td>{{repayment[0].loan_repayment.loanNo}}</td>
+                                    <td>{{repayment[0].date_created.strftime('%d-%m-%Y %I:%M %p')}}</td>
+                                    <td>{{repayment[0].repayment_transaction.transaction_code}}</td>
+                                    <td>KES {{repayment[0].amount | format_currency}}</td>
+                                    <td>KES {{repayment[1] | format_currency}}</td>
+
                                 </tr>
                                 {%endfor%}
 
@@ -40,14 +43,8 @@
                         </table>
                     </div>
                 </div>
-
-
-
-                                                                       <!-- Dashboard Tab Pane 2-->
-
             </div>
         </div>
     </div>
-
 </div>
 {%endblock%}

@@ -95,3 +95,6 @@ class MemberEmplDataForm(FlaskForm):
     business_income=IntegerField("Business Income in KES")
     employment_terms = SelectField('Select Employment Terms', choices=[('','Select Employment Terms'),('Permanent','Permanent'),('Casual','Casual'),('Contarct','Contarct')])
 
+class MakeRepaymentForm(FlaskForm):
+    loan=QuerySelectField('Select Loan', validators=[DataRequired()], get_label='loanNo', allow_blank=True)
+    amount=IntegerField("Amount",validators=[DataRequired()])

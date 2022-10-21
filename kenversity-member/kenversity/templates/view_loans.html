@@ -40,7 +40,7 @@
                             <td>{{num}}</td>
                             <td>{{loan.loan_cat.name}}</td>
                             <td>{{loan.loan_cat.interest_rate}}</td>
-                            <td>KES {{loan.amount}}</td>
+                            <td>KES {{loan.amount | format_currency}}</td>
                             <td>{{loan.date_created.strftime("%d-%m-%Y")}}</td>
                             <td>{{loan.status}}</td>
                             <td> <a href="{{url_for('member.add_guarantor',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >VIEW</a></td>

@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app,jsonify
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
-                    ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm)
-from .utils import save_picture,save_file,simulate_pay,add_nums
-from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral
+                    ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm,
+                    MakeRepaymentForm)
+from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No
+from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral,Repayment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
@@ -20,6 +21,12 @@ def get_loan_category():
 def get_loan_category_pk(obj):
     return str(obj)
 
+def get_loan():
+    return Loan.query.all()
+
+
+def get_loan_pk(obj):
+    return str(obj)
 @member.route('/member')
 @login_required
 def dashboard():
@@ -28,8 +35,10 @@ def dashboard():
     for dep in deps:
         if dep.amount:
             total_shares+=dep.amount
+
+    loans=Loan.query.filter_by(status="DISBURSED").count()
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
-    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests)
+    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans)
 
 @member.route('/member/login', methods=["POST", "GET"])
 def login():
@@ -133,13 +142,40 @@ def callback_url():
                 member.update()
             elif member.memberNo:
                 dep=Deposit.query.filter_by(CheckoutRequestID=checkout_requestID).first()
+                rep=Repayment.query.filter_by(CheckoutRequestID=checkout_requestID).first()
                 if dep:
                     transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="DEP")
                     transaction.save()
                     dep.transactionID=transaction.id
                     dep.amount=amount
                     dep.update()
-
+                elif rep:
+                    transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="REP")
+                    transaction.save()
+                    loan=Loan.query.get(rep.loanID)
+                    remaining_amount = Loan.get_remaining_amount(loan.id)
+                    if amount<remaining_amount:
+                        rep.transactionID=transaction.id
+                        rep.amount=amount
+                        rep.update()
+                    elif amount ==  remaining_amount:
+                        rep.transactionID=transaction.id
+                        rep.amount=amount
+                        rep.update()
+                        loan.status =  "FULFILLED"
+                        loan.update()
+                    else:
+                        extra_amount=amount-remaining_amount
+                        rep.transactionID=transaction.id
+                        rep.amount=remaining_amount
+                        rep.update()
+                        loan.status =  "FULFILLED"
+                        loan.update()
+                        dep=Deposit(memberID=current_user.id,CheckoutRequestID="NONE",transactionID=transaction.id,amount=remaining_amount)
+                        dep.save()
+                else:
+                    transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="MISC")
+                    transaction.save()
             #email the person that their transaction was successful
         else:
             transaction=Transaction(transaction_code=transaction_code,phone_number=phone_number,amount=amount,reason="MISC")
@@ -203,7 +239,7 @@ def apply_loan():
     if form.validate_on_submit():
         loan_cat=str(form.loan_category.data)
         loan_amount = int(form.loan_amount.data)
-        loan=Loan(loan_applier=current_user,loan_categoryID=loan_cat,amount=loan_amount)
+        loan=Loan(loan_applier=current_user,loanNo=get_loan_No(),loan_categoryID=loan_cat,amount=loan_amount)
         loan.save()
         flash(f"Loan application has been successfully submitted","success")
         return redirect(url_for('member.add_guarantor',loan_id=loan.id))
@@ -330,9 +366,16 @@ def confirm_request(guarantor_id,verdict):
 @member.route('/member/loans/view', methods=["POST", "GET"])
 @login_required
 def view_loans():
-    loans=Loan.query.filter_by(memberID=current_user.id).order_by(Loan.date_created.desc()).all()
+    loans=Loan.query.filter_by(memberID=current_user.id).filter(Loan.status!="DISBURSED").order_by(Loan.date_created.desc()).all()
     loans=add_nums(loans)
     return render_template("view_loans.html",loans=loans)
+
+@member.route('/member/disbursed-loans/view', methods=["POST", "GET"])
+@login_required
+def view_disbursed_loans():
+    loans=Loan.query.filter_by(memberID=current_user.id).filter_by(status="DISBURSED").order_by(Loan.date_created.desc()).all()
+    loans=add_nums(loans)
+    return render_template("view_disbursed_loans.html",loans=loans,Loan=Loan)
 
 @member.route('/member/transactions/<member_id>/download', methods=["POST", "GET"])
 @login_required
@@ -438,3 +481,47 @@ def member_profile():
     empl_form.employment_terms.data=current_user.employment_terms
 
     return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form)
+
+@member.route('/member/repayment/make', methods=["POST", "GET"])
+@login_required
+def make_repayment():
+    form=MakeRepaymentForm()
+    form.loan.get_pk = get_loan_pk
+    form.loan.query_factory = get_loan
+    if form.validate_on_submit():
+        loan_no=str(form.loan.data)
+        amount=form.amount.data
+        loan=Loan.query.filter_by(loanNo=loan_no).first()
+        resp=simulate_pay(current_user.phone_number,amount)
+        if resp:
+            rep=Repayment(memberID=current_user.id,repaymentNo=get_repayment_No(),loanID=loan.id,CheckoutRequestID=resp["CheckoutRequestID"])
+            rep.save()
+            flash("You will be probpted to authorise the transaction on your phone","info")
+            return redirect(url_for('member.dashboard'))
+
+    return render_template("make_repayment.html",form=form)
+
+@member.route('/member/repayments/view', methods=["POST", "GET"])
+@login_required
+def view_repayments():
+    repayments=Repayment.query.all()
+    repayments=add_nums(repayments)
+    return render_template("view_repayments.html",repayments=repayments)
+
+@member.route('/member/<loan_id>/repayments/view', methods=["POST", "GET"])
+@login_required
+def view_loan_repayments(loan_id):
+    repayments=Repayment.query.filter_by(loanID=loan_id).all()
+    loan=Loan.query.get_or_404(loan_id)
+    amount=loan.amount
+    new_dict={}
+    i = 1
+    for repayment in repayments:
+        new_dict[i]= [repayment,amount-repayment.amount]
+        amount-=repayment.amount
+        i+=1
+
+    repayments={k:v for k,v in sorted(new_dict.items(),key=lambda x: (x[1][0].date_created),reverse=True)}
+
+    repayments=add_nums(repayments.values())
+    return render_template("view_loan_repayments.html",repayments=repayments,loan=loan)
