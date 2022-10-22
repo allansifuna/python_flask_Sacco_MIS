@@ -9,7 +9,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
 from flask_weasyprint import HTML, render_pdf
-from datetime import datetime
+from datetime import datetime,date
 REGISTRATION_FEE_AMOUNT=1
 
 member = Blueprint('member', __name__)
@@ -374,8 +374,10 @@ def view_loans():
 @login_required
 def view_disbursed_loans():
     loans=Loan.query.filter_by(memberID=current_user.id).filter_by(status="DISBURSED").order_by(Loan.date_created.desc()).all()
+    loans.extend(Loan.query.filter_by(memberID=current_user.id).filter_by(status="FULFILLED").order_by(Loan.date_created.desc()).all())
     loans=add_nums(loans)
-    return render_template("view_disbursed_loans.html",loans=loans,Loan=Loan)
+    today=date.today()
+    return render_template("view_disbursed_loans.html",loans=loans,Loan=Loan,today=today)
 
 @member.route('/member/transactions/<member_id>/download', methods=["POST", "GET"])
 @login_required

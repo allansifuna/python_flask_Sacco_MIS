@@ -7,7 +7,7 @@ from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collate
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
 import secrets
-from datetime import datetime
+from datetime import datetime,date
 from dateutil.relativedelta import relativedelta
 staff = Blueprint('staff', __name__)
 
@@ -48,9 +48,15 @@ def login():
         staff = Staff.query.filter_by(email=email).first()
         if staff and staff.password is not None:
             if bcrypt.check_password_hash(staff.password, password):
-                login_user(staff, remember=form.remember.data)
-                next_page = request.args.get('next')
-                return redirect(next_page) if next_page else redirect(url_for('staff.dashboard'))
+                if staff.status != "INACTIVE":
+                    if staff.status == "ACTIVE":
+                        login_user(staff, remember=form.remember.data)
+                        next_page = request.args.get('next')
+                        return redirect(next_page) if next_page else redirect(url_for('staff.dashboard'))
+                    else:
+                        flash("Wrong email or Password!!", "danger")
+                else:
+                    flash("Your Account is inactive.","danger")
             else:
                 flash("Wrong email or Password!!", "danger")
         else:
@@ -99,7 +105,7 @@ def add_staff():
         staff.save()
         send_set_password_email(staff)
         flash("New Staff Successfully Added.","success")
-        return redirect(url_for("staff.dashboard"))
+        return redirect(url_for("staff.view_staff"))
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
@@ -236,7 +242,7 @@ def decline_loan(loan_id):
 @staff.route('/staff/pending-loans/view',methods=["POST","GET"])
 @login_required
 def view_staff_loans():
-    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").all()
+    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").all()
     loans=add_nums(loans)
     has_gs={}
     has_cols={}
@@ -421,3 +427,58 @@ def disbursement_verdict(loan_id,verdict):
         loan.update()
         flash("Loan Application has been Declined. The Loan Applicant will be duly informed","info")
         return redirect(url_for('staff.loan_disburse'))
+
+@staff.route('/staff/view/all',methods=["POST","GET"])
+@login_required
+def view_staff():
+    staff=Staff.query.all()
+    staff=add_nums(staff)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_staff.html",staff=staff,search=search)
+
+@staff.route('/staff/<staff_id>/disbursed-loans/view',methods=["POST","GET"])
+@login_required
+def view_my_disbursed_loans(staff_id):
+    loans=Loan.query.filter_by(staffID=staff_id).filter_by(status="DISBURSED").order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    today=date.today()
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today)
+
+@staff.route('/staff/<staff_id>/defaulted-loans/view',methods=["POST","GET"])
+@login_required
+def view_my_defaulted_loans(staff_id):
+    today=date.today()
+    loans=Loan.query.filter_by(staffID=staff_id).filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True)
+
+@staff.route('/staff/disbursed-loans/view/all',methods=["POST","GET"])
+@login_required
+def view_all_disbursed_loans():
+    loans=Loan.query.filter_by(status="DISBURSED").order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    today=date.today()
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today)
+
+@staff.route('/staff/defaulted-loans/view/all',methods=["POST","GET"])
+@login_required
+def view_all_defaulted_loans():
+    today=date.today()
+    loans=Loan.query.filter_by(staffID=staff_id).filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
+    loans.extend(Loan.query.filter_by(staffID=staff_id).filter_by(status="FULFILLED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all())
+    loans=add_nums(loans)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True)

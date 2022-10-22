@@ -6,51 +6,54 @@
             {%for category,message in messages%}
                 <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
                     {{message}}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
                 </div>
             {%endfor%}
         {%endif%}
     {%endwith%}
-            <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">MY LOANS</h6>
+            {%if defaulted%}
+                <h6 class="m-0 font-weight-bold text-danger">DEFAULTED LOANS</h6>
+            {%else%}
+                <h6 class="m-0 font-weight-bold text-primary">DISBURSED LOANS</h6>
+            {%endif%}
         </div>
 
-        <div class="card-body">
+        <div class="card-body m-0">
             <div class="table-responsive">
                 <table class="table table-bordered small" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Loan No</th>
+                            <th>No#</th>
+                            <th>Loan NO</th>
+                            <th>Nat ID</th>
+                            <th>Name</th>
                             <th>Loan Category</th>
-                            <th>Loan Amount</th>
-                            <th>Amount Repayed</th>
+                            <th>Amount</th>
+                            <th>Amount Paid</th>
                             <th>Amount Due</th>
-                            <th>Date Disbursed</th>
-                            <th>Date Due</th>
-                            <th>Repayment Progress</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
                             <th>Status</th>
-                            <th>Repayments</th>
+                            <th>Approved By</th>
                         </tr>
                     </thead>
                     <tbody>
                         {%for num,loan in loans.items()%}
                             <tr>
+                            <td>{{num}}</td>
                             <td>{{loan.loanNo}}</td>
+                            <td>{{loan.loan_applier.national_id}}</td>
+                            <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
                             <td>{{loan.loan_cat.name}}</td>
                             <td>KES {{loan.amount | format_currency}}</td>
-                            <td>KES {{ (loan.amount-Loan.get_remaining_amount(loan.id)) | format_currency }}</td>
+                            <td>KES {{(loan.amount - Loan.get_remaining_amount(loan.id)) | format_currency}}</td>
                             <td>KES {{Loan.get_remaining_amount(loan.id) | format_currency}}</td>
-                            <td>{{loan.start_date.strftime("%d-%m-%Y")}}</td>
-                            <td>{{loan.end_date.strftime("%d-%m-%Y")}}</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: {{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}%" aria-valuenow="{{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}" aria-valuemin="0" aria-valuemax="100">{{(100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)) | format_float}}%</div>
-                                </div>
-                            </td>
+                            <td>{{loan.start_date.strftime('%d-%m-%Y')}}</td>
+                            <td>{{loan.end_date.strftime('%d-%m-%Y')}}</td>
                             <td>
                                 {%if today > loan.end_date and Loan.get_remaining_amount(loan.id)>0%}
                                     <span class="text-danger font-weight-bold"> DEFAULTED</span>
@@ -60,8 +63,8 @@
                                     <span class="text-primary font-weight-bold"> IN PROGRESS</span>
                                 {%endif%}
                             </td>
-                            <td> <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a></td>
-                            </tr>
+                            <td>{{loan.loan_approver.first_name}} {{loan.loan_approver.last_name}}</td>
+                        </tr>
                         {%endfor%}
 
                     </tbody>
@@ -70,4 +73,5 @@
         </div>
     </div>
 </div>
+
 {%endblock%}

@@ -15,7 +15,7 @@
     {%endwith%}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">LOAN APPLICATIONS</h6>
+            <h6 class="m-0 font-weight-bold text-primary">STAFF</h6>
         </div>
 
         <div class="card-body">
@@ -26,20 +26,28 @@
                             <th>No#</th>
                             <th>National ID</th>
                             <th>Name</th>
-                            <th>Loan Category</th>
-                            <th>Amount</th>
-                            <th>Approve</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {%for num,loan in loans.items()%}
+                        {%for num,staf in staff.items()%}
                             <tr>
                             <td>{{num}}</td>
-                            <td>{{loan.loan_applier.national_id}}</td>
-                            <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
-                            <td>{{loan.loan_cat.name}}</td>
-                            <td>KES {{loan.amount | format_currency}}</td>
-                            <td> <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Start Approval</a></td>
+                            <td>{{staf.national_id}}</td>
+                            <td>{{staf.first_name}} {{staf.last_name}}</td>
+                            <td>{{staf.email}}</td>
+                            <td>{{staf.phone_number}}</td>
+                            <td>
+                                {% if staf.status == "ACTIVE"%}
+                                    <span class="font-weight-bold text-primary">{{staf.status}}</span>
+                                {%elif staf.status == "INACTIVE"%}
+                                    <span class="font-weight-bold text-warning">{{staf.status}}</span>
+                                {%else%}
+                                    <span class="font-weight-bold text-danger">{{staf.status}}</span>
+                                {%endif%}
+                            </td>
                         </tr>
                         {%endfor%}
 
