@@ -8,7 +8,11 @@
 
   <body>
     <h1>KENVERSITY SACCO</h1>
+    {%if is_staff%}
+    <h4>SACCO STAFF</h4>
+    {%else%}
     <h4>SACCO MEMBERS</h4>
+    {%endif%}
 
     <dl id="informations">
       <dt>Date</dt>
@@ -19,7 +23,11 @@
       <thead>
           <tr>
               <th>No#</th>
+              {%if is_staff%}
+              <th>Staff No</th>
+              {%else%}
               <th>Member No</th>
+              {%endif%}
               <th>National ID</th>
               <th>Name</th>
               <th>Email</th>
@@ -27,6 +35,18 @@
           </tr>
       </thead>
       <tbody>
+        {%if is_staff%}
+          {%for num,staf in staff.items()%}
+              <tr>
+              <td>{{num}}</td>
+              <td>{{staf.status}}</td>
+              <td>{{staf.national_id}}</td>
+              <td>{{staf.first_name}} {{staf.last_name}}</td>
+              <td>{{staf.email}}</td>
+              <td>+ {{staf.phone_number}}</td>
+          </tr>
+          {%endfor%}
+        {%else%}
           {%for num,member in members.items()%}
               <tr>
               <td>{{num}}</td>
@@ -37,7 +57,7 @@
               <td>+ {{member.phone_number}}</td>
           </tr>
           {%endfor%}
-
+        {%endif%}
       </tbody>
     </table>
   </body>

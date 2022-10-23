@@ -447,7 +447,7 @@ def view_my_disbursed_loans(staff_id):
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today)
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,not_all=True)
 
 @staff.route('/staff/<staff_id>/defaulted-loans/view',methods=["POST","GET"])
 @login_required
@@ -458,7 +458,7 @@ def view_my_defaulted_loans(staff_id):
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True)
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True,not_all=True)
 
 @staff.route('/staff/disbursed-loans/view/all',methods=["POST","GET"])
 @login_required
@@ -469,19 +469,19 @@ def view_all_disbursed_loans():
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today)
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,all_dis=True)
 
 @staff.route('/staff/defaulted-loans/view/all',methods=["POST","GET"])
 @login_required
 def view_all_defaulted_loans():
     today=date.today()
-    loans=Loan.query.filter_by(staffID=staff_id).filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
-    loans.extend(Loan.query.filter_by(staffID=staff_id).filter_by(status="FULFILLED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all())
+    loans=Loan.query.filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
+    # loans.extend(Loan.query.filter_by(staffID=staff_id).filter_by(status="FULFILLED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all())
     loans=add_nums(loans)
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True)
+    return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,all_def=True,defaulted=True)
 
 @staff.route('/staff/<member_id>/loans/view',methods=["POST","GET"])
 @login_required
@@ -514,3 +514,65 @@ def view_loan_repayments(loan_id):
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
     return render_template("view_loan_repayments.html",repayments=repayments,loan=loan,search=search)
+
+@staff.route('/staff/disbursed-loans/download',methods=["POST","GET"])
+@login_required
+def download_disbursed_loans():
+    loans=Loan.query.filter_by(staffID=current_user.id).filter_by(status="DISBURSED").order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    today=date.today()
+    html = render_template("download_disbursed_loans.html",loans=loans,staff=current_user,Loan=Loan,today=today,date=datetime.today(),title="Kenversity_Sacco_disbursed_loans.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/defaulted-loans/download',methods=["POST","GET"])
+@login_required
+def download_defaulted_loans():
+
+    today=date.today()
+    loans=Loan.query.filter_by(staffID=current_user.id).filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    html = render_template("download_disbursed_loans.html",loans=loans,staff=current_user,Loan=Loan,today=today,date=datetime.today(),defaulted=True,title="Kenversity_Sacco_defaulted_loans.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/download',methods=["POST","GET"])
+@login_required
+def download_staff():
+    staff=Staff.query.all()
+    staff=add_nums(staff)
+    html=render_template("download_members.html",staff=staff,date=datetime.today(),is_staff=True,title="Kenversity_Sacco_Staff.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/all-disbursed-loans/download',methods=["POST","GET"])
+@login_required
+def download_all_disbursed_loans():
+    loans=Loan.query.filter_by(status="DISBURSED").order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    today=date.today()
+    html = render_template("download_disbursed_loans.html",loans=loans,Loan=Loan,today=today,date=datetime.today(),title="Kenversity_Sacco_all_disbursed_loans.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/all-defaulted-loans/download',methods=["POST","GET"])
+@login_required
+def download_all_defaulted_loans():
+
+    today=date.today()
+    loans=Loan.query.filter_by(status="DISBURSED").filter(Loan.end_date < today).order_by(Loan.start_date.desc()).all()
+    loans=add_nums(loans)
+    html = render_template("download_disbursed_loans.html",loans=loans,Loan=Loan,today=today,date=datetime.today(),defaulted=True,title="Kenversity_Sacco_all_defaulted_loans.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/<loan_id>/repayments/download',methods=["POST","GET"])
+@login_required
+def download_loan_repayments(loan_id):
+    repayments=Repayment.query.filter_by(loanID=loan_id).all()
+    loan=Loan.query.get_or_404(loan_id)
+    amount=loan.amount
+    new_dict={}
+    i = 1
+    for repayment in repayments:
+        new_dict[i]= [repayment,amount-repayment.amount]
+        amount-=repayment.amount
+        i+=1
+    repayments=new_dict
+    html = render_template("download_loan_repayment.html",loan=loan,repayments=repayments,date=datetime.today(),title=f"Kenversity_Sacco_{loan.loanNo}_repayments.pdf")
+    return render_pdf(HTML(string=html))

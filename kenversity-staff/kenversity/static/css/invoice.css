@@ -64,7 +64,6 @@ aside {
 }
 aside address {
   font-style: normal;
-  white-space: pre-line;
 }
 aside address#from {
   color: #a9a;
@@ -76,6 +75,7 @@ dl {
   right: 0;
   text-align: right;
   top: 0;
+  margin-top: 0;
 }
 dt, dd {
   display: inline;
@@ -84,13 +84,13 @@ dt, dd {
 dt {
   color: #a9a;
 }
-dt::before {
+/*dt::before {
   content: '';
   display: block;
 }
 dt::after {
   content: ':';
-}
+}*/
 
 table {
   border-collapse: collapse;

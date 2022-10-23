@@ -4,7 +4,7 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
     <h4 class="h4 mb-0 text-gray-800"> LOAN REPAYMENTS( <span class="font-weight-bold">{{loan.loanNo}} </span>) </h4>
     <div class="d-none d-sm-inline-block">
-      <a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Download</a>
+      <a href="{{url_for('staff.download_loan_repayments',loan_id=loan.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Download</a>
     </div>
 
   </div>

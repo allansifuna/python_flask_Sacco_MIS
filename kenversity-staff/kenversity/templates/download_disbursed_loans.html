@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+    <style type="text/css">
+      th{
+        font-size: 6pt;
+        font-weight: 600;
+        padding: 1mm 3mm 1mm 3mm;
+        text-align: bottom;
+      }
+      td{
+        font-size: 6pt;
+        padding: mm;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    {%if defaulted%}
+      <h4>DEFAULTED LOANS</h4>
+    {%else%}
+      <h4>DISBURSED LOANS</h4>
+    {%endif%}
+
+    <dl id="informations">
+      <dt>Date</dt>
+      <dd>{{date.strftime("%b, %d %Y %I:%M %p ")}}</dd>
+      {%if staff%}
+      <h5>Approved By: {{staff.first_name }} {{staff.last_name}} </h5>
+      {%endif%}
+    </dl>
+
+    <table>
+      <thead>
+          <tr>
+              <th>Loan NO</th>
+              <th>National ID</th>
+              <th>Name</th>
+              <th>Loan</th>
+              <th>Amount</th>
+              <th>Amount Paid</th>
+              <th>Amount Due</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              {%if not staff%}
+              <th>Approved By</th>
+              {%endif%}
+          </tr>
+      </thead>
+      <tbody>
+          {%for num,loan in loans.items()%}
+              <tr>
+              <td>{{loan.loanNo}}</td>
+              <td>{{loan.loan_applier.national_id}}</td>
+              <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
+              <td>{{loan.loan_cat.name}}</td>
+              <td>KES {{loan.amount | format_currency}}</td>
+              <td>KES {{(loan.amount - Loan.get_remaining_amount(loan.id)) | format_currency}}</td>
+              <td>KES {{Loan.get_remaining_amount(loan.id) | format_currency}}</td>
+              <td>{{loan.start_date.strftime('%d-%m-%Y')}}</td>
+              <td>{{loan.end_date.strftime('%d-%m-%Y')}}</td>
+              <td>
+                  {%if today > loan.end_date and Loan.get_remaining_amount(loan.id)>0%}
+                      <span class="text-danger font-weight-bold"> DEFAULTED</span>
+                  {%elif loan.status == "FULFILLED" or Loan.get_remaining_amount(loan.id)<=0 %}
+                      <span class="text-success font-weight-bold"> FULFILLED</span>
+                  {%else%}
+                      <span class="text-primary font-weight-bold"> IN PROGRESS</span>
+                  {%endif%}
+              </td>
+              {%if not staff%}
+              <td>{{loan.loan_approver.first_name}} {{loan.loan_approver.last_name}}</td>
+              {%endif%}
+          </tr>
+          {%endfor%}
+
+      </tbody>
+    </table>
+  </body>
+</html>

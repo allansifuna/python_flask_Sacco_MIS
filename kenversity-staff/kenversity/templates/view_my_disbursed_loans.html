@@ -14,12 +14,35 @@
         {%endif%}
     {%endwith%}
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 py-3 d-flex flex-row align-items-center justify-content-between">
             {%if defaulted%}
                 <h6 class="m-0 font-weight-bold text-danger">DEFAULTED LOANS</h6>
             {%else%}
                 <h6 class="m-0 font-weight-bold text-primary">DISBURSED LOANS</h6>
             {%endif%}
+            <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+
+          <div class="dropdown-divider"></div>
+                {%if defaulted%}
+                    {%if not all_def%}
+                    <a class="dropdown-item text-primary" href="{{url_for('staff.download_defaulted_loans')}}">Download Report</a>
+                    {%else%}
+                    <a class="dropdown-item text-primary" href="{{url_for('staff.download_all_defaulted_loans')}}">Download Report</a>
+                    {%endif%}
+                {%else%}
+                    {%if not all_dis%}
+                    <a class="dropdown-item text-primary" href="{{url_for('staff.download_disbursed_loans')}}">Download Report</a>
+                    {%else%}
+                    <a class="dropdown-item text-primary" href="{{url_for('staff.download_all_disbursed_loans')}}">Download Report</a>
+                    {%endif%}
+                {%endif%}
+            </div>
+
+          </div>
         </div>
 
         <div class="card-body m-0">
@@ -37,7 +60,11 @@
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Status</th>
+                            {%if not_all%}
+                            <th>Repayments</th>
+                            {%else%}
                             <th>Approved By</th>
+                            {%endif%}
                         </tr>
                     </thead>
                     <tbody>
@@ -61,7 +88,11 @@
                                     <span class="text-primary font-weight-bold"> IN PROGRESS</span>
                                 {%endif%}
                             </td>
+                            {%if not_all%}
+                            <td> <a href="{{url_for('staff.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a></td>
+                            {%else%}
                             <td>{{loan.loan_approver.first_name}} {{loan.loan_approver.last_name}}</td>
+                            {%endif%}
                         </tr>
                         {%endfor%}
 

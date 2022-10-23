@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+    <style type="text/css">
+      h5{
+        margin-top: 1mm;
+        margin-bottom: 1mm;
+      }
+      .h5a{
+        font-weight: 400;
+      }
+      td:last-of-type {
+        font-weight: 800;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    <h4>LOAN REPAYMENT</h4>
+
+    <dl id="informations">
+      <h5><span class="h5a">Date:</span> {{date.strftime("%b, %d %Y %I:%M %p ")}}</h5>
+      <h5><span class="h5a">LOAN No:</span> {{loan.loanNo}}</h5>
+      <h5><span class="h5a">LOAN APPLICANT:</span>  {{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</h5>
+      <h5><span class="h5a">MEMBER No:</span>  {{loan.loan_applier.memberNo}}</h5>
+      <h5><span class="h5a">APPROVED BY:</span>  {{loan.loan_approver.first_name}} {{loan.loan_approver.last_name}}</h5>
+    </dl>
+
+    <table style="margin-top: 45px;">
+      <thead>
+          <tr>
+              <th>No#</th>
+              <th>Repayment Date</th>
+              <th>Mpesa Code</th>
+              <th>Amount Paid</th>
+              <th>Outstanding Loan Amount</th>
+          </tr>
+      </thead>
+      <tbody>
+          {%for num,repayment in repayments.items()%}
+              <tr>
+              <td>{{num}}</td>
+              <td>{{repayment[0].date_created.strftime('%d-%m-%Y %I:%M %p')}}</td>
+              <td>{{repayment[0].repayment_transaction.transaction_code}}</td>
+              <td>KES {{repayment[0].amount | format_currency}}</td>
+              <td>KES {{repayment[1] | format_currency}}</td>
+
+          </tr>
+          {%endfor%}
+
+      </tbody>
+    </table>
+  </body>
+</html>
