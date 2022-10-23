@@ -16,7 +16,7 @@
             <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">MY LOANS</h6>
+            <h6 class="m-0 font-weight-bold text-primary">MEMBER (<span class="text-gray-800">{{member.memberNo}}</span>) LOANS</h6>
         </div>
 
         <div class="card-body">
@@ -60,7 +60,7 @@
                                     <span class="text-primary font-weight-bold"> IN PROGRESS</span>
                                 {%endif%}
                             </td>
-                            <td> <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a></td>
+                            <td> <a href="{{url_for('staff.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a></td>
                             </tr>
                         {%endfor%}
 

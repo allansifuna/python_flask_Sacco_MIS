@@ -29,6 +29,7 @@ def create_app(conf_method):
     app.config.from_object(conf.get(conf_method))
 
     from kenversity.member.routes import member
+    from kenversity.errors.handlers import errors
 
     db.init_app(app)
     mail.init_app(app)
@@ -40,6 +41,7 @@ def create_app(conf_method):
     # redis.init_app(app)
 
     app.register_blueprint(member)
+    app.register_blueprint(errors)
 
     @app.template_filter()
     def format_currency(value):

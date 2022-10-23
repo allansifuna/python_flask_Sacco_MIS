@@ -27,11 +27,10 @@
                 <table class="table table-bordered small" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>No#</th>
                             <th>Loan NO</th>
                             <th>Nat ID</th>
                             <th>Name</th>
-                            <th>Loan Category</th>
+                            <th>Loan</th>
                             <th>Amount</th>
                             <th>Amount Paid</th>
                             <th>Amount Due</th>
@@ -44,7 +43,6 @@
                     <tbody>
                         {%for num,loan in loans.items()%}
                             <tr>
-                            <td>{{num}}</td>
                             <td>{{loan.loanNo}}</td>
                             <td>{{loan.loan_applier.national_id}}</td>
                             <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>

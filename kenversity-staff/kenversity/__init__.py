@@ -25,6 +25,7 @@ def create_app(conf_method):
     app.config.from_object(conf.get(conf_method))
 
     from kenversity.staff.routes import staff
+    from kenversity.errors.handlers import errors
 
     db.init_app(app)
     mail.init_app(app)
@@ -34,6 +35,7 @@ def create_app(conf_method):
     lm.init_app(app)
     # redis.init_app(app)
     app.register_blueprint(staff)
+    app.register_blueprint(errors)
 
     @app.template_filter()
     def format_currency(value):
@@ -55,6 +57,10 @@ def create_app(conf_method):
         new_nums=",".join(split_nums)
         new_nums=new_nums[::-1]
         return f"{new_nums}.00"
+
+    @app.template_filter()
+    def format_float(value):
+        return f"{value:.2f}"
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:

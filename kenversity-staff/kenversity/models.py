@@ -85,6 +85,29 @@ class Member(db.Model,UserMixin, CRUDMixin):
             return None
         return Member.query.get(memberID)
 
+    @staticmethod
+    def get_shares(member_id):
+        shares=0
+        deposits=Deposit.query.filter_by(memberID=member_id).all()
+        for deposit in deposits:
+            shares+=deposit.amount
+        return shares
+
+    @staticmethod
+    def get_loans(member_id):
+        loans = Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").count()
+        loans+=Loan.query.filter_by(memberID=member_id).filter_by(status="APPROVED").count()
+        return loans
+
+    @staticmethod
+    def get_loans_guaranteed(member_id):
+        guarantees=Guarantor.query.filter_by(memberID=member_id).filter_by(status="APPROVED").all()
+        loans=0
+        for guarantee in guarantees:
+            if guarantee.loan_guarantor.status == "APPROVED":
+                loans+=1
+        return loans
+
 class Staff(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     first_name=db.Column(db.String(40),nullable=False)

@@ -1,0 +1,50 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid mt-n10">
+    <div class="d-sm-flex align-items-center justify-content-between mb-2">
+    <h4 class="h4 mb-0 text-gray-800"> LOAN REPAYMENTS( <span class="font-weight-bold">{{loan.loanNo}} </span>) </h4>
+    <div class="d-none d-sm-inline-block">
+      <a href="" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-arrow-alt-circle-down fa-sm text-white-50"></i> Download</a>
+    </div>
+
+  </div>
+    <!-- Tabbed dashboard card example-->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="tab-content" id="dashboardNavContent">
+                <!-- Dashboard Tab Pane 1-->
+                <div class="tab-pane fade show active" id="production" role="tabpanel" aria-labelledby="production-pill">
+                    <div class="datatable table-responsive">
+                        <table class="table table-bordered table-hover display" id="" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>No#</th>
+                                    <th>Loan No</th>
+                                    <th>Repayment Date</th>
+                                    <th>Mpesa Code</th>
+                                    <th>Amount</th>
+                                    <th>Outstanding Loan Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for num,repayment in repayments.items()%}
+                                    <tr>
+                                    <td>{{num}}</td>
+                                    <td>{{repayment[0].loan_repayment.loanNo}}</td>
+                                    <td>{{repayment[0].date_created.strftime('%d-%m-%Y %I:%M %p')}}</td>
+                                    <td>{{repayment[0].repayment_transaction.transaction_code}}</td>
+                                    <td>KES {{repayment[0].amount | format_currency}}</td>
+                                    <td>KES {{repayment[1] | format_currency}}</td>
+
+                                </tr>
+                                {%endfor%}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

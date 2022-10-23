@@ -3,7 +3,7 @@ from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,
         DeclineLoanForm,SearchForm)
 from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
-from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor
+from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor,Repayment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
 import secrets
@@ -17,7 +17,7 @@ staff = Blueprint('staff', __name__)
 def dashboard():
     pending_member_approvals=Member.query.filter_by(memberNo=None).count()
     pending_loan_applications=Loan.query.filter_by(staffID=None).count()
-    pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").count()
+    pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").count()
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
@@ -26,8 +26,8 @@ def dashboard():
 @staff.route('/search/<string:data>', methods=["POST", "GET"])
 @login_required
 def searches(data):
-    members=Member.query.filter_by(first_name=data).filter_by(status="ACTIVE").all()
-    members.extend(Member.query.filter_by(last_name=data).filter_by(status="ACTIVE").all())
+    members=Member.query.filter_by(first_name=data.capitalize()).filter_by(status="ACTIVE").all()
+    members.extend(Member.query.filter_by(last_name=data.capitalize()).filter_by(status="ACTIVE").all())
     members.extend(Member.query.filter_by(memberNo=data).filter_by(status="ACTIVE").all())
     members.extend(Member.query.filter_by(email=data).filter_by(status="ACTIVE").all())
     members.extend(Member.query.filter_by(phone_number=data).filter_by(status="ACTIVE").all())
@@ -482,3 +482,35 @@ def view_all_defaulted_loans():
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
     return render_template("view_my_disbursed_loans.html",loans=loans,search=search,Loan=Loan,today=today,defaulted=True)
+
+@staff.route('/staff/<member_id>/loans/view',methods=["POST","GET"])
+@login_required
+def view_member_loans(member_id):
+    member=Member.query.get_or_404(member_id)
+    loans=Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").all()
+    loans.extend(Loan.query.filter_by(memberID=member_id).filter_by(status="FULFILLED").all())
+    loans=add_nums(loans)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_member_loans.html",loans=loans,search=search,Loan=Loan,today=date.today(),member=member)
+
+@staff.route('/staff/<loan_id>/repayments/view',methods=["POST","GET"])
+@login_required
+def view_loan_repayments(loan_id):
+    repayments=Repayment.query.filter_by(loanID=loan_id).all()
+    loan=Loan.query.get_or_404(loan_id)
+    amount=loan.amount
+    new_dict={}
+    i = 1
+    for repayment in repayments:
+        new_dict[i]= [repayment,amount-repayment.amount]
+        amount-=repayment.amount
+        i+=1
+
+    repayments={k:v for k,v in sorted(new_dict.items(),key=lambda x: (x[1][0].date_created),reverse=True)}
+    repayments=add_nums(repayments.values())
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_loan_repayments.html",repayments=repayments,loan=loan,search=search)
