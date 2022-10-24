@@ -104,7 +104,7 @@ class Member(db.Model,UserMixin, CRUDMixin):
         guarantees=Guarantor.query.filter_by(memberID=member_id).filter_by(status="APPROVED").all()
         loans=0
         for guarantee in guarantees:
-            if guarantee.loan_guarantor.status == "APPROVED":
+            if guarantee.loan_guarantor.status == "APPROVED" or guarantee.loan_guarantor.status == "DISBURSED":
                 loans+=1
         return loans
 
@@ -139,6 +139,22 @@ class Staff(db.Model,UserMixin, CRUDMixin):
         except Exception as e:
             return None
         return Staff.query.get(staffID)
+
+    @staticmethod
+    def get_members_approved(staff_id):
+        members=Member.query.filter_by(staffID=staff_id).count()
+        return members
+
+    @staticmethod
+    def get_loans_approved(staff_id):
+        loans=Loan.query.filter_by(staffID=staff_id).count()
+        return loans
+
+    @staticmethod
+    def get_pending_loans(staff_id):
+        loans=Loan.query.filter_by(staffID=staff_id).filter(Loan.status!="DISBURSED").filter(Loan.status!="FULFILLED").count()
+        return loans
+
 
 class Deposit(db.Model, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)

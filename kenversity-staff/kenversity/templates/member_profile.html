@@ -36,7 +36,7 @@
           <div class="dropdown-divider"></div>
               <a class="dropdown-item text-primary" href="{{url_for('staff.view_member_loans',member_id=member.id)}}">View Loans</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-primary" href="">Download Member Profile</a>
+              <a class="dropdown-item text-primary" href="{{url_for('staff.download_member_profile',member_id=member.id)}}">Download Member Profile</a>
             </div>
 
           </div>

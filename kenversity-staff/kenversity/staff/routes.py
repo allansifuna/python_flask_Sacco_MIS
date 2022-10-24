@@ -576,3 +576,28 @@ def download_loan_repayments(loan_id):
     repayments=new_dict
     html = render_template("download_loan_repayment.html",loan=loan,repayments=repayments,date=datetime.today(),title=f"Kenversity_Sacco_{loan.loanNo}_repayments.pdf")
     return render_pdf(HTML(string=html))
+
+@staff.route('/staff/<staff_id>/profile',methods=["POST","GET"])
+@login_required
+def staff_profile(staff_id):
+    staff=Staff.query.get_or_404(staff_id)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template('staff_profile.html',staff=staff,Staff=Staff,search=search)
+
+@staff.route('/staff/<member_id>/profile/download',methods=["POST","GET"])
+@login_required
+def download_member_profile(member_id):
+    member=Member.query.get_or_404(member_id)
+    today=date.today()
+    html = render_template("download_member_profile.html",member=member,Member=Member,date=datetime.today(),title=f"Kenversity_Sacco_{member.memberNo}_profile.pdf")
+    return render_pdf(HTML(string=html))
+
+@staff.route('/staff/<staff_id>/staff/profile/download',methods=["POST","GET"])
+@login_required
+def download_staff_profile(staff_id):
+    staff=Staff.query.get(staff_id)
+    today=date.today()
+    html = render_template("download_staff_profile.html",staff=staff,Staff=Staff,date=datetime.today(),title=f"Kenversity_Sacco_profile.pdf")
+    return render_pdf(HTML(string=html))

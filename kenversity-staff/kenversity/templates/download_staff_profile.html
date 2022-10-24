@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+    <style type="text/css">
+      #tbl{
+        width: 50%;
+        text-align: left;
+      }
+      th:last-of-type, td:last-of-type {
+        text-align: left;
+      }
+      td {
+        font-size: 9pt;
+        text-align: left;
+      }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    <h4>STAFF PROFILE</h4>
+
+    <dl id="informations">
+      <dt>Date</dt>
+      <dd>{{date.strftime("%b, %d %Y %I:%M %p ")}}</dd>
+    </dl>
+    <div class="prof">
+      <table id="tbl">
+      <tbody>
+              <tr>
+              <th>Staff No</th>
+              <td>ST0001</td>
+              </tr>
+              <tr>
+              <th>National ID</th>
+              <td>{{staff.national_id}}</td>
+              </tr>
+              <tr>
+              <th>First Name</th>
+              <td>{{staff.first_name}} </td>
+              </tr>
+              <tr>
+              <th>Last Name</th>
+              <td>{{staff.last_name}}</td>
+              </tr>
+              <tr>
+              <th>Email</th>
+              <td>{{staff.email}}</td>
+              </tr>
+              <tr>
+              <th>Phone Number</th>
+              <td>+{{staff.phone_number}}</td>
+              </tr>
+          </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>SACCO INFO</h4>
+    <table>
+      <tbody>
+              <tr>
+              <th>Members Approved</th>
+              <td>{{Staff.get_members_approved(staff.id)}}</td>
+              </tr>
+              <tr>
+              <th>Loans Approved</th>
+              <td>{{Staff.get_loans_approved(staff.id)}}</td>
+              </tr>
+              <tr>
+              <th>Pending Loan Approvals</th>
+              <td>{{Staff.get_pending_loans(staff.id)}}</td>
+              </tr>
+          </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

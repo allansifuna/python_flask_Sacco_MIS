@@ -46,7 +46,7 @@
                             <tr>
                             <td>{{num}}</td>
                             <td>{{staf.national_id}}</td>
-                            <td>{{staf.first_name}} {{staf.last_name}}</td>
+                            <td> <a href="{{url_for('staff.staff_profile',staff_id=staf.id)}}">{{staf.first_name}} {{staf.last_name}}</a></td>
                             <td>{{staf.email}}</td>
                             <td>{{staf.phone_number}}</td>
                             <td>

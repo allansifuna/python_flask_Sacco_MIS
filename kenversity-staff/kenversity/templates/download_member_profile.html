@@ -1,0 +1,192 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="{{url_for('static',filename='css/invoice.css')}}" media="print" rel="stylesheet">
+    <title>{{title}}</title>
+    <meta name="description" content="KENVERSITY">
+    <style type="text/css">
+      #tbl{
+        width: 50%;
+        text-align: left;
+      }
+      th:last-of-type, td:last-of-type {
+        text-align: left;
+      }
+      td {
+        font-size: 9pt;
+        text-align: left;
+      }
+      img{
+       width: 4cm;
+      height: 4cm;
+      }
+      .img{
+        padding: 1mm;
+        margin-top: -5cm;
+        position: absolute;
+        right: 0;
+        margin-right: 10mm;
+        border-radius: 50%;
+        border-color: #a9a;
+        border-width: 4cm;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>KENVERSITY SACCO</h1>
+    <h4>MEMBER PROFILE</h4>
+
+    <dl id="informations">
+      <dt>Date</dt>
+      <dd>{{date.strftime("%b, %d %Y %I:%M %p ")}}</dd>
+    </dl>
+    <div class="prof">
+      <table id="tbl">
+      <tbody>
+              <tr>
+              <th>Member No</th>
+              <td>{{member.memberNo}}</td>
+              </tr>
+              <tr>
+              <th>National ID</th>
+              <td>{{member.national_id}}</td>
+              </tr>
+              <tr>
+              <th>First Name</th>
+              <td>{{member.first_name}} </td>
+              </tr>
+              <tr>
+              <th>Last Name</th>
+              <td>{{member.last_name}}</td>
+              </tr>
+              <tr>
+              <th>Email</th>
+              <td>{{member.email}}</td>
+              </tr>
+              <tr>
+              <th>Phone Number</th>
+              <td>+{{member.phone_number}}</td>
+              </tr>
+          </tr>
+      </tbody>
+    </table>
+    <div class="img">
+      <img src="http://127.0.0.1:5000/static/ids/{{member.photo}}" alt="Profile Picture">
+    </div>
+    </div>
+
+    <h4>SACCO INFO</h4>
+    <table>
+      <tbody>
+              <tr>
+              <th>TOTAL SHARES</th>
+              <td>KES {{Member.get_shares(member.id) | format_currency}}</td>
+              </tr>
+              <tr>
+              <th>EXISTING LOANS</th>
+              <td>{{Member.get_loans(member.id)}}</td>
+              </tr>
+              <tr>
+              <th>LOANS GUARANTEED</th>
+              <td>{{Member.get_loans_guaranteed(member.id)}} </td>
+              </tr>
+          </tr>
+      </tbody>
+    </table>
+
+    <h4>BIO DATA</h4>
+    <table>
+      <thead>
+          <tr>
+              <th>Date Of Birth</th>
+              <th>Gender</th>
+              <th>Marital Status</th>
+              <th>Number Of Dependants</th>
+          </tr>
+      </thead>
+      <tbody>
+              <tr>
+              <td>{%if member.dob%}
+                {{member.dob.strftime("%d-%m-%Y")}}
+                {%else%}
+                N/A
+                {%endif%}</td>
+              <td>{{member.gender}}</td>
+              <td>{{member.marital_status}}</td>
+              <td>{{member.number_of_dependants}}</td>
+          </tr>
+      </tbody>
+    </table>
+    <br>
+    <table>
+      <thead>
+          <tr>
+              <th>Physical Address</th>
+              <th>Town</th>
+              <th>Street</th>
+              <th>Estate</th>
+              <th>House Number</th>
+              <th>House Ownership</th>
+          </tr>
+      </thead>
+      <tbody>
+              <tr>
+              <td>{{member.address}}</td>
+              <td>{{member.town}}</td>
+              <td>{{member.street}}</td>
+              <td>{{member.estate}}</td>
+              <td>{{member.house_number}}</td>
+              <td>{{member.house_ownership}}</td>
+          </tr>
+      </tbody>
+    </table>
+
+    <h4>EMPLOYMENT DATA</h4>
+    {% if member.employment_status == "Self-Employed"%}
+    <table>
+      <thead>
+          <tr>
+              <th>Employment Status</th>
+              <th>Business Type</th>
+              <th>Years In Operation</th>
+              <th>Business Income</th>
+          </tr>
+      </thead>
+      <tbody>
+              <tr>
+              <td>{{member.employment_status}}</td>
+              <td>{{member.business_type}}</td>
+              <td>{{member.years_of_operation}}</td>
+              <td>{{member.business_income}}</td>
+          </tr>
+      </tbody>
+    </table>
+    {%else%}
+    <table>
+      <thead>
+          <tr>
+              <th>Employer Name</th>
+              <th>Employer Address</th>
+              <th>Employer Telephone</th>
+              <th>Employment Terms</th>
+              <th>Retirement Date</th>
+          </tr>
+      </thead>
+      <tbody>
+              <tr>
+              <td>{{member.employer_name}}</td>
+              <td>{{member.employer_address}}</td>
+              <td>{{member.employer_phone}}</td>
+              <td>{{member.employment_terms}}</td>
+              <td>{% if member.retirement_date%}
+                {{member.retirement_date.strftime('%d-%m-%Y')}}
+                {%else%}
+                N/A
+                {%endif%}</td>
+          </tr>
+      </tbody>
+    </table>
+    {%endif%}
+  </body>
+</html>
