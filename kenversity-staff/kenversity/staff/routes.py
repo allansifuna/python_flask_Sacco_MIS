@@ -215,7 +215,6 @@ def staff_verdict(loan_id,verdict):
         loan.update()
         return redirect(url_for("staff.decline_loan",loan_id=loan_id))
     elif verdict == "APPROVED":
-        loan.status ="APPROVED_PROFILE"
         loan.profile_status="APPROVED"
         loan.update()
         flash("Member profile successfully Approved","success")

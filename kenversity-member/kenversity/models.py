@@ -74,7 +74,7 @@ class Member(db.Model,UserMixin, CRUDMixin):
 
     def get_reset_token(self, expires_sec=18000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'memberID': self.memberID}).decode('utf-8')
+        return s.dumps({'memberID': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):

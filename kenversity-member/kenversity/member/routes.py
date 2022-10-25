@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
                     ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm,
-                    MakeRepaymentForm)
-from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No
+                    MakeRepaymentForm,PasswordResetForm,ResetRequestForm)
+from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email
 from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral,Repayment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -36,9 +36,10 @@ def dashboard():
         if dep.amount:
             total_shares+=dep.amount
 
-    loans=Loan.query.filter_by(status="DISBURSED").count()
+    loans=Loan.query.filter_by(status="DISBURSED").filter_by(memberID=current_user.id).count()
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
-    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans)
+    pending_loans=Loan.query.filter_by(status="UNAPPROVED").filter_by(memberID=current_user.id).count()
+    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans,pending_loans=pending_loans)
 
 @member.route('/member/login', methods=["POST", "GET"])
 def login():
@@ -121,6 +122,36 @@ def register():
         form.phone.data=member.phone_number
 
     return render_template('register.html',stage=stage,form=form)
+
+@member.route('/member/reset-request', methods=["POST", "GET"])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('member.dashboard'))
+    form = ResetRequestForm()
+    if form.validate_on_submit():
+        member = Member.query.filter_by(email=form.email.data).first()
+        send_reset_email(member)
+        flash("An email has been sent to your email with instructions to reset your password", 'info')
+        return redirect(url_for('member.login'))
+    return render_template('reset_request.html', form=form)
+
+
+@member.route('/member/reset_password/<token>', methods=['POST', 'GET'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('member.dashboard'))
+    member = Member.verify_reset_token(token)
+    if member is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('member.reset_request'))
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        member.password = password
+        db.session.commit()
+        flash(f'Your password has been updated. You can now log in', 'success')
+        return redirect(url_for('member.login'))
+    return render_template("reset_password.html", form=form)
 
 @member.route('/callback_url', methods=["POST"])
 def callback_url():

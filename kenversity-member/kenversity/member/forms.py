@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from wtforms.fields.html5 import TelField, DateField, EmailField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileAllowed
+from kenversity.models import Member
 
 class NullableDateField(DateField):
     """Native WTForms DateField throws error for empty dates.
@@ -98,3 +99,18 @@ class MemberEmplDataForm(FlaskForm):
 class MakeRepaymentForm(FlaskForm):
     loan=QuerySelectField('Select Loan', validators=[DataRequired()], get_label='loanNo', allow_blank=True)
     amount=IntegerField("Amount",validators=[DataRequired()])
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password'), Length(min=8)])
+
+
+class ResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        member = Member.query.filter_by(email=email.data).first()
+        if member is None:
+            raise ValidationError('There is no account with that email. You must register first.')

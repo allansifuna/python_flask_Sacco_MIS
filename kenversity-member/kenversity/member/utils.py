@@ -71,3 +71,16 @@ def get_repayment_No():
         num=int(num[2:])+1
         num=str(num).zfill(5)
         return f"RP{num}"
+
+def send_reset_email(member):
+    token = member.get_reset_token()
+    msg = Message('Password Reset Request', sender=("Kenversity SACCO", "Ke"), recipients=[member.email])
+    msg.body = f'''
+    To reset your password follow the following link:
+    {url_for('member.reset_token', token=token, _external=True)}
+
+
+
+    if you did not make this request just ignore this email.
+    '''
+    mail.send(msg)
