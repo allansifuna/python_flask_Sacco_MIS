@@ -132,3 +132,16 @@ def add_nums(data):
         new_dict[i]=datum
         i+=1
     return new_dict
+
+def send_reset_email(staff):
+    token = staff.get_reset_token()
+    msg = Message('Password Reset Request', sender=("Kenversity SACCO", "Ke"), recipients=[staff.email])
+    msg.body = f'''
+    To reset your password follow the following link:
+    {url_for('staff.reset_token', token=token, _external=True)}
+
+
+
+    if you did not make this request just ignore this email.
+    '''
+    mail.send(msg)

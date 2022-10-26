@@ -3,6 +3,7 @@ from wtforms import StringField, IntegerField, SubmitField, PasswordField, Boole
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import TelField, DateField, EmailField
 from wtforms_sqlalchemy.fields import QuerySelectField
+from kenversity.models import Staff
 
 class LoginForm(FlaskForm):
     email = StringField('Email Address', validators=[DataRequired(), Email()])
@@ -45,3 +46,17 @@ class DeclineLoanForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     text=StringField("Search")
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password'), Length(min=8)])
+
+class ResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        staff = Staff.query.filter_by(email=email.data).first()
+        if staff is None:
+            raise ValidationError('There is no account with that email. You must register first.')

@@ -558,3 +558,19 @@ def view_loan_repayments(loan_id):
 
     repayments=add_nums(repayments.values())
     return render_template("view_loan_repayments.html",repayments=repayments,loan=loan)
+
+@member.route('/member/<loan_id>/repayments/download',methods=["POST","GET"])
+@login_required
+def download_loan_repayments(loan_id):
+    repayments=Repayment.query.filter_by(loanID=loan_id).all()
+    loan=Loan.query.get_or_404(loan_id)
+    amount=loan.amount
+    new_dict={}
+    i = 1
+    for repayment in repayments:
+        new_dict[i]= [repayment,amount-repayment.amount]
+        amount-=repayment.amount
+        i+=1
+    repayments=new_dict
+    html = render_template("download_loan_repayment.html",loan=loan,repayments=repayments,date=datetime.today(),title=f"Kenversity_Sacco_{loan.loanNo}_repayments.pdf")
+    return render_pdf(HTML(string=html))

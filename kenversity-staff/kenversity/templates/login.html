@@ -25,28 +25,28 @@
                     {{form.hidden_tag()}}
                     <div class="form-group">
                       {%if form.email.errors%}
-                            {{form.email(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                            {{form.email(class="form-control is-invalid",id="exampleInputEmail")}}
                             <div class="invalid-feedback">
                               {%for error in form.email.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.email(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {{form.email(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
                             {%endif%}
 
                     </div>
 
                     <div class="form-group">
                       {%if form.password.errors%}
-                            {{form.password(class="form-control form-control-user is-invalid")}}
+                            {{form.password(class="form-control is-invalid")}}
                             <div class="invalid-feedback">
                               {%for error in form.password.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{form.password(class="form-control form-control-user",id="exampleInputPassword",placeholder="Enter Password...")}}
+                            {{form.password(class="form-control",id="exampleInputPassword",placeholder="Enter Password...")}}
                             {%endif%}
 
                     </div>
@@ -56,7 +56,7 @@
                         {{form.remember.label(class="custom-control-label",for="customCheck")}}
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                    <button type="submit" class="btn btn-primary btn-block">
                       Login
                     </button>
                     <hr>
@@ -65,7 +65,7 @@
                   </form>
                   <hr>
                   <div class="text-center">
-                    <a class="small" href="{{url_for('staff.dashboard')}}">Forgot Password?</a>
+                    <a class="small" href="{{url_for('staff.reset_request')}}">Forgot Password?</a>
                   </div>
                 </div>
           </div>

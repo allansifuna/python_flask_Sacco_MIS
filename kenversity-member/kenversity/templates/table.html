@@ -9,6 +9,14 @@
         color: #1ee494;
         font-weight: 500;
       }
+      .h5a{
+        font-weight: 400;
+      }
+      h5{
+
+        margin-top: 1mm;
+        margin-bottom: 1mm;
+      }
     </style>
   </head>
 
@@ -19,20 +27,16 @@
     {%else%}
     <h4>MEMBER TRANSACTIONS REPORT</h4>
     {%endif%}
-
-    <aside>
-        Name: <span id="details">{{member.first_name}} {{member.last_name}}</span><br>
-        Email: <span id="details">{{member.email}}</span><br>
-        Phone Number: <span id="details">+{{member.phone_number}}</span><br>
-        National ID: <span id="details">{{member.national_id}}</span><br>
-    </aside>
-
     <dl id="informations">
-      <dt>Date</dt>
-      <dd>{{date.strftime("%b, %d %Y ")}}</dd>
+      <h5><span class="h5a">Date: </span> {{date.strftime("%b, %d %Y %I:%M %p ")}}</h5>
+      <h5><span class="h5a">MEMBER NO: </span> {{member.memberNo}}</h5>
+      <h5><span class="h5a">NAME: </span> {{member.first_name}} {{member.last_name}}</h5>
+      <h5><span class="h5a">EMAIL: </span> {{member.email}}</h5>
+      <h5><span class="h5a">PHONE NUMBER: +</span>{{member.phone_number}}</h5>
+      <h5><span class="h5a">NATIONAL ID: </span>{{member.national_id}}</h5>
     </dl>
 
-    <table>
+    <table style="margin-top: 50px;">
       <thead>
         <tr>
           <th>No#</th>

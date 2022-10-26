@@ -129,7 +129,7 @@ class Staff(db.Model,UserMixin, CRUDMixin):
 
     def get_reset_token(self, expires_sec=18000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'staffID': self.staffID}).decode('utf-8')
+        return s.dumps({'staffID': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):

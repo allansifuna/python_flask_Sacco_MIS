@@ -64,7 +64,6 @@ aside {
 }
 aside address {
   font-style: normal;
-  white-space: pre-line;
 }
 aside address#from {
   color: #a9a;
@@ -76,6 +75,7 @@ dl {
   right: 0;
   text-align: right;
   top: 0;
+  margin-top: 0;
 }
 dt, dd {
   display: inline;
@@ -84,13 +84,13 @@ dt, dd {
 dt {
   color: #a9a;
 }
-dt::before {
+/*dt::before {
   content: '';
   display: block;
 }
 dt::after {
   content: ':';
-}
+}*/
 
 table {
   border-collapse: collapse;
@@ -99,17 +99,17 @@ table {
 }
 th {
   border: .2mm solid #a9a;
-  font-size: 10pt;
-  font-weight: 800;
-  padding: .3cm;
+  font-size: 9pt;
+  font-weight: 600;
+  padding: .1cm;
   text-transform: uppercase;
+  text-align: left;
 }
 td {
-  padding: 3mm;
+  padding: 2mm;
   border: .2mm solid #a9a;
-}
-th, td {
-  text-align: center;
+  font-size: 8pt;
+  text-align: left;
 }
 th:first-of-type, td:first-of-type {
   text-align: left;

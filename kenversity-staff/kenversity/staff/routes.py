@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,
-        DeclineLoanForm,SearchForm)
-from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email
+        DeclineLoanForm,SearchForm,PasswordResetForm,ResetRequestForm)
+from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email,send_reset_email
 from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor,Repayment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
@@ -69,6 +69,36 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('staff.login'))
+
+@staff.route('/staff/reset-request', methods=["POST", "GET"])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('staff.dashboard'))
+    form = ResetRequestForm()
+    if form.validate_on_submit():
+        staff = Staff.query.filter_by(email=form.email.data).first()
+        send_reset_email(staff)
+        flash("An email has been sent to your email with instructions to reset your password", 'info')
+        return redirect(url_for('staff.login'))
+    return render_template('reset_request.html', form=form)
+
+
+@staff.route('/staff/reset-password/<token>', methods=['POST', 'GET'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('staff.dashboard'))
+    staff = Staff.verify_reset_token(token)
+    if staff is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('staff.reset_request'))
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        staff.password = password
+        db.session.commit()
+        flash(f'Your password has been updated. You can now log in', 'success')
+        return redirect(url_for('staff.login'))
+    return render_template("reset_password.html", form=form)
 
 @staff.route('/staff/add/loan-categories',methods=["POST","GET"])
 @login_required
