@@ -39,11 +39,7 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
 
           <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-primary" href="">Exam Results</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-primary" href="">Coach's Comments</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-primary" href="">Game History</a>
+              <a class="dropdown-item text-primary" href="{{url_for('staff.member_profile',member_id=loan.loan_applier.id)}}">View Full Profile</a>
             </div>
 
           </div>
@@ -73,16 +69,6 @@
                 <span class="">Email:</span> <span class="text-gray-800 font-weight-bold ml-2">{{loan.loan_applier.email}}</span>
               </li>
             </div>
-            <div class="list-group">
-              <li class="list-group-item pt-2 pb-2 mt-1">
-                <span class="">School:</span> <span class="text-gray-800 font-weight-bold ml-2"></span>
-              </li>
-            </div>
-            <div class="list-group">
-              <li class="list-group-item pt-2 pb-2 mt-1">
-                <span class="">Hub:</span> <span class="text-gray-800 font-weight-bold ml-2"></span>
-              </li>
-            </div>
           </div>
         </div>
       </div>
@@ -95,7 +81,7 @@
             <div class="row no-gutters align-items-center">
               <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Shares</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">KES 1000</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">KES {{Member.get_shares(loan.loan_applier.id) | format_currency}}</div>
               </div>
               <div class="col-auto">
                 <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -112,7 +98,7 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-success text-uppercase mb-1">number of Existing Loans</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{Member.get_loans(loan.loan_applier.id)}}</div>
                 </div>
                 <div class="col-auto">
                   <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -128,10 +114,10 @@
             <div class="card-body">
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Loans Guarantor</div>
+                  <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Loans Guarateed</div>
                   <div class="row no-gutters align-items-center">
                     <div class="col-auto">
-                      <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"> 7</div>
+                      <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"> {{Member.get_loans_guaranteed(loan.loan_applier.id)}}</div>
                     </div>
                   </div>
                 </div>
@@ -154,7 +140,7 @@
               <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-success text-uppercase mb-1">LOAN AMOUNT APPLIED</div>
-                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{loan.amount}}</div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">KES {{loan.amount | format_currency}}</div>
                 </div>
                 <div class="col-auto">
                   <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>

@@ -26,6 +26,7 @@
                             <th>No#</th>
                             <th>National ID</th>
                             <th>Name</th>
+                            <th>Loan No</th>
                             <th>Loan Category</th>
                             <th>Amount</th>
                             <th>Approve</th>
@@ -37,6 +38,7 @@
                             <td>{{num}}</td>
                             <td>{{loan.loan_applier.national_id}}</td>
                             <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
+                            <td>{{loan.loanNo}}</td>
                             <td>{{loan.loan_cat.name}}</td>
                             <td>KES {{loan.amount | format_currency}}</td>
                             <td> <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >Start Approval</a></td>

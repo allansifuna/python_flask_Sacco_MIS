@@ -85,6 +85,10 @@
             <h6 class="collapse-header">Click to Approve: </h6>
             <a class="collapse-item" href="{{url_for('staff.view_loans')}}">Loan Applications</a>
             <a class="collapse-item" href="{{url_for('staff.view_staff_loans')}}">Pending Loan Approvals</a>
+            {%if current_user.role == "ADMINSTARTOR"%}
+              <h6 class="collapse-header">Click to Disburse: </h6>
+            <a class="collapse-item" href="{{url_for('staff.loan_disburse')}}">Disburse Loans</a>
+            {%endif%}
             <h6 class="collapse-header">Click to View: </h6>
             <a class="collapse-item" href="{{url_for('staff.view_my_disbursed_loans',staff_id=current_user.id)}}">Disbursed Loans</a>
             {%if current_user.role =="ADMINSTARTOR"%}

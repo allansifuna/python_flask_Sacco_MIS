@@ -101,12 +101,20 @@
                                                     <td>{{guarantor.applicant.last_name}}</td>
                                                     <td>{{guarantor.applicant.email}}</td>
                                                     <td>{{guarantor.applicant.phone_number}}</td>
-                                                    <td><span class="text-info font-weight-bold ml-2">{{guarantor.status}}</span></td>
+                                                    <td>
+                                                      {%if guarantor.status == "DECLINED" %}
+                                                      <span class="text-danger font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                      {%elif guarantor.status == "UNCONFIRMED"%}
+                                                      <span class="text-info font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                      {%else%}
+                                                      <span class="text-primary font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                      {%endif%}
+                                                    </td>
                                                     <td>
                                                       {%if guarantor.status!="APPROVED" %}
                                                       <a href="{{url_for('member.remove_guarantor',loan_id=loan_id,guarantor_id=guarantor.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DELETE</a></td>
                                                       {%else%}
-                                                      <span class="text-info font-weight-bold ml-2">{{guarantor.status}}</span>
+                                                      <span class="text-primary font-weight-bold ml-2">{{guarantor.status}}</span>
                                                       {%endif%}
                                                 </tr>
                                                 {%endfor%}

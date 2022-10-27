@@ -43,7 +43,7 @@
                                                     <td>{{loan.loan_applier.national_id}}</td>
                                                     <td>{{loan.loan_applier.first_name}} {{loan.loan_applier.last_name}}</td>
                                                     <td>{{loan.loan_cat.name}}</td>
-                                                    <td>KES {{loan.amount}}</td>
+                                                    <td>KES {{loan.amount | format_currency}}</td>
                                                     <td>
                                                         {%if loan.profile_status == "UNAPPROVED"%}
                                                             <a href="{{url_for('staff.approve_loan',loan_id=loan.id)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right" >Approve Profile</a>

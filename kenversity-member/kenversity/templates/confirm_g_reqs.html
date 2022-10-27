@@ -30,6 +30,7 @@
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Phone Number</th>
+                                                    <th>Loan No</th>
                                                     <th>Loan Amount</th>
                                                     <th>Repayment Period</th>
                                                     <th>Approve</th>
@@ -44,8 +45,9 @@
                                                     <td>{{req.loan_guarantor.loan_applier.first_name}}</td>
                                                     <td>{{req.loan_guarantor.loan_applier.last_name}}</td>
                                                     <td>{{req.loan_guarantor.loan_applier.phone_number}}</td>
-                                                    <td>{{req.loan_guarantor.amount}}</td>
-                                                    <td>{{req.loan_guarantor.loan_cat.repayment_duration}}</td>
+                                                    <td>{{req.loan_guarantor.loanNo}}</td>
+                                                    <td>KES {{req.loan_guarantor.amount | format_currency}}</td>
+                                                    <td>{{req.loan_guarantor.loan_cat.repayment_duration}} Months</td>
                                                     <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='CONFIRMED')}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right" >CONFIRM</a></td>
                                                     <td> <a href="{{url_for('member.confirm_request',guarantor_id=req.id,verdict='DECLINED')}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right" >DECLINE</a></td>
                                                 </tr>

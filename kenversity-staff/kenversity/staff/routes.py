@@ -234,7 +234,7 @@ def approve_loan(loan_id):
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("approve_loan.html",loan=loan,search=search)
+    return render_template("approve_loan.html",loan=loan,search=search,Member=Member)
 
 @staff.route('/staff/loan/<loan_id>/<verdict>/approve',methods=["POST","GET"])
 @login_required
@@ -305,7 +305,7 @@ def approve_guarantor(loan_id,member_id):
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("approve_guarantor.html",loan_id=loan_id,member=member,search=search)
+    return render_template("approve_guarantor.html",loan_id=loan_id,member=member,search=search,Member=Member)
 
 @staff.route('/staff/guarantor/<loan_id>/<member_id>/<verdict>/approve',methods=["POST","GET"])
 @login_required
