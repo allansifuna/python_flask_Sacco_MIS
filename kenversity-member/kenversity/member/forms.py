@@ -84,6 +84,8 @@ class MemberBioDataForm(FlaskForm):
     street = StringField('Street')
     house_number = StringField('Enter House Number')
     house_ownership = SelectField('Select House Ownership', choices=[('','Select House Ownership'),('Rented','Rented'),('Owned','Owned')])
+    bank_name = StringField('Bank Name')
+    bank_account = StringField('Bank Account No.')
 
 class MemberEmplDataForm(FlaskForm):
     employment_status = SelectField('Select Employement Status', choices=[('','Select Employment Status'),('Employed','Employed'),('Self-Employed','Self-Employed')])
@@ -114,3 +116,11 @@ class ResetRequestForm(FlaskForm):
         member = Member.query.filter_by(email=email.data).first()
         if member is None:
             raise ValidationError('There is no account with that email. You must register first.')
+
+class OpenTicketForm(FlaskForm):
+    issue=SelectField('What is your issue about? ', choices=[('','Select ...'),('Deposits','Deposits'),('Loans','Loans'),('Repayments','Repayments')])
+    message=TextAreaField("Ticket Description")
+
+class UpdateTicketForm(FlaskForm):
+    ticket_id=StringField()
+    message=TextAreaField("Add Description.")

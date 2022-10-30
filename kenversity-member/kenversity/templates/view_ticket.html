@@ -1,0 +1,66 @@
+{%extends 'layout.html'%}
+{%block content%}
+<!-- Begin Page Content -->
+<div class="container">
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        {%if ticket.status == "OPEN"%}
+            <h4 class="h4 mb-0 text-gray-800">Ticket #{{ticket.ticketNo}} <span class="badge badge-success">Open</span></h4>
+        {%else%}
+            <h4 class="h4 mb-0 text-gray-800">Ticket #{{ticket.ticketNo}} <span class="badge badge-danger">Closed</span></h4>
+        {%endif%}
+    {%if ticket.status != "CLOSED"%}
+        {%if current_user == ticket.member_issues%}
+        <div class="d-none d-sm-inline-block">
+          <a href="{{url_for('member.close_ticket',ticket_id=ticket.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-arrow-alt-circle-right fa-sm text-white-50"></i> Close Ticket</a>
+        </div>
+        {%endif%}
+    {%endif%}
+  </div>
+    {% for msg in ticket_msgs%}
+        {%if msg.sender == "MEMBER"%}
+            <div class="alert border-primary col-lg-11  ml-5fade show" role="alert">
+                <h6 class="text-gray-800 border-primary border-bottom-primary">{{ticket.member_issues.first_name.upper()}} {{ticket.member_issues.last_name.upper()}} | {{ticket.member_issues.memberNo}}</h6>
+                {{msg.message}}
+            </div>
+        {%else%}
+            <div class="alert border-success ml-auto mr-5 col-lg-11 fade show" role="alert">
+                <h6 class="font-weight-bold border-success border-bottom-success text-right">Kenversity Staff</h6>
+                {{msg.message}}
+            </div>
+        {%endif%}
+    {%endfor%}
+    {%if ticket.status != "CLOSED"%}
+    <form class="user" method="POST">
+              {{form.hidden_tag()}}
+              <div class="form-group">
+                {{ form.message.label() }}
+                {%if form.message.errors%}
+                {{form.message(class="form-control is-invalid",id="message")}}
+                <div class="invalid-feedback">
+                  {%for error in form.message.errors%}
+                  <span>{{error}}</span><br />
+                  {%endfor%}
+                </div>
+                {%else%}
+                {{form.message(class="form-control ",id="name")}}
+                {%endif%}
+              </div>
+              <button type="submit" class="btn btn-primary pl-3 pr-3">
+                Update Issue
+              </button>
+            </form>
+    {%endif%}
+</div>
+{%endblock content%}

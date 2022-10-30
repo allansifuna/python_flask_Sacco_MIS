@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
                     ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm,
-                    MakeRepaymentForm,PasswordResetForm,ResetRequestForm)
-from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email
-from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral,Repayment
+                    MakeRepaymentForm,PasswordResetForm,ResetRequestForm,OpenTicketForm,UpdateTicketForm)
+from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email,get_ticket_No
+from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral,Repayment,Ticket,TicketMessage
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import json
@@ -39,6 +39,7 @@ def dashboard():
     loans=Loan.query.filter_by(status="DISBURSED").filter_by(memberID=current_user.id).count()
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
     pending_loans=Loan.query.filter_by(status="UNAPPROVED").filter_by(memberID=current_user.id).count()
+    open_tickets=Ticket.query.filter_by(memberID=current_user.id).filter_by(status="OPEN").all()
     return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans,pending_loans=pending_loans)
 
 @member.route('/member/login', methods=["POST", "GET"])
@@ -466,6 +467,8 @@ def member_profile():
         current_user.street=biodata_form.street.data
         current_user.house_number=biodata_form.house_number.data
         current_user.house_ownership=biodata_form.house_ownership.data
+        current_user.bank_name=biodata_form.bank_name.data
+        current_user.bank_account=biodata_form.bank_account.data
         db.session.commit()
         flash("Successfully Updated Bio Data","success")
         return redirect(url_for('member.member_profile'))
@@ -503,6 +506,8 @@ def member_profile():
     biodata_form.street.data=current_user.street
     biodata_form.house_number.data=current_user.house_number
     biodata_form.house_ownership.data=current_user.house_ownership
+    biodata_form.bank_name.data=current_user.bank_name
+    biodata_form.bank_account.data=current_user.bank_account
 
     empl_form.employment_status.data=current_user.employment_status
     empl_form.name.data=current_user.employer_name
@@ -575,3 +580,39 @@ def download_loan_repayments(loan_id):
     repayments=new_dict
     html = render_template("download_loan_repayment.html",loan=loan,repayments=repayments,date=datetime.today(),title=f"Kenversity_Sacco_{loan.loanNo}_repayments.pdf")
     return render_pdf(HTML(string=html))
+
+@member.route('/member/ticket/open',methods=["POST","GET"])
+@login_required
+def open_ticket():
+    form=OpenTicketForm()
+    if form.validate_on_submit():
+        issue=form.issue.data
+        msg=form.message.data
+        ticket=Ticket(ticketNo=get_ticket_No(),issue=issue,memberID=current_user.id)
+        ticket.save()
+        ticket_msg=TicketMessage(ticketID=ticket.id,message=msg,sender="MEMBER")
+        ticket_msg.save()
+        flash("You have successfuly opened a ticket","success")
+        return redirect(url_for("member.view_ticket",ticket_id=ticket.id))
+    return render_template("open_ticket.html",form=form)
+
+@member.route('/member/ticket/<ticket_id>/view',methods=["POST","GET"])
+@login_required
+def view_ticket(ticket_id):
+    form=UpdateTicketForm()
+    form.ticket_id.data=ticket_id
+    if form.validate_on_submit():
+        ticket_msg=TicketMessage(ticketID=form.ticket_id.data,message=form.message.data,sender="MEMBER")
+        ticket_msg.save()
+    ticket=Ticket.query.get_or_404(ticket_id)
+    ticket_msgs=TicketMessage.query.filter_by(ticketID=ticket.id)
+    return render_template("view_ticket.html",ticket=ticket,ticket_msgs=ticket_msgs,form=form)
+
+@member.route('/member/ticket/<ticket_id>/close',methods=["POST","GET"])
+@login_required
+def close_ticket(ticket_id):
+    ticket=Ticket.query.get_or_404(ticket_id)
+    ticket.status = "CLOSED"
+    ticket.save()
+    flash("Ticket closed","success")
+    return redirect(url_for('member.view_ticket',ticket_id=ticket_id))

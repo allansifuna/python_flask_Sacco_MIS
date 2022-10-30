@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for,current_app
 from flask_mail import Message
 from kenversity import mail,mpesa
-from kenversity.models import Loan,Repayment
+from kenversity.models import Loan,Repayment,Ticket
 
 
 def save_picture(form_picture):
@@ -61,7 +61,15 @@ def get_loan_No():
         num=int(num[2:])+1
         num=str(num).zfill(5)
         return f"LN{num}"
-
+def get_ticket_No():
+    tickets=Ticket.query.order_by(Ticket.ticketNo.asc()).all()
+    if len(tickets) == 0 :
+        return "TK00001"
+    else:
+        num=tickets[-1].ticketNo
+        num=int(num[2:])+1
+        num=str(num).zfill(5)
+        return f"TK{num}"
 def get_repayment_No():
     repayments=Repayment.query.order_by(Repayment.repaymentNo.asc()).all()
     if len(repayments) == 0 :

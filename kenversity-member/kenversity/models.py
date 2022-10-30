@@ -62,12 +62,15 @@ class Member(db.Model,UserMixin, CRUDMixin):
     years_of_operation=db.Column(db.Integer,nullable=True)
     business_income=db.Column(db.Integer,nullable=True)
     employment_terms=db.Column(db.String(50),nullable=True)
+    bank_name=db.Column(db.String(50),nullable=True)
+    bank_account=db.Column(db.String(50),nullable=True)
     staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
     deposits = db.relationship('Deposit', backref='member', lazy=True)
     collaterals = db.relationship('Collateral', backref='member', lazy=True)
     guarantors=db.relationship('Guarantor', backref='applicant', lazy=True)
     loans=db.relationship('Loan', backref='loan_applier', lazy=True)
     repayments=db.relationship('Repayment', backref='member', lazy=True)
+    tickets=db.relationship('Ticket', backref='member_issues', lazy=True)
 
     def __repr__(self):
         return f"{self.memberNo}-<{self.first_name}|{self.last_name}>"
@@ -100,6 +103,7 @@ class Staff(db.Model,UserMixin, CRUDMixin):
     approved_loans = db.relationship('Loan', backref='loan_approver', lazy=True)
     approved_guarantors = db.relationship('Guarantor', backref='guarantor_approver', lazy=True)
     approved_members = db.relationship('Member', backref='member_approver', lazy=True)
+    tickets=db.relationship('TicketMessage', backref='staff_resp', lazy=True)
 
     def __repr__(self):
         return f"<{self.first_name}|{self.last_name}>"
@@ -244,3 +248,20 @@ class Repayment(db.Model, CRUDMixin):
 
     def __repr__(self):
         return f"<{self.id}|{self.amount}>"
+
+class Ticket(db.Model,CRUDMixin):
+    id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    ticketNo=db.Column(db.String(7),nullable=True)
+    issue=db.Column(db.String(50),nullable=True)
+    status=db.Column(db.String(50),nullable=False,default="OPEN")
+    memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
+    date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
+    messages=db.relationship('TicketMessage', backref='ticket_message', lazy=True)
+
+class TicketMessage(db.Model,CRUDMixin):
+    id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    ticketID=db.Column(db.String(8),db.ForeignKey('ticket.id'),nullable=True)
+    message=db.Column(db.String(1000),nullable=True)
+    sender=db.Column(db.String(50),nullable=True)
+    date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
+    staffID=db.Column(db.String(8),db.ForeignKey('staff.id'),nullable=True)
