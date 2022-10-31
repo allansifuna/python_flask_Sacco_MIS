@@ -17,7 +17,15 @@
   {%endwith%}
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">MEMBER PROFILE</h1>
+    <h1 class="h3 mb-0 text-gray-800">MEMBER PROFILE
+    {%if member.status ==  "ACTIVE"%}
+      <span class="badge badge-success pl-2 pr-2 ml-2"> ACTIVE</span>
+    {%elif member.status ==  "DEACTIVATED"%}
+      <span class="badge badge-danger pl-2 pr-2 ml-2"> DEACTIVATED</span>
+    {%else%}
+      <span class="badge badge-warning pl-2 pr-2 ml-2"> INACTIVE</span>
+    {%endif%}
+    </h1>
   </div>
 
   <!-- Content Row -->
@@ -32,11 +40,17 @@
               <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-
-          <div class="dropdown-divider"></div>
               <a class="dropdown-item text-primary" href="{{url_for('staff.view_member_loans',member_id=member.id)}}">View Loans</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item text-primary" href="{{url_for('staff.download_member_profile',member_id=member.id)}}">Download Member Profile</a>
+              {%if member.status == "ACTIVE"%}
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="{{url_for('staff.delete_member',member_id=member.id)}}">Delete Member</a>
+              {%else%}
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-success" href="{{url_for('staff.activate_member',member_id=member.id)}}">Activate Member</a>
+              {%endif%}
             </div>
 
           </div>
@@ -46,6 +60,11 @@
             <img class="img-profile rounded-circle shadow-sm" width="125px" height="125px" src="http://127.0.0.1:5000/static/ids/{{member.photo}}">
           </div>
           <div class="card-body">
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Member No:</span> <span class="text-gray-800 font-weight-bold ml-2"> {{member.memberNo}}</span>
+              </li>
+            </div>
             <div class="list-group">
               <li class="list-group-item pt-2 pb-2 mt-1">
                 <span class="">Name:</span> <span class="text-gray-800 font-weight-bold ml-2"> {{member.first_name}} {{member.last_name}}</span>
@@ -95,7 +114,7 @@
             </div>
             <div class="list-group">
               <li class="list-group-item pt-2 pb-2 mt-1">
-                <span class="">Business Income:</span> <span class="text-gray-800 font-weight-bold ml-2">KES {{member.business_income}}</span>
+                <span class="">Business Income:</span> <span class="text-gray-800 font-weight-bold ml-2">KES {{member.business_income | format_currency}}</span>
               </li>
             </div>
             {%else%}
@@ -129,6 +148,16 @@
               </li>
             </div>
             {%endif%}
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Bank Name:</span> <span class="text-gray-800 font-weight-bold ml-2">{{member.bank_name}}</span>
+              </li>
+            </div>
+            <div class="list-group">
+              <li class="list-group-item pt-2 pb-2 mt-1">
+                <span class="">Bank Account No:</span> <span class="text-gray-800 font-weight-bold ml-2">{{member.bank_account}}</span>
+              </li>
+            </div>
           </div>
         </div>
       </div>

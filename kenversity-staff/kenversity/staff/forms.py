@@ -60,3 +60,7 @@ class ResetRequestForm(FlaskForm):
         staff = Staff.query.filter_by(email=email.data).first()
         if staff is None:
             raise ValidationError('There is no account with that email. You must register first.')
+
+class UpdateTicketForm(FlaskForm):
+    ticket_id=StringField()
+    message=TextAreaField("Add Description.")

@@ -23,7 +23,7 @@
     {%if ticket.status != "CLOSED"%}
         {%if current_user == ticket.member_issues%}
         <div class="d-none d-sm-inline-block">
-          <a href="{{url_for('member.close_ticket',ticket_id=ticket.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-arrow-alt-circle-right fa-sm text-white-50"></i> Close Ticket</a>
+          <a href="{{url_for('staff.close_ticket',ticket_id=ticket.id)}}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-arrow-alt-circle-right fa-sm text-white-50"></i> Close Ticket</a>
         </div>
         {%endif%}
     {%endif%}

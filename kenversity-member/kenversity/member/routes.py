@@ -27,6 +27,25 @@ def get_loan():
 
 def get_loan_pk(obj):
     return str(obj)
+
+def get_msgs():
+    open_tickets=Ticket.query.filter_by(memberID=current_user.id).filter_by(status="OPEN").all()
+    # print(open_tickets)
+    open_messages ={}
+    i=0
+    for ticket in open_tickets:
+        msgs=TicketMessage.query.filter_by(ticketID=ticket.id).all()
+        msg=None
+        if len(msgs) > 1:
+            msg=msgs[-1]
+        else:
+            msg=msgs[0]
+        print(msg.sender)
+        if msg.sender == "STAFF":
+            open_messages[i]=(ticket,msg.staff_resp)
+            i+=1
+    msgs=len(open_messages.keys())
+    return (msgs,open_messages)
 @member.route('/member')
 @login_required
 def dashboard():
@@ -39,8 +58,8 @@ def dashboard():
     loans=Loan.query.filter_by(status="DISBURSED").filter_by(memberID=current_user.id).count()
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
     pending_loans=Loan.query.filter_by(status="UNAPPROVED").filter_by(memberID=current_user.id).count()
-    open_tickets=Ticket.query.filter_by(memberID=current_user.id).filter_by(status="OPEN").all()
-    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans,pending_loans=pending_loans)
+    msgs,open_messages=get_msgs()
+    return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans,pending_loans=pending_loans,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/login', methods=["POST", "GET"])
 def login():
@@ -238,7 +257,8 @@ def make_deposit():
             return redirect(url_for("member.dashboard"))
         flash("Payment simulation failed. Pleas try again!","danger")
     form.phone.data=current_user.phone_number
-    return render_template("make_deposit.html",form=form)
+    msgs,open_messages=get_msgs()
+    return render_template("make_deposit.html",form=form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/view/deposits', methods=["POST", "GET"])
 @login_required
@@ -249,7 +269,8 @@ def view_deposits():
     for deposit in deposits:
         ds[i]=deposit
         i+=1
-    return render_template("member_deposits.html",ds=ds)
+    msgs,open_messages=get_msgs()
+    return render_template("member_deposits.html",ds=ds,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/view/transactions', methods=["POST", "GET"])
 @login_required
@@ -260,7 +281,8 @@ def view_transactions():
     for transaction in transactions:
         ts[i]=transaction
         i+=1
-    return render_template("member_transactions.html",ts=ts)
+    msgs,open_messages=get_msgs()
+    return render_template("member_transactions.html",ts=ts,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/loan/apply', methods=["POST", "GET"])
 @login_required
@@ -275,7 +297,8 @@ def apply_loan():
         loan.save()
         flash(f"Loan application has been successfully submitted","success")
         return redirect(url_for('member.add_guarantor',loan_id=loan.id))
-    return render_template("apply_loan.html",form=form)
+    msgs,open_messages=get_msgs()
+    return render_template("apply_loan.html",form=form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/get/lc/<loan_cat_id>', methods=["POST", "GET"])
 @login_required
@@ -324,7 +347,8 @@ def add_guarantor(loan_id):
         flash("Added a guarantor","success")
         return redirect(url_for('member.add_guarantor',loan_id=loan_id))
     form.name.data=""
-    return render_template("add_guarantors.html",form=form,guarantors=guarantors,loan_id=loan_id)
+    msgs,open_messages=get_msgs()
+    return render_template("add_guarantors.html",form=form,guarantors=guarantors,loan_id=loan_id,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/guarantors/<loan_id>/<guarantor_id>/remove', methods=["POST", "GET"])
 @login_required
@@ -355,7 +379,8 @@ def add_collateral(loan_id):
         col.save()
         flash("Added a Collateral","success")
         return redirect(url_for('member.add_collateral',loan_id=loan_id))
-    return render_template("add_collateral.html",form=form,collaterals=collaterals,loan_id=loan_id)
+    msgs,open_messages=get_msgs()
+    return render_template("add_collateral.html",form=form,collaterals=collaterals,loan_id=loan_id,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/collateral/<loan_id>/<collateral_id>/remove', methods=["POST", "GET"])
 @login_required
@@ -377,7 +402,8 @@ def confirm_guarantor_request():
     for req in reqs_:
         reqs[i]=req
         i+=1
-    return render_template("confirm_g_reqs.html",reqs=reqs)
+    msgs,open_messages=get_msgs()
+    return render_template("confirm_g_reqs.html",reqs=reqs,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/guarantor/confirm/<guarantor_id>/<verdict>', methods=["POST", "GET"])
 @login_required
@@ -401,7 +427,8 @@ def confirm_request(guarantor_id,verdict):
 def view_loans():
     loans=Loan.query.filter_by(memberID=current_user.id).filter(Loan.status!="DISBURSED").order_by(Loan.date_created.desc()).all()
     loans=add_nums(loans)
-    return render_template("view_loans.html",loans=loans)
+    msgs,open_messages=get_msgs()
+    return render_template("view_loans.html",loans=loans,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/disbursed-loans/view', methods=["POST", "GET"])
 @login_required
@@ -410,7 +437,8 @@ def view_disbursed_loans():
     loans.extend(Loan.query.filter_by(memberID=current_user.id).filter_by(status="FULFILLED").order_by(Loan.date_created.desc()).all())
     loans=add_nums(loans)
     today=date.today()
-    return render_template("view_disbursed_loans.html",loans=loans,Loan=Loan,today=today)
+    msgs,open_messages=get_msgs()
+    return render_template("view_disbursed_loans.html",loans=loans,Loan=Loan,today=today,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/transactions/<member_id>/download', methods=["POST", "GET"])
 @login_required
@@ -518,8 +546,8 @@ def member_profile():
     empl_form.years_of_operation.data=current_user.years_of_operation
     empl_form.business_income.data=current_user.business_income
     empl_form.employment_terms.data=current_user.employment_terms
-
-    return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form)
+    msgs,open_messages=get_msgs()
+    return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/repayment/make', methods=["POST", "GET"])
 @login_required
@@ -537,15 +565,16 @@ def make_repayment():
             rep.save()
             flash("You will be probpted to authorise the transaction on your phone","info")
             return redirect(url_for('member.dashboard'))
-
-    return render_template("make_repayment.html",form=form)
+    msgs,open_messages=get_msgs()
+    return render_template("make_repayment.html",form=form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/repayments/view', methods=["POST", "GET"])
 @login_required
 def view_repayments():
     repayments=Repayment.query.all()
     repayments=add_nums(repayments)
-    return render_template("view_repayments.html",repayments=repayments)
+    msgs,open_messages=get_msgs()
+    return render_template("view_repayments.html",repayments=repayments,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/<loan_id>/repayments/view', methods=["POST", "GET"])
 @login_required
@@ -563,7 +592,8 @@ def view_loan_repayments(loan_id):
     repayments={k:v for k,v in sorted(new_dict.items(),key=lambda x: (x[1][0].date_created),reverse=True)}
 
     repayments=add_nums(repayments.values())
-    return render_template("view_loan_repayments.html",repayments=repayments,loan=loan)
+    msgs,open_messages=get_msgs()
+    return render_template("view_loan_repayments.html",repayments=repayments,loan=loan,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/<loan_id>/repayments/download',methods=["POST","GET"])
 @login_required
@@ -594,7 +624,8 @@ def open_ticket():
         ticket_msg.save()
         flash("You have successfuly opened a ticket","success")
         return redirect(url_for("member.view_ticket",ticket_id=ticket.id))
-    return render_template("open_ticket.html",form=form)
+    msgs,open_messages=get_msgs()
+    return render_template("open_ticket.html",form=form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/ticket/<ticket_id>/view',methods=["POST","GET"])
 @login_required
@@ -604,9 +635,11 @@ def view_ticket(ticket_id):
     if form.validate_on_submit():
         ticket_msg=TicketMessage(ticketID=form.ticket_id.data,message=form.message.data,sender="MEMBER")
         ticket_msg.save()
+        return redirect(url_for("member.view_ticket",ticket_id=ticket_id))
     ticket=Ticket.query.get_or_404(ticket_id)
     ticket_msgs=TicketMessage.query.filter_by(ticketID=ticket.id)
-    return render_template("view_ticket.html",ticket=ticket,ticket_msgs=ticket_msgs,form=form)
+    msgs,open_messages=get_msgs()
+    return render_template("view_ticket.html",ticket=ticket,ticket_msgs=ticket_msgs,form=form,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/ticket/<ticket_id>/close',methods=["POST","GET"])
 @login_required

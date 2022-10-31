@@ -88,8 +88,32 @@ class Member(db.Model,UserMixin, CRUDMixin):
             return None
         return Member.query.get(memberID)
 
+    @staticmethod
+    def get_shares(member_id):
+        shares=0
+        deposits=Deposit.query.filter_by(memberID=member_id).all()
+        for deposit in deposits:
+            shares+=deposit.amount
+        return shares
+
+    @staticmethod
+    def get_loans(member_id):
+        loans = Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").count()
+        loans+=Loan.query.filter_by(memberID=member_id).filter_by(status="APPROVED").count()
+        return loans
+
+    @staticmethod
+    def get_loans_guaranteed(member_id):
+        guarantees=Guarantor.query.filter_by(memberID=member_id).filter_by(status="APPROVED").all()
+        loans=0
+        for guarantee in guarantees:
+            if guarantee.loan_guarantor.status == "APPROVED" or guarantee.loan_guarantor.status == "DISBURSED":
+                loans+=1
+        return loans
+
 class Staff(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
+    # staffNo=db.Column(db.String(7),nullable=True)
     first_name=db.Column(db.String(40),nullable=False)
     last_name=db.Column(db.String(40),nullable=False)
     national_id=db.Column(db.String(8),nullable=False)
@@ -257,6 +281,13 @@ class Ticket(db.Model,CRUDMixin):
     memberID=db.Column(db.String(8),db.ForeignKey('member.id'),nullable=False)
     date_created=db.Column(db.DateTime,default=datetime.now,nullable=False)
     messages=db.relationship('TicketMessage', backref='ticket_message', lazy=True)
+
+    @staticmethod
+    def get_last_updater(ticket_id):
+        msgs=TicketMessage.query.filter_by(ticketID=ticket_id).all()
+        if len(msgs) == 1:
+            return msgs[0].sender
+        return msgs[-1].sender
 
 class TicketMessage(db.Model,CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)

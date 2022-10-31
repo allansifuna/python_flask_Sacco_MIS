@@ -178,30 +178,34 @@
                 {%endif%}
               </div>
             </li>
+            {%if show%}
             <!-- Nav Item - Messages -->
             <li class="nav-item dropdown no-arrow mx-1">
               <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-envelope fa-fw"></i>
                 <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter">1</span>
+                <span class="badge badge-danger badge-counter">{{msgs}}</span>
               </a>
               <!-- Dropdown - Messages -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
                 <h6 class="dropdown-header">
-                  Message Center
+                  Ticket Updates
                 </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+                {%for k,ticket in open_messages.items()%}
+                <a class="dropdown-item d-flex align-items-center" href="{{url_for('member.view_ticket',ticket_id=ticket[0].id)}}">
                   <div class="dropdown-list-image mr-3">
                     <img class="rounded-circle" src="{{url_for('static',filename='ids/'+current_user.photo)}}" alt="">
                     <div class="status-indicator bg-success"></div>
                   </div>
                   <div class="font-weight-bold">
-                    <div class="text-truncate">Ticket #TK0001 Has been Updated</div>
-                    <div class="small text-gray-500">Allan SIfuna</div>
+                    <div class="text-truncate small"><b>Ticket #{{ticket[0].ticketNo}} Has been Updated</b></div>
+                    <div class="small text-gray-800">{{ticket[1].first_name}} {{ticket[1].last_name}}</div>
                   </div>
                 </a>
+                {%endfor%}
               </div>
             </li>
+            {%endif%}
             <div class="topbar-divider d-none d-sm-block"></div>
 
             <!-- Nav Item - User Information -->

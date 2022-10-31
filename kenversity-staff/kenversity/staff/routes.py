@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,
-        DeclineLoanForm,SearchForm,PasswordResetForm,ResetRequestForm)
+        DeclineLoanForm,SearchForm,PasswordResetForm,ResetRequestForm,UpdateTicketForm)
 from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email,send_reset_email
-from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor,Repayment
+from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor,Repayment,Ticket,TicketMessage
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
 import secrets
@@ -18,10 +18,11 @@ def dashboard():
     pending_member_approvals=Member.query.filter_by(memberNo=None).count()
     pending_loan_applications=Loan.query.filter_by(staffID=None).count()
     pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").count()
+    open_tickets=Ticket.query.filter_by(status="OPEN").count()
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template('home.html',pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications,search=search)
+    return render_template('home.html',open_tickets=open_tickets,pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications,search=search)
 
 @staff.route('/search/<string:data>', methods=["POST", "GET"])
 @login_required
@@ -31,6 +32,11 @@ def searches(data):
     members.extend(Member.query.filter_by(memberNo=data).filter_by(status="ACTIVE").all())
     members.extend(Member.query.filter_by(email=data).filter_by(status="ACTIVE").all())
     members.extend(Member.query.filter_by(phone_number=data).filter_by(status="ACTIVE").all())
+    members.extend(Member.query.filter_by(first_name=data.capitalize()).filter_by(status="DEACTIVATED").all())
+    members.extend(Member.query.filter_by(last_name=data.capitalize()).filter_by(status="DEACTIVATED").all())
+    members.extend(Member.query.filter_by(memberNo=data).filter_by(status="DEACTIVATED").all())
+    members.extend(Member.query.filter_by(email=data).filter_by(status="DEACTIVATED").all())
+    members.extend(Member.query.filter_by(phone_number=data).filter_by(status="DEACTIVATED").all())
     matches=len(members)>0
     found=len(members)
     search=SearchForm()
@@ -630,3 +636,56 @@ def download_staff_profile(staff_id):
     today=date.today()
     html = render_template("download_staff_profile.html",staff=staff,Staff=Staff,date=datetime.today(),title=f"Kenversity_Sacco_profile.pdf")
     return render_pdf(HTML(string=html))
+
+@staff.route('/staff/ticket/<ticket_id>/view',methods=["POST","GET"])
+@login_required
+def view_ticket(ticket_id):
+    form=UpdateTicketForm()
+    form.ticket_id.data=ticket_id
+    if form.validate_on_submit():
+        ticket_msg=TicketMessage(ticketID=form.ticket_id.data,message=form.message.data,sender="STAFF",staffID=current_user.id)
+        ticket_msg.save()
+        return redirect(url_for("staff.view_ticket",ticket_id=ticket_id))
+    ticket=Ticket.query.get_or_404(ticket_id)
+    ticket_msgs=TicketMessage.query.filter_by(ticketID=ticket.id)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_ticket.html",ticket=ticket,ticket_msgs=ticket_msgs,form=form,search=search)
+
+@staff.route('/staff/ticket/<ticket_id>/close',methods=["POST","GET"])
+@login_required
+def close_ticket(ticket_id):
+    ticket=Ticket.query.get_or_404(ticket_id)
+    ticket.status = "CLOSED"
+    ticket.save()
+    flash("Ticket closed","success")
+    return redirect(url_for('staff.view_ticket',ticket_id=ticket_id))
+
+@staff.route('/staff/tickets/all/view',methods=["POST","GET"])
+@login_required
+def view_all_tickets():
+    tickets=Ticket.query.all()
+    tickets=add_nums(tickets)
+    search=SearchForm()
+    if search.validate_on_submit():
+        return redirect(url_for('staff.searches', data=search.text.data))
+    return render_template("view_all_ticket.html",tickets=tickets,Ticket=Ticket,search=search)
+
+@staff.route('/staff/member/<member_id>/delete',methods=["POST","GET"])
+@login_required
+def delete_member(member_id):
+    member=Member.query.get_or_404(member_id)
+    member.status = "DEACTIVATED"
+    member.update()
+    flash("Member inactivated successfully","warning")
+    return redirect(url_for('staff.member_profile',member_id=member_id))
+
+@staff.route('/staff/member/<member_id>/activate',methods=["POST","GET"])
+@login_required
+def activate_member(member_id):
+    member=Member.query.get_or_404(member_id)
+    member.status = "ACTIVE"
+    member.update()
+    flash("Member activated successfully","success")
+    return redirect(url_for('staff.member_profile',member_id=member_id))

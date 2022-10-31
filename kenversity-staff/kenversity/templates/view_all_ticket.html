@@ -1,0 +1,69 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">OPEN TICKETS</h6>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>No#</th>
+                            <th>Ticket No</th>
+                            <th>Ticket Issue</th>
+                            <th>Opened By</th>
+                            <th>Member No</th>
+                            <th>Status</th>
+                            <th>Last Updated By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for num,ticket in tickets.items()%}
+                            <tr>
+                            <td>{{num}}</td>
+                            <td>{{ticket.ticketNo}}</td>
+                            <td>{{ticket.issue}}</td>
+                            <td>{{ticket.member_issues.first_name}} {{ticket.member_issues.last_name}}</td>
+                            <td>{{ticket.member_issues.memberNo}}</td>
+                            <td>
+                                {% if ticket.status == "OPEN"%}
+                                <span class="font-weight-bold text-success">{{ticket.status}}</span>
+                                {% else %}
+                                <span class="font-weight-bold text-danger">{{ticket.status}}</span>
+                                {%endif%}
+                            </td>
+                            <td>
+                                {% if Ticket.get_last_updater(ticket.id) == "MEMBER"%}
+                                    <span class="font-weight-bold text-primary">MEMBER</span>
+                                {%else%}
+                                    <span class="font-weight-bold text-info">STAFF</span>
+                                {%endif%}
+                            </td>
+                            <td> <a href="{{url_for('staff.view_ticket',ticket_id=ticket.id)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right" >View Ticket</a></td>
+                        </tr>
+                        {%endfor%}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

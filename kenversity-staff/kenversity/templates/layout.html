@@ -101,6 +101,20 @@
           </div>
         </div>
       </li>
+      {%if current_user.role !="ADMINSTARTOR"%}
+       <li class="nav-item">
+        <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#staff" aria-expanded="true" aria-controls="staff">
+          <i class="fas fa-fw fa-baseball-ball"></i>
+          <span>Tickets:</span>
+        </a>
+        <div id="staff" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+           <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Click to View: </h6>
+            <a class="collapse-item" href="{{url_for('staff.view_all_tickets')}}">View Tickets</a>
+          </div>
+        </div>
+      </li>
+      {%endif%}
       {%if current_user.role =="ADMINSTARTOR"%}
        <li class="nav-item">
         <a class="nav-link collapsed" href="" data-toggle="collapse" data-target="#staff" aria-expanded="true" aria-controls="staff">
