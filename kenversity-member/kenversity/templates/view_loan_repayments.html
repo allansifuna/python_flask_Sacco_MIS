@@ -1,6 +1,18 @@
 {%extends 'layout.html'%}
 {%block content%}
 <div class="container-fluid mt-n10">
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
     <h4 class="h4 mb-0 text-gray-800"> LOAN REPAYMENTS( <span class="font-weight-bold">{{loan.loanNo}} </span>) </h4>
     <div class="d-none d-sm-inline-block">
@@ -8,6 +20,7 @@
     </div>
 
   </div>
+
     <!-- Tabbed dashboard card example-->
     <div class="card mb-4">
         <div class="card-body">

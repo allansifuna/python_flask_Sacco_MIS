@@ -139,3 +139,10 @@ class OpenTicketForm(FlaskForm):
 class UpdateTicketForm(FlaskForm):
     ticket_id=StringField()
     message=TextAreaField("Add Description.")
+
+class MockDepositForm(FlaskForm):
+    num=IntegerField("Number of Deposits",validators=[DataRequired()])
+
+class MockLoanRepaymentForm(FlaskForm):
+    mocks=IntegerField("Number of Deposits",validators=[DataRequired()])
+    loan_no=StringField("Loan No",validators=[DataRequired()])

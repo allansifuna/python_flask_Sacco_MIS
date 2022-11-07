@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request,
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
                     ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm,
-                    MakeRepaymentForm,PasswordResetForm,ResetRequestForm,OpenTicketForm,UpdateTicketForm)
-from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email,get_ticket_No
+                    MakeRepaymentForm,PasswordResetForm,ResetRequestForm,OpenTicketForm,UpdateTicketForm,MockLoanRepaymentForm,MockDepositForm)
+from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email,get_ticket_No,mock_deposits,mock_repayments
 from kenversity.models import Member, Deposit,Transaction,LoanCategory,Loan,Guarantor,Collateral,Repayment,Ticket,TicketMessage
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -56,6 +56,7 @@ def dashboard():
             total_shares+=dep.amount
 
     loans=Loan.query.filter_by(status="DISBURSED").filter_by(memberID=current_user.id).count()
+    loans+=Loan.query.filter_by(status="DEFAULTED").filter_by(memberID=current_user.id).count()
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
     pending_loans=Loan.query.filter_by(status="UNAPPROVED").filter_by(memberID=current_user.id).count()
     msgs,open_messages=get_msgs()
@@ -431,7 +432,7 @@ def confirm_request(guarantor_id,verdict):
 @member.route('/member/loans/view', methods=["POST", "GET"])
 @login_required
 def view_loans():
-    loans=Loan.query.filter_by(memberID=current_user.id).filter(Loan.status!="DISBURSED").order_by(Loan.date_created.desc()).all()
+    loans=Loan.query.filter_by(memberID=current_user.id).filter(Loan.status!="DISBURSED").filter(Loan.status!="DEFAULTED").filter(Loan.status!="FULFILLED").order_by(Loan.date_created.desc()).all()
     loans=add_nums(loans)
     msgs,open_messages=get_msgs()
     return render_template("view_loans.html",loans=loans,msgs=msgs,open_messages=open_messages,show=True)
@@ -442,6 +443,7 @@ def view_disbursed_loans():
     loans=Loan.query.filter_by(memberID=current_user.id).filter_by(status="DISBURSED").order_by(Loan.date_created.desc()).all()
     # print(current_user.id)
     loans.extend(Loan.query.filter_by(memberID=current_user.id).filter_by(status="FULFILLED").order_by(Loan.date_created.desc()).all())
+    loans.extend(Loan.query.filter_by(memberID=current_user.id).filter_by(status="DEFAULTED").order_by(Loan.date_created.desc()).all())
     loans=add_nums(loans)
     today=date.today()
     msgs,open_messages=get_msgs()
@@ -656,3 +658,19 @@ def close_ticket(ticket_id):
     ticket.save()
     flash("Ticket closed","success")
     return redirect(url_for('member.view_ticket',ticket_id=ticket_id))
+
+@member.route('/member/mock',methods=["POST","GET"])
+@login_required
+def mock_payments():
+    dep_form=MockDepositForm()
+    loan_form=MockLoanRepaymentForm()
+    if dep_form.validate_on_submit():
+        mock_deposits(current_user,dep_form.num.data)
+        flash(f"{dep_form.num.data} deposits were successfully added.","success")
+        return redirect(url_for("member.view_deposits"))
+    if loan_form.validate_on_submit():
+        ln=Loan.query.filter_by(loanNo=loan_form.loan_no.data).first()
+        mock_repayments(current_user,ln,loan_form.mocks.data)
+        flash(f"{loan_form.mocks.data} repayments were successfully added for loan {loan_form.loan_no.data}","success")
+        return redirect(url_for("member.view_loan_repayments",loan_id=ln.id))
+    return render_template("mock.html",dep_form=dep_form,loan_form=loan_form)

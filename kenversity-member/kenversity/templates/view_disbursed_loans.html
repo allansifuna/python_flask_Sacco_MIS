@@ -47,9 +47,20 @@
                             <td>{{loan.start_date.strftime("%d-%m-%Y")}}</td>
                             <td>{{loan.end_date.strftime("%d-%m-%Y")}}</td>
                             <td>
+                                {%if loan.status == "DEFAULTED"%}
                                 <div class="progress">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: {{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}%" aria-valuenow="{{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}" aria-valuemin="0" aria-valuemax="100">{{(100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)) | format_float}}%</div>
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}%" aria-valuenow="{{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}" aria-valuemin="0" aria-valuemax="100">{{(100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)) | format_float}}%</div>
                                 </div>
+                                {%elif loan.status == "FULFILLED"%}
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}%" aria-valuenow="{{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}" aria-valuemin="0" aria-valuemax="100">{{(100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)) | format_float}}%</div>
+                                </div>
+                                {%else%}
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}%" aria-valuenow="{{100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)}}" aria-valuemin="0" aria-valuemax="100">{{(100-((Loan.get_remaining_amount(loan.id) /loan.amount)*100)) | format_float}}%</div>
+                                </div>
+                                {%endif%}
+
                             </td>
                             <td>
                                 {%if today > loan.end_date and Loan.get_remaining_amount(loan.id)>0%}
@@ -60,7 +71,16 @@
                                     <span class="text-primary font-weight-bold"> IN PROGRESS</span>
                                 {%endif%}
                             </td>
-                            <td> <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a></td>
+                            <td>
+                                {%if loan.status == "DEFAULTED"%}
+                                <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-danger btn-sm bg-light border-bottom-danger border-top border-left border-right p-1 pl-4 pr-4" >view</a>
+                                {%elif loan.status == "FULFILLED"%}
+                                <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-success btn-sm bg-light border-bottom-success border-top border-left border-right p-1 pl-4 pr-4" >view</a>
+                                {%else%}
+                                <a href="{{url_for('member.view_loan_repayments',loan_id=loan.id)}}" class="btn text-primary btn-sm bg-light border-bottom-primary border-top border-left border-right p-1 pl-4 pr-4" >view</a>
+                                {%endif%}
+
+                            </td>
                             </tr>
                         {%endfor%}
 

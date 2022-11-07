@@ -1,0 +1,104 @@
+{%extends 'layout.html'%}
+{%block content%}
+<div class="container-fluid">
+    <h4 class="h3 mb-3 text-gray-800"> MOCK PAYMENTS</h4>
+    {%with messages= get_flashed_messages(with_categories=true)%}
+        {%if messages%}
+            {%for category,message in messages%}
+                <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {%endfor%}
+        {%endif%}
+    {%endwith%}
+    <div class="col-lg-8 m-auto mt-4">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExamplec" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExamplec">
+                <h6 class="m-0 font-weight-bold text-Primary">MEMBER DEPOSITS</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseCardExamplec">
+                <div class="card-body col-lg-10 m-auto">
+                    <form class="user" method="POST" enctype="multipart/form-data">
+                {{dep_form.hidden_tag()}}
+                <div class="form-group">
+                    {{ dep_form.num.label() }}
+                  {%if dep_form.num.errors%}
+                        {{dep_form.num(class="form-control is-invalid",id="exampleInputnum")}}
+                        <div class="invalid-feedback">
+                          {%for error in dep_form.num.errors%}
+                          <span>{{error}}</span><br />
+                          {%endfor%}
+                        </div>
+                        {%else%}
+                        {{dep_form.num(class="form-control",id="exampleInputfirst_name",placeholder="Enter Number of deposits to Mock")}}
+                        {%endif%}
+
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                      Mock Deposits
+                    </button>
+                </div>
+                <hr>
+              </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 m-auto mt-4">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExampleb" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCardExampleb">
+                <h6 class="m-0 font-weight-bold text-Primary">LOAN REPAYMENTS</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse" id="collapseCardExampleb">
+                <div class="card-body col-lg-10 m-auto">
+                    <form class="user" method="POST" enctype="multipart/form-data">
+                {{loan_form.hidden_tag()}}
+                <div class="form-group">
+                    {{ loan_form.loan_no.label() }}
+                  {%if loan_form.loan_no.errors%}
+                        {{loan_form.loan_no(class="form-control is-invalid",id="exampleInputloan_no")}}
+                        <div class="invalid-feedback">
+                          {%for error in loan_form.loan_no.errors%}
+                          <span>{{error}}</span><br />
+                          {%endfor%}
+                        </div>
+                        {%else%}
+                        {{loan_form.loan_no(class="form-control",id="exampleInputfirst_name",placeholder="Enter Loan Number to Mock Repayment")}}
+                        {%endif%}
+
+                </div>
+                <div class="form-group">
+                    {{ loan_form.mocks.label() }}
+                  {%if loan_form.mocks.errors%}
+                        {{loan_form.mocks(class="form-control is-invalid",id="exampleInputmocks")}}
+                        <div class="invalid-feedback">
+                          {%for error in loan_form.mocks.errors%}
+                          <span>{{error}}</span><br />
+                          {%endfor%}
+                        </div>
+                        {%else%}
+                        {{loan_form.mocks(class="form-control",id="exampleInputfirst_name",placeholder="Enter Number of Repayments to Mock")}}
+                        {%endif%}
+
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary pl-3 pr-3 ">
+                      Mock Loan Repayment
+                    </button>
+                </div>
+                <hr>
+              </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

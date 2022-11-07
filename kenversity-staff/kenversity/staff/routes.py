@@ -34,15 +34,16 @@ staff = Blueprint('staff', __name__)
 def dashboard():
     pending_member_approvals=Member.query.filter_by(memberNo=None).count()
     pending_loan_applications=Loan.query.filter_by(staffID=None).count()
-    pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").count()
+    pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").filter(Loan.status!="FULFILLED").count()
     open_tickets=Ticket.query.filter_by(status="OPEN").count()
     total_deposits = 0
     if current_user.role == "ADMINSTARTOR":
+
         all_deps=Deposit.query.all()
         for dep in all_deps:
             total_deposits+=dep.amount
-        deposit_days=get_deposit_days()
-
+    deposit_days=get_deposit_days()
+    loans=[Loan.query.filter_by(status="DISBURSED").count(),Loan.query.filter_by(status="FULFILLED").count(),Loan.query.filter_by(status="DEFAULTED").count()]
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
@@ -53,7 +54,8 @@ def dashboard():
                     pending_loan_applications=pending_loan_applications,
                     search=search,
                     total_deposits=total_deposits,
-                    deposit_days=deposit_days
+                    deposit_days=deposit_days,
+                    loans=loans
                     )
 
 @staff.route('/search/<string:data>', methods=["POST", "GET"])
@@ -309,7 +311,7 @@ def decline_loan(loan_id):
 @staff.route('/staff/pending-loans/view',methods=["POST","GET"])
 @login_required
 def view_staff_loans():
-    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").all()
+    loans=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").filter(Loan.status!="FULFILLED").filter(Loan.status!="DEFAULTED").all()
     loans=add_nums(loans)
     has_gs={}
     has_cols={}

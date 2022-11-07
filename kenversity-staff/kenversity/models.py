@@ -28,6 +28,16 @@ def load_staff(id):
 def id_unique():
     return secrets.token_hex(8)
 
+def get_transaction_No():
+    transactions=Transaction.query.order_by(Transaction.transactionNo.asc()).all()
+    if len(transactions) == 0 :
+        return "TN000001"
+    else:
+        num=transactions[-1].transactionNo
+        num=int(num[2:])+1
+        num=str(num).zfill(6)
+        return f"TN{num}"
+
 class Member(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberNo=db.Column(db.String(7),nullable=True)
@@ -100,6 +110,7 @@ class Member(db.Model,UserMixin, CRUDMixin):
     def get_loans(member_id):
         loans = Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").count()
         loans+=Loan.query.filter_by(memberID=member_id).filter_by(status="APPROVED").count()
+        loans+=Loan.query.filter_by(memberID=member_id).filter_by(status="DEFAULTED").count()
         return loans
 
     @staticmethod
@@ -246,7 +257,7 @@ class Loan(db.Model, CRUDMixin):
 
 class Transaction(db.Model, CRUDMixin):
     id=db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
-    transactionNo=db.Column(db.String(9),nullable=True)
+    transactionNo=db.Column(db.String(9),default=get_transaction_No)
     phone_number=db.Column(db.String(12),nullable=False)
     transaction_code=db.Column(db.String(40),nullable=False)
     amount=db.Column(db.Integer,nullable=False)
