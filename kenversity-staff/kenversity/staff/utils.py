@@ -1,7 +1,8 @@
 from kenversity import mail
 from flask_mail import Message
-from kenversity.models import Member
+from kenversity.models import Member,Deposit
 from flask import url_for
+from datetime import datetime
 
 def send_set_password_email(user):
     token = user.get_reset_token()
@@ -145,3 +146,16 @@ def send_reset_email(staff):
     if you did not make this request just ignore this email.
     '''
     mail.send(msg)
+
+def get_deposit_days():
+    days={}
+    days[datetime.today().strftime("%d-%m-%Y")]=0
+    deps=Deposit.query.all()
+    for dep in deps:
+        if dep.deposit_date.strftime("%d-%m-%Y") not in days:
+            days[dep.deposit_date.strftime("%d-%m-%Y")]=dep.amount
+        else:
+            days[dep.deposit_date.strftime("%d-%m-%Y")]+=dep.amount
+    days={k:v for k,v in sorted(days.items(),key=lambda x: datetime.strptime(x[0],"%d-%m-%Y"))}
+    return days
+

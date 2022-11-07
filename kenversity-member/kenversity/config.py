@@ -20,12 +20,12 @@ class Config:
     APP_SECRET="Dmpu7oYaCULD1xZG"
     BUSINESS_SHORTCODE="4029829"
     PASSCODE="2ce084c9f634b1334c806ce7c7b3cbfdf8f6a5e5b1a4a94f64a5495a3cb27960"
-    CALLBACK_URL="https://550e-105-50-230-22.eu.ngrok.io/callback_url"
+    CALLBACK_URL="https://74fa-105-161-171-128.ap.ngrok.io//callback_url"
 
 class Development(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:////home/allan/Documents/kenversityMIS/kenversity.db'
 
 class Producton(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/eacdt?user=postgres&password=admin123'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/kenversity?user=postgres&password=admin123'
 
 conf={"dev":Development,"prod":Producton}

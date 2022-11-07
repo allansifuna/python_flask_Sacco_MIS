@@ -30,11 +30,21 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Pending Member Approvals</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800"> {{pending_member_approvals}} Members</div>
+                      {%if current_user.role == "ADMINSTARTOR"%}
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Member Deposits</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">KES {{total_deposits | format_currency}}</div>
+                      {%else%}
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Pending Member Approvals</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"> {{pending_member_approvals}} Members</div>
+                      {%endif%}
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      {%if current_user.role == "ADMINSTARTOR"%}
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      {%else%}
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      {%endif%}
+
                     </div>
                   </div>
                 </div>
@@ -96,6 +106,57 @@
               </div>
             </div>
           </div>
+          {%if current_user.role == "ADMINSTARTOR"%}
+          <div class="row">
+
+
+            <!-- Area Chart -->
+            <div class="col-xl-7 col-lg-7">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary"> Daily Member Deposits Trend</h6>
+
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-area">
+                    <canvas id="myAreaChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="col-xl-5 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Loans</h6>
+
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2">
+                    <canvas id="myPieChart"></canvas>
+                  </div>
+                  <div class="mt-4 text-center small">
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-primary"></i> In Progress
+                    </span>
+
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-success"></i> Fulfilled
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-danger"></i> defaulted
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {%endif%}
 
             <!-- <div class="row">
                  <div>
@@ -204,13 +265,12 @@ var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
     labels:[
-    20
-          // {% for item in labels %}
-          //  "{{ item }}",
-          // {% endfor %}
+          {% for item in deposit_days.keys() %}
+           "{{ item }}",
+          {% endfor %}
   ],
     datasets: [{
-      label: "Total Time",
+      label: "Member Deposits Trend",
       lineTension: 0.3,
       backgroundColor: "rgba(78, 115, 223, 0.05)",
       borderColor: "rgba(78, 115, 223, 1)",
@@ -223,10 +283,9 @@ var myLineChart = new Chart(ctx, {
       pointHitRadius: 10,
       pointBorderWidth: 2,
       data: [
-      10
-          // {% for item in data %}
-          //  "{{ item }}",
-          // {% endfor %}
+          {% for item in deposit_days.values() %}
+           "{{ item }}",
+          {% endfor %}
   ],
     }],
   },
@@ -259,7 +318,7 @@ var myLineChart = new Chart(ctx, {
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return  number_format(value) +' mins';
+            return  'KES '+ number_format(value);
           }
         },
         gridLines: {
@@ -291,7 +350,7 @@ var myLineChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': ' + number_format(tooltipItem.yLabel) +' mins';
+          return 'KES '+datasetLabel + ': ' + number_format(tooltipItem.yLabel);
         }
       }
     }
@@ -307,10 +366,10 @@ var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
   type: 'doughnut',
   data: {
-    labels: ["Boys", "Girls"],
+    labels: ["In Progress", "Fulfilled","Defaulted"],
     datasets: [{
-      data: [20,40 ],
-      backgroundColor: ['#4e73df', '#1cc88a'],
+      data: [100,120,110 ],
+      backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b'],
       hoverBackgroundColor: ['#2e59d9', '#17a673'],
       hoverBorderColor: "rgba(234, 236, 244, 1)",
     }],
@@ -324,13 +383,13 @@ var myPieChart = new Chart(ctx, {
       borderWidth: 1,
       xPadding: 15,
       yPadding: 15,
-      displayColors: false,
+      displayColors: true,
       caretPadding: 10,
     },
     legend: {
       display: false
     },
-    cutoutPercentage: 80,
+    cutoutPercentage: 70,
   },
 });
     </script>

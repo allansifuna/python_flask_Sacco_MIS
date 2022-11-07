@@ -99,10 +99,15 @@ def register():
     if stage is None:
         form=MemberRegistrationForm()
         if form.validate_on_submit():
+            if form.phone.data.startswith("0"):
+                phone=f"254{form.phone.data[1:]}"
+            elif form.phone.data.startswith("+"):
+                phone=form.phone.data[1:]
+            else:
+                phone=form.phone.data
             fname=form.first_name.data
             lname=form.last_name.data
             email=form.email.data
-            phone=form.phone.data
             nat_id=form.national_id.data
             passw=form.password.data
             password=bcrypt.generate_password_hash(passw).decode("utf-8")
@@ -179,6 +184,7 @@ def callback_url():
     decoded = request_data.decode()
     resp=json.loads(decoded)
     resultCode=resp["Body"]["stkCallback"]["ResultCode"]
+    return
     if resultCode == 0:
         phone_number=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
         amount=resp["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
@@ -263,7 +269,7 @@ def make_deposit():
 @member.route('/member/view/deposits', methods=["POST", "GET"])
 @login_required
 def view_deposits():
-    deposits=Deposit.query.filter_by(memberID=current_user.id).filter(Deposit.amount!=None).all()
+    deposits=Deposit.query.filter_by(memberID=current_user.id).filter(Deposit.amount!=None).order_by(Deposit.deposit_date.desc()).all()
     i=1
     ds={}
     for deposit in deposits:
@@ -434,6 +440,7 @@ def view_loans():
 @login_required
 def view_disbursed_loans():
     loans=Loan.query.filter_by(memberID=current_user.id).filter_by(status="DISBURSED").order_by(Loan.date_created.desc()).all()
+    # print(current_user.id)
     loans.extend(Loan.query.filter_by(memberID=current_user.id).filter_by(status="FULFILLED").order_by(Loan.date_created.desc()).all())
     loans=add_nums(loans)
     today=date.today()

@@ -5,6 +5,7 @@ from wtforms.fields.html5 import TelField, DateField, EmailField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileAllowed
 from kenversity.models import Member
+import re
 
 class NullableDateField(DateField):
     """Native WTForms DateField throws error for empty dates.
@@ -28,20 +29,34 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me?')
 
 class MemberRegistrationForm(FlaskForm):
-    first_name = StringField('First Name')
-    last_name = StringField('Last Name')
-    email = EmailField('Email')
+    first_name = StringField('First Name',validators=[DataRequired(), Length(min=2)])
+    last_name = StringField('Last Name',validators=[DataRequired(), Length(min=2)])
+    email = EmailField('Email',validators=[DataRequired(), Email()])
     phone = TelField('Phone Number')
-    national_id = StringField('National ID')
+    national_id = StringField('National ID', validators=[Length(min=8,max=8)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('Confirm Password', validators=[EqualTo('password'), Length(min=8)])
 
+    def validate_email(self, email):
+        member = Member.query.filter_by(email=email.data).first()
+        if member:
+            raise ValidationError('There is an existing account with that email. Use another email to register.')
+    def validate_phone(self,phone):
+        pattern="\+?(254|0)(7|1)\d{8}"
+        phone_number=phone.data
+        if not re.match(pattern,phone_number):
+            raise ValidationError('Invalid Phone Number!!!!')
+        member = Member.query.filter_by(phone_number=phone.data).first()
+        if member:
+            raise ValidationError('There is an existing account with that phone number. Use another phone number to register.')
+
+
 
 class MemberDataForm(FlaskForm):
-    id_front = FileField('ID Front', validators=[FileAllowed(['jpg', 'png'])])
-    id_back = FileField('ID Back', validators=[FileAllowed(['jpg', 'png'])])
-    kra_pin = FileField('KRA PIN Certificate', validators=[FileAllowed(['pdf'])])
-    photo = FileField('Passport Photo', validators=[FileAllowed(['jpg', 'png'])])
+    id_front = FileField('ID Front', validators=[FileAllowed(['jpg', 'png']),DataRequired()])
+    id_back = FileField('ID Back', validators=[FileAllowed(['jpg', 'png']),DataRequired()])
+    kra_pin = FileField('KRA PIN Certificate', validators=[FileAllowed(['pdf']),DataRequired()])
+    photo = FileField('Passport Photo', validators=[FileAllowed(['jpg', 'png']),DataRequired()])
 
 class MemberRegPayForm(FlaskForm):
     phone = TelField('Phone Number')

@@ -15,7 +15,7 @@ for name in names:
 	phone=f"2547{''.join([str(choice(nums)) for i in range(8)])}"
 	nat_id="".join([str(choice(nums)) for i in range(8)])
 	email=f"{fname.lower()}{lname.lower()}@gmail.com"
-	ps=f"{fname.lower()}123"
+	ps=f"{fname.lower()}1234"
 	passw=bcrypt.generate_password_hash(ps).decode("utf-8")
 	member= Member(first_name = fname,last_name=lname,email=email,phone_number=phone,national_id=nat_id,id_front=id_front,id_back=id_back,kra_pin=kra_pin,password=passw)
 	member.save()

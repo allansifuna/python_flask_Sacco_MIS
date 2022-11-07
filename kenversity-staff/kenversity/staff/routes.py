@@ -2,14 +2,31 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from kenversity import db, bcrypt, mail
 from .forms import (LoginForm,AddLoanCategoriesForm,AddStaffForm,SetPasswordForm,ApproveMemberForm,
         DeclineLoanForm,SearchForm,PasswordResetForm,ResetRequestForm,UpdateTicketForm)
-from .utils import send_set_password_email,get_member_No,send_approval_email,send_disapproval_email,add_nums,send_loan_decline_email,send_reset_email
-from kenversity.models import Staff,Member,LoanCategory,Transaction,Loan,Collateral,Guarantor,Repayment,Ticket,TicketMessage
+from .utils import (send_set_password_email,
+                    get_member_No,send_approval_email,
+                    send_disapproval_email,
+                    add_nums,
+                    send_loan_decline_email,
+                    send_reset_email,
+                    get_deposit_days)
+from kenversity.models import (Staff,
+                    Member,
+                    LoanCategory,
+                    Transaction,
+                    Loan,
+                    Collateral,
+                    Guarantor,
+                    Repayment,
+                    Ticket,
+                    TicketMessage,
+                    Deposit)
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_weasyprint import HTML, render_pdf
 import secrets
 from datetime import datetime,date
 from dateutil.relativedelta import relativedelta
 staff = Blueprint('staff', __name__)
+
 
 @staff.route('/',methods=["POST","GET"])
 @staff.route('/staff',methods=["POST","GET"])
@@ -19,10 +36,25 @@ def dashboard():
     pending_loan_applications=Loan.query.filter_by(staffID=None).count()
     pending_loan_approvals=Loan.query.filter_by(staffID=current_user.id).filter(Loan.status!="DECLINED").filter(Loan.status!="APPROVED").filter(Loan.status!="DISBURSED").count()
     open_tickets=Ticket.query.filter_by(status="OPEN").count()
+    total_deposits = 0
+    if current_user.role == "ADMINSTARTOR":
+        all_deps=Deposit.query.all()
+        for dep in all_deps:
+            total_deposits+=dep.amount
+        deposit_days=get_deposit_days()
+
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template('home.html',open_tickets=open_tickets,pending_member_approvals=pending_member_approvals,pending_loan_approvals=pending_loan_approvals,pending_loan_applications=pending_loan_applications,search=search)
+    return render_template('home.html',
+                    open_tickets=open_tickets,
+                    pending_member_approvals=pending_member_approvals,
+                    pending_loan_approvals=pending_loan_approvals,
+                    pending_loan_applications=pending_loan_applications,
+                    search=search,
+                    total_deposits=total_deposits,
+                    deposit_days=deposit_days
+                    )
 
 @staff.route('/search/<string:data>', methods=["POST", "GET"])
 @login_required

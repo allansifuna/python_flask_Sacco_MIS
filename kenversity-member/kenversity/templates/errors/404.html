@@ -1,4 +1,6 @@
+{% if current_user.is_authenticated%}
 {%extends 'layout.html'%}
+{%endif%}
 {%block content%}
 
 <div class="container-fluid">
