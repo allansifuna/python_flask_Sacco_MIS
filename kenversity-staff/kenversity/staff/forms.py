@@ -63,4 +63,4 @@ class ResetRequestForm(FlaskForm):
 
 class UpdateTicketForm(FlaskForm):
     ticket_id=StringField()
-    message=TextAreaField("Add Description.")
+    message=TextAreaField("Add Description.",validators=[DataRequired()])

@@ -557,6 +557,7 @@ def view_all_defaulted_loans():
 def view_member_loans(member_id):
     member=Member.query.get_or_404(member_id)
     loans=Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").all()
+    loans.extend(Loan.query.filter_by(memberID=member_id).filter_by(status="DEFAULTED").all())
     loans.extend(Loan.query.filter_by(memberID=member_id).filter_by(status="FULFILLED").all())
     loans=add_nums(loans)
     search=SearchForm()
