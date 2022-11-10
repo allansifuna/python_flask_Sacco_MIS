@@ -53,6 +53,66 @@ def send_approval_email(member):
     '''
     mail.send(msg)
 
+def send_loan_approval_email(loan):
+    msg = Message('Loan Approved Email', sender=(
+        "Kenversity SACCO", "Ke"), recipients=[loan.loan_applier.email])
+
+    msg.body = f'''
+    Dear {loan.loan_applier.first_name},
+
+    Your loan application, Loan Number {loan.loanNo}, has been successfully APPROVED.
+
+
+
+    The following are the loan specifications:-
+
+    Loan Number: {loan.loanNo},
+
+    Amount: {loan.amount} (inclusive of interest),
+
+    Repayment Duration: {loan.loan_cat.repayment_duration} Months.
+
+    The loan will be duly disbursed within 24hrs.
+
+
+
+    For more information regarding the loan log in to our self service portal at http://127.0.0.1:5000/member.
+
+    Thank you.
+
+    Regards,
+    Kenversity Sacco Staff.
+    '''
+    mail.send(msg)
+
+def send_loan_disbursement_email(loan):
+    msg = Message('Loan Disbursed Email', sender=(
+        "Kenversity SACCO", "Ke"), recipients=[loan.loan_applier.email])
+
+    msg.body = f'''
+    Dear {loan.loan_applier.first_name},
+
+    Your loan application, Loan Number {loan.loanNo}, has been successfully DISBURSED.
+
+
+
+    The following are the loan specifications:-
+
+    Loan Number: {loan.loanNo},
+
+    Amount: {loan.amount} (inclusive of interest),
+
+    Repayment Duration: {loan.loan_cat.repayment_duration} Months.
+
+    For more information regarding the loan log in to our self service portal at http://127.0.0.1:5000/member.
+
+    Thank you.
+
+    Regards,
+    Kenversity Sacco Staff.
+    '''
+    mail.send(msg)
+
 def send_disapproval_email(member,reason,reg_fees):
     msg = Message('Member Approval Declined', sender=(
         "Kenversity SACCO", "Ke"), recipients=[member.email])
@@ -114,6 +174,8 @@ def send_loan_decline_email(member,reason):
     Your Loan Application has been declined.
 
     This is due to the following reasons cited by staff:-
+
+
     {reason}.
 
 

@@ -8,7 +8,9 @@ from .utils import (send_set_password_email,
                     add_nums,
                     send_loan_decline_email,
                     send_reset_email,
-                    get_deposit_days)
+                    get_deposit_days,
+                    send_loan_approval_email,
+                    send_loan_disbursement_email)
 from kenversity.models import (Staff,
                     Member,
                     LoanCategory,
@@ -44,6 +46,7 @@ def dashboard():
             total_deposits+=dep.amount
     deposit_days=get_deposit_days()
     loans=[Loan.query.filter_by(status="DISBURSED").count(),Loan.query.filter_by(status="FULFILLED").count(),Loan.query.filter_by(status="DEFAULTED").count()]
+    pending_loan_disbursements = Loan.query.filter_by(status="APPROVED").count()
     search=SearchForm()
     if search.validate_on_submit():
         return redirect(url_for('staff.searches', data=search.text.data))
@@ -52,6 +55,7 @@ def dashboard():
                     pending_member_approvals=pending_member_approvals,
                     pending_loan_approvals=pending_loan_approvals,
                     pending_loan_applications=pending_loan_applications,
+                    pending_loan_disbursements=pending_loan_disbursements,
                     search=search,
                     total_deposits=total_deposits,
                     deposit_days=deposit_days,
@@ -228,7 +232,7 @@ def member_approval(member_id):
             member.memberNo=get_member_No()
             member.status="ACTIVE"
             member.update()
-            # send_approval_email(member)
+            send_approval_email(member)
             flash("Member Successfully Approved","success")
             return redirect(url_for('staff.member_approvals'))
         else:
@@ -250,10 +254,7 @@ def member_approval(member_id):
     form.last_name.data=member.last_name
     form.national_id.data=member.national_id
     form.reg_fees.data=reg_fees
-    search=SearchForm()
-    if search.validate_on_submit():
-        return redirect(url_for('staff.searches', data=search.text.data))
-    return render_template("member_approval.html",form=form,member=member,search=search)
+    return render_template("member_approval.html",form=form,member=member)
 
 @staff.route('/staff/loans/view',methods=["POST","GET"])
 @login_required
@@ -459,6 +460,7 @@ def recommend_disbursement(loan_id):
     loan=Loan.query.get_or_404(loan_id)
     loan.status="APPROVED"
     loan.update()
+    send_loan_approval_email(loan)
     flash("Loan has been fowarded to the credit manager for Disbursment.","success")
     return redirect(url_for('staff.view_staff_loans'))
 
@@ -489,6 +491,7 @@ def disbursement_verdict(loan_id,verdict):
         loan.end_date= datetime.today()+tdelta
         loan.amount=int(loan.amount*(1+(loan.loan_cat.interest_rate/100)))
         loan.update()
+        send_loan_disbursement_email(loan)
         flash("Loan successfully disbursed.","success")
         return redirect(url_for('staff.loan_disburse'))
     else:

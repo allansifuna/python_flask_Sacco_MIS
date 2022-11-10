@@ -38,6 +38,16 @@ def get_transaction_No():
         num=str(num).zfill(6)
         return f"TN{num}"
 
+def get_staff_no():
+    staffs=Staff.query.filter(Staff.staffNo!=None).order_by(Staff.staffNo.asc()).all()
+    if len(staffs) == 0 :
+        return "ST00001"
+    else:
+        num=staffs[-1].staffNo
+        num=int(num[2:])+1
+        num=str(num).zfill(5)
+        return f"ST{num}"
+
 class Member(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     memberNo=db.Column(db.String(7),nullable=True)
@@ -124,7 +134,7 @@ class Member(db.Model,UserMixin, CRUDMixin):
 
 class Staff(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
-    # staffNo=db.Column(db.String(7),nullable=True)
+    staffNo=db.Column(db.String(7),default=get_staff_no,nullable=True)
     first_name=db.Column(db.String(40),nullable=False)
     last_name=db.Column(db.String(40),nullable=False)
     national_id=db.Column(db.String(8),nullable=False)

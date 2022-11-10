@@ -38,7 +38,7 @@ class ApproveMemberForm(FlaskForm):
     last_name=StringField('Last Name', validators=[DataRequired()])
     national_id=StringField('National ID', validators=[DataRequired()])
     reg_fees=IntegerField('Registration Fees', validators=[DataRequired()])
-    verdict=SelectField('Select Verdict', choices=[('', 'Select Verdict ...'),('APPROVE', 'Approve'), ('DISAPPROVE', 'Disapprove')])
+    verdict=SelectField('Select Verdict', choices=[('', 'Select Verdict ...'),('APPROVE', 'Approve'), ('DISAPPROVE', 'Disapprove')],validators=[DataRequired()])
     reason=TextAreaField("Reason if Disapproved")
 
 class DeclineLoanForm(FlaskForm):

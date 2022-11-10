@@ -15,7 +15,7 @@ REGISTRATION_FEE_AMOUNT=1
 member = Blueprint('member', __name__)
 
 def get_loan_category():
-    return LoanCategory.query.all()
+    return LoanCategory.query.filter(LoanCategory.min_shares<=Member.get_shares(current_user.id)).all()
 
 
 def get_loan_category_pk(obj):
@@ -46,6 +46,7 @@ def get_msgs():
             i+=1
     msgs=len(open_messages.keys())
     return (msgs,open_messages)
+
 @member.route('/member')
 @login_required
 def dashboard():
@@ -60,6 +61,8 @@ def dashboard():
     guarantor_requests = Guarantor.query.filter_by(memberID=current_user.id).filter_by(status="UNCONFIRMED").count()
     pending_loans=Loan.query.filter_by(status="UNAPPROVED").filter_by(memberID=current_user.id).count()
     msgs,open_messages=get_msgs()
+    if not current_user.bank_account:
+        flash("Please update your bio data and employment status on your account profile.","info")
     return render_template('home.html',total_shares=total_shares,guarantor_requests=guarantor_requests,loans=loans,pending_loans=pending_loans,msgs=msgs,open_messages=open_messages,show=True)
 
 @member.route('/member/login', methods=["POST", "GET"])
@@ -114,6 +117,7 @@ def register():
             password=bcrypt.generate_password_hash(passw).decode("utf-8")
             member=Member(first_name=fname,last_name=lname,email=email,phone_number=phone,national_id=nat_id,password=password)
             member.save()
+            flash("Details saved successfuly","success")
             return redirect(url_for('member.register',stage="user_data",member=member.id))
     elif stage == "user_data":
         memberID=request.args.get("member")
@@ -133,6 +137,7 @@ def register():
             member.photo=photo
             member.status="INACTIVE"
             member.update()
+            flash("Details saved successfuly","success")
             return redirect(url_for('member.register',stage="payment",member=member.id))
     elif stage == "payment":
         form=MemberRegPayForm()

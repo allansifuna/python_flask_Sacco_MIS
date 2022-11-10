@@ -34,6 +34,7 @@
                     <thead>
                         <tr>
                             <th>No#</th>
+                            <th>Staff No</th>
                             <th>National ID</th>
                             <th>Name</th>
                             <th>Email</th>
@@ -45,6 +46,7 @@
                         {%for num,staf in staff.items()%}
                             <tr>
                             <td>{{num}}</td>
+                            <td>{{staf.staffNo}}</td>
                             <td>{{staf.national_id}}</td>
                             <td> <a href="{{url_for('staff.staff_profile',staff_id=staf.id)}}">{{staf.first_name}} {{staf.last_name}}</a></td>
                             <td>{{staf.email}}</td>

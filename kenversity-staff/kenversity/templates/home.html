@@ -57,8 +57,13 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">MY PENDING LOAN APPROVALS</div>
+                      {%if current_user.role == "ADMINSTARTOR"%}
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">MY PENDING LOAN DISBURSEMENTS</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{pending_loan_disbursements}}</div>
+                      {%else%}
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">MY PENDING LOAN APPROVALS</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">{{pending_loan_approvals}} {%if pending_loan_approvals == 1 %} Loan {%else%} Loans{%endif%}</div>
+                      {%endif%}
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>

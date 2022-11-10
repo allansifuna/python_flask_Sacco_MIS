@@ -34,75 +34,75 @@
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
                     {%if form.name.errors%}
-                    {{form.name(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    {{form.name(class="form-control is-invalid",id="exampleInputEmail")}}
                     <div class="invalid-feedback">
                       {%for error in form.name.errors%}
                       <span>{{error}}</span><br />
                       {%endfor%}
                     </div>
                     {%else%}
-                    {{form.name(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Loan Category Name...")}}
+                    {{form.name(class="form-control",id="exampleInputEmail",placeholder="Enter Loan Category Name...")}}
                     {%endif%}
                   </div>
                   <div class="col-sm-6">
                     {%if form.min_shares.errors%}
-                    {{form.min_shares(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                    {{form.min_shares(class="form-control is-invalid",id="exampleInputEmail")}}
                     <div class="invalid-feedback">
                       {%for error in form.min_shares.errors%}
                       <span>{{error}}</span><br />
                       {%endfor%}
                     </div>
                     {%else%}
-                    {{form.min_shares(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Minimum Shares...")}}
+                    {{form.min_shares(class="form-control",id="exampleInputEmail",placeholder="Enter Minimum Shares...")}}
                     {%endif%}
                   </div>
                 </div>
                 <div class="form-group">
                   {%if form.max_amount.errors%}
-                  {{form.max_amount(class="form-control form-control-user is-invalid",id="exampleInputmax_amount")}}
+                  {{form.max_amount(class="form-control is-invalid",id="exampleInputmax_amount")}}
                   <div class="invalid-feedback">
                     {%for error in form.max_amount.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.max_amount(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Max Amount...")}}
+                  {{form.max_amount(class="form-control",id="exampleInputEmail",placeholder="Enter Max Amount...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
                   {%if form.repayment_duration.errors%}
-                  {{form.repayment_duration(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.repayment_duration(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.repayment_duration.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.repayment_duration(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Repayment Duration...")}}
+                  {{form.repayment_duration(class="form-control",id="exampleInputEmail",placeholder="Enter Repayment Duration...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
                   {%if form.qualification_duration.errors%}
-                  {{form.qualification_duration(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.qualification_duration(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.qualification_duration.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.qualification_duration(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Qualification Duration...")}}
+                  {{form.qualification_duration(class="form-control",id="exampleInputEmail",placeholder="Enter Qualification Duration...")}}
                   {%endif%}
                 </div>
                 <div class="form-group">
                   {%if form.interest_rate.errors%}
-                  {{form.interest_rate(class="form-control form-control-user is-invalid",id="exampleInputEmail")}}
+                  {{form.interest_rate(class="form-control is-invalid",id="exampleInputEmail")}}
                   <div class="invalid-feedback">
                     {%for error in form.interest_rate.errors%}
                     <span>{{error}}</span><br />
                     {%endfor%}
                   </div>
                   {%else%}
-                  {{form.interest_rate(class="form-control form-control-user",id="exampleInputEmail",placeholder="Enter Loan Rate...")}}
+                  {{form.interest_rate(class="form-control",id="exampleInputEmail",placeholder="Enter Loan Rate...")}}
                   {%endif%}
                 </div>
 
