@@ -232,7 +232,7 @@ def member_approval(member_id):
             member.memberNo=get_member_No()
             member.status="ACTIVE"
             member.update()
-            send_approval_email(member)
+            # send_approval_email(member)
             flash("Member Successfully Approved","success")
             return redirect(url_for('staff.member_approvals'))
         else:

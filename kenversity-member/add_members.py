@@ -3,9 +3,9 @@ create_app("dev").app_context().push()
 from kenversity.models import Member,Transaction
 from kenversity import bcrypt
 from random import choice
-id_front="7c8ecb9c9f46fe9a.jpg"
-id_back="71c85022efe1c984.jpg"
-kra_pin="c0ea9dd9d65fa182.pdf"
+id_front="7795a3635cd70307.jpg"
+id_back="8b2efbe15aeb7d7f.jpg"
+kra_pin="9c3bdd3c4ec49d84.pdf"
 nums=[1,2,3,4,5,6,7,8,9]
 values=[1,2,3,4,5,6,7,8,9,0,"A","B","C","D","E","F","H","G","I","J","K","L","M","N","O","P","Z","R","S","T"]
 names=[('Geofrey','Pkiach'),('John','Doe'),('Melvin','Kimathi'),('Steve','Ndegwa'),('James','Kamau'),('Joseph','Kimani'),('Mercy','Mureithi'),('Elizabeth','Kamau'),('Sandra','Tacko'),('Joan','Adhiambo'),('June','Akinyi'),('Diana','Chelang\'at'),('Elizabeth','Chepkoech'),('Faith','Nekesa'),('Bradley','Jakait'),('Mark','Mlango'),('Nick','Ruto'),('Joseph','Wekesa'),('Nick','Orimbo'),('Hilda','Nasimiyu'),('Abel','Wafula'),('Hadija','Lule'),('Ashley','Kamau'),('Oscar','Ouma'),('Kingsley','Taabu'),('Samuel','Muli'),('Samuel','Ombati'),('Samuel','Kuria'),('Emmanuel','Chege'),('Emmanuel','Loperatum'),('Dominic','Marende'),('Remmington','Were'),('Kenneth','Bett'),('Arnold','Ombasa'),('Elizabeth','Wangunyu'),('Frank','Wafula'),('Robert','Wekesa'),('Monica','Nangila'),('Christine','Naliaka'),('Christine','Maina'),('Cornelius','Kundu'),('Dan','Shitawa'),('Robert','Kubasu')]

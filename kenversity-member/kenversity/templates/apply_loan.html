@@ -166,6 +166,10 @@
                   mxa.value="KES "+data.max_amount
                   inr.value=data.interest_rate +"%"
                   rep.value = data.repayment_duration + " Months"
+                  if(lm.value != ''){
+                    v=(1+parseFloat(inr.value)/100)* parseFloat(lm.value)
+                    rm.value = "KES "+ parseInt(v)
+                  }
                   // div1.hidden=false;
                   // div2.hidden=false;
                   // div3.hidden=false;

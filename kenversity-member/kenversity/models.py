@@ -173,7 +173,9 @@ class Staff(db.Model,UserMixin, CRUDMixin):
 
     @staticmethod
     def get_loans_approved(staff_id):
-        loans=Loan.query.filter_by(staffID=staff_id).count()
+        loans=Loan.query.filter_by(staffID=staff_id).filter_by(status="DISBURSED").count()
+        loans+=Loan.query.filter_by(staffID=staff_id).filter_by(status="FULFILLED").count()
+        loans+=Loan.query.filter_by(staffID=staff_id).filter_by(status="DEFAULTED").count()
         return loans
 
     @staticmethod
