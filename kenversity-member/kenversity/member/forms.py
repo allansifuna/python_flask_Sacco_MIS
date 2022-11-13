@@ -1,4 +1,6 @@
 from flask_wtf import FlaskForm
+from flask_login import current_user
+from flask import flash
 from wtforms import StringField, IntegerField, SubmitField, PasswordField, BooleanField, SelectField, FloatField,TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import TelField, DateField, EmailField
@@ -6,6 +8,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileAllowed
 from kenversity.models import Member
 import re
+from datetime import date, timedelta,datetime
 
 class NullableDateField(DateField):
     """Native WTForms DateField throws error for empty dates.
@@ -17,7 +20,7 @@ class NullableDateField(DateField):
                 self.data = None
                 return
             try:
-                self.data = datetime.datetime.strptime(date_str, self.format).date()
+                self.data = datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Not a valid date value'))
@@ -50,6 +53,36 @@ class MemberRegistrationForm(FlaskForm):
         if member:
             raise ValidationError('There is an existing account with that phone number. Use another phone number to register.')
 
+class MemberUpdateDetailsForm(FlaskForm):
+    first_name = StringField('First Name',validators=[DataRequired(), Length(min=2)])
+    last_name = StringField('Last Name',validators=[DataRequired(), Length(min=2)])
+    email_addr = EmailField('Email',validators=[DataRequired(), Email()])
+    phone_no = TelField('Phone Number')
+    national_id = StringField('National ID', validators=[Length(min=8,max=8)])
+    submit1 = SubmitField('Save')
+
+    def validate_email_addr(self, email):
+        member = Member.query.filter_by(email=email.data).first()
+        if member and member.id != current_user.id:
+            flash("Email already Exists","danger")
+            raise ValidationError('There is an existing account with that email. Use another email to register.')
+
+    def validate_phone_no(self,phone):
+        pattern="\+?(254|0)(7|1)\d{8}"
+        phone_number=phone.data
+        if not re.match(pattern,phone_number):
+            flash("Invalid Phone Number","danger")
+            raise ValidationError('Invalid Phone Number!!!!')
+        if phone.data.startswith("0"):
+            phone_no=f"254{phone.data[1:]}"
+        elif phone.data.startswith("+"):
+            phone_no=phone.data[1:]
+        else:
+            phone_no=phone.data
+        member = Member.query.filter_by(phone_number=phone_no).first()
+        if member and member.id != current_user.id:
+            flash("Phone number already exists","danger")
+            raise ValidationError('There is an existing account with that phone number. Use another phone number to register.')
 
 
 class MemberDataForm(FlaskForm):
@@ -57,6 +90,7 @@ class MemberDataForm(FlaskForm):
     id_back = FileField('ID Back', validators=[FileAllowed(['jpg', 'png']),DataRequired()])
     kra_pin = FileField('KRA PIN Certificate', validators=[FileAllowed(['pdf']),DataRequired()])
     photo = FileField('Passport Photo', validators=[FileAllowed(['jpg', 'png']),DataRequired()])
+    submit4 = SubmitField('Save')
 
 class MemberRegPayForm(FlaskForm):
     phone = TelField('Phone Number')
@@ -101,6 +135,17 @@ class MemberBioDataForm(FlaskForm):
     house_ownership = SelectField('Select House Ownership', choices=[('','Select House Ownership'),('Rented','Rented'),('Owned','Owned')])
     bank_name = StringField('Bank Name')
     bank_account = StringField('Bank Account No.')
+    submit = SubmitField('Save')
+
+    def validate_dob(self,dob):
+        today=date.today()
+        y=365*18
+        t_delta=timedelta(days=y)
+        ago=today-t_delta
+
+        if ago < dob.data:
+            flash("Invalid Date of Birth","danger")
+            raise ValidationError('Invalid Date of Birth')
 
 class MemberEmplDataForm(FlaskForm):
     employment_status = SelectField('Select Employement Status', choices=[('','Select Employment Status'),('Employed','Employed'),('Self-Employed','Self-Employed')])
@@ -112,6 +157,9 @@ class MemberEmplDataForm(FlaskForm):
     years_of_operation=IntegerField("Years of Operation")
     business_income=IntegerField("Business Income in KES")
     employment_terms = SelectField('Select Employment Terms', choices=[('','Select Employment Terms'),('Permanent','Permanent'),('Casual','Casual'),('Contarct','Contarct')])
+    submit2 = SubmitField('Save')
+
+
 
 class MakeRepaymentForm(FlaskForm):
     loan=QuerySelectField('Select Loan', validators=[DataRequired()], get_label='loanNo', allow_blank=True)

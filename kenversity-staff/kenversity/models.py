@@ -1,7 +1,7 @@
 from kenversity import db,lm
 from flask import current_app
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime,date
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import secrets
 
@@ -132,6 +132,15 @@ class Member(db.Model,UserMixin, CRUDMixin):
                 loans+=1
         return loans
 
+    @staticmethod
+    def get_loans_defaulted(member_id):
+        loans = Loan.query.filter_by(memberID=member_id).filter_by(status="DISBURSED").all()
+        lns=0
+        for loan in loans:
+            if loan.end_date < date.today():
+                lns+=1
+        return lns
+
 class Staff(db.Model,UserMixin, CRUDMixin):
     id = db.Column(db.String(8),default=id_unique, unique=True, primary_key=True)
     staffNo=db.Column(db.String(7),default=get_staff_no,nullable=True)
@@ -155,7 +164,7 @@ class Staff(db.Model,UserMixin, CRUDMixin):
 
     def get_reset_token(self, expires_sec=18000):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'staffID': self.staffID}).decode('utf-8')
+        return s.dumps({'staffID': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token):

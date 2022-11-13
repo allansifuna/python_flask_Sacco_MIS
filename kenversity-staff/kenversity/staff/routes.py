@@ -175,7 +175,7 @@ def add_staff():
         email=form.email.data
         phone_number=form.phone_number.data
         role=form.role.data
-        staff=Staff(first_name=first_name,last_name=first_name,national_id=national_id,status="ACTIVE",email=email,phone_number=phone_number,role=role)
+        staff=Staff(first_name=first_name,last_name=last_name,national_id=national_id,status="INACTIVE",email=email,phone_number=phone_number,role=role)
         staff.save()
         send_set_password_email(staff)
         flash("New Staff Successfully Added.","success")
@@ -197,6 +197,7 @@ def set_password(token):
     if form.validate_on_submit():
         password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         staff.password = password
+        staff.status = "ACTIVE"
         db.session.commit()
         flash(f'Your password has been set. You can now log in', 'success')
         return redirect(url_for('staff.login'))
@@ -536,6 +537,7 @@ def view_my_defaulted_loans(staff_id):
 @login_required
 def view_all_disbursed_loans():
     loans=Loan.query.filter_by(status="DISBURSED").order_by(Loan.start_date.desc()).all()
+    loans.extend(Loan.query.filter_by(status="FULFILLED").order_by(Loan.start_date.desc()).all())
     loans=add_nums(loans)
     today=date.today()
     search=SearchForm()

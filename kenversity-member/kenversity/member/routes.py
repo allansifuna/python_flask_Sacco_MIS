@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request,current_app,jsonify
 from kenversity import db, bcrypt, mail
-from .forms import (LoginForm,MemberRegistrationForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
+from .forms import (LoginForm,MemberRegistrationForm,MemberUpdateDetailsForm,MemberDataForm,MemberRegPayForm,MakeDepositForm,
                     ApplyLoanForm,SearchGuatantorForm,AddCollateralForm,MemberBioDataForm,MemberEmplDataForm,
                     MakeRepaymentForm,PasswordResetForm,ResetRequestForm,OpenTicketForm,UpdateTicketForm,MockLoanRepaymentForm,MockDepositForm)
 from .utils import save_picture,save_file,simulate_pay,add_nums,get_loan_No,get_repayment_No,send_reset_email,get_ticket_No,mock_deposits,mock_repayments
@@ -483,59 +483,65 @@ def download_deposits(member_id):
 @member.route('/member/profile', methods=["POST", "GET"])
 @login_required
 def member_profile():
-    register_form=MemberRegistrationForm()
+    register_form=MemberUpdateDetailsForm()
     docs_form=MemberDataForm()
     biodata_form=MemberBioDataForm()
     empl_form=MemberEmplDataForm()
+    if request.method == "POST":
+        if register_form.submit1.data and register_form.validate_on_submit():
+            if register_form.phone_no.data.startswith("0"):
+                phone=f"254{register_form.phone_no.data[1:]}"
+            elif register_form.phone_no.data.startswith("+"):
+                phone=register_form.phone_no.data[1:]
+            else:
+                phone=register_form.phone_no.data
+            current_user.first_name=register_form.first_name.data
+            current_user.last_name=register_form.last_name.data
+            current_user.email=register_form.email_addr.data
+            current_user.phone_number=phone
+            current_user.national_id=register_form.national_id.data
+            db.session.commit()
+            flash("Successfully Updated Registration Data","success")
+            return redirect(url_for('member.member_profile'))
 
-    if register_form.validate_on_submit():
-        current_user.first_name=register_form.first_name.data
-        current_user.last_name=register_form.last_name.data
-        current_user.email=register_form.email.data
-        current_user.phone_number=register_form.phone.data
-        current_user.national_id=register_form.national_id.data
-        db.session.commit()
-        flash("Successfully Updated Registration Data","success")
-        return redirect(url_for('member.member_profile'))
+        if biodata_form.submit.data and biodata_form.validate_on_submit():
+            current_user.dob=biodata_form.dob.data
+            current_user.gender=biodata_form.gender.data
+            current_user.marital_status=biodata_form.marital_status.data
+            current_user.number_of_dependants=biodata_form.number_of_dependants.data
+            current_user.address=biodata_form.address.data
+            current_user.town=biodata_form.town.data
+            current_user.estate=biodata_form.estate.data
+            current_user.street=biodata_form.street.data
+            current_user.house_number=biodata_form.house_number.data
+            current_user.house_ownership=biodata_form.house_ownership.data
+            current_user.bank_name=biodata_form.bank_name.data
+            current_user.bank_account=biodata_form.bank_account.data
+            db.session.commit()
+            flash("Successfully Updated Bio Data","success")
+            return redirect(url_for('member.member_profile'))
 
-    if biodata_form.validate_on_submit():
-        current_user.dob=biodata_form.dob.data
-        current_user.gender=biodata_form.gender.data
-        current_user.marital_status=biodata_form.marital_status.data
-        current_user.number_of_dependants=biodata_form.number_of_dependants.data
-        current_user.address=biodata_form.address.data
-        current_user.town=biodata_form.town.data
-        current_user.estate=biodata_form.estate.data
-        current_user.street=biodata_form.street.data
-        current_user.house_number=biodata_form.house_number.data
-        current_user.house_ownership=biodata_form.house_ownership.data
-        current_user.bank_name=biodata_form.bank_name.data
-        current_user.bank_account=biodata_form.bank_account.data
-        db.session.commit()
-        flash("Successfully Updated Bio Data","success")
-        return redirect(url_for('member.member_profile'))
-
-    if empl_form.validate_on_submit():
-        if empl_form.employment_status.data == "Employed":
-            current_user.employment_status=empl_form.employment_status.data
-            current_user.employer_name=empl_form.name.data
-            current_user.employer_address=empl_form.address.data
-            current_user.employer_phone=empl_form.phone.data
-            current_user.employment_terms=empl_form.employment_terms.data
-            current_user.retirement_date=empl_form.retirement_date.data
-        if empl_form.employment_status.data == "Self-Employed":
-            current_user.employment_status=empl_form.employment_status.data
-            current_user.business_type=empl_form.business_type.data
-            current_user.years_of_operation=empl_form.years_of_operation.data
-            current_user.business_income=empl_form.business_income.data
-        db.session.commit()
-        flash("Successfully Updated Employment Data","success")
-        return redirect(url_for('member.member_profile'))
+        if empl_form.submit2.data and empl_form.validate_on_submit():
+            if empl_form.employment_status.data == "Employed":
+                current_user.employment_status=empl_form.employment_status.data
+                current_user.employer_name=empl_form.name.data
+                current_user.employer_address=empl_form.address.data
+                current_user.employer_phone=empl_form.phone.data
+                current_user.employment_terms=empl_form.employment_terms.data
+                current_user.retirement_date=empl_form.retirement_date.data
+            if empl_form.employment_status.data == "Self-Employed":
+                current_user.employment_status=empl_form.employment_status.data
+                current_user.business_type=empl_form.business_type.data
+                current_user.years_of_operation=empl_form.years_of_operation.data
+                current_user.business_income=empl_form.business_income.data
+            db.session.commit()
+            flash("Successfully Updated Employment Data","success")
+            return redirect(url_for('member.member_profile'))
 
     register_form.first_name.data=current_user.first_name
     register_form.last_name.data=current_user.last_name
-    register_form.email.data=current_user.email
-    register_form.phone.data=current_user.phone_number
+    register_form.email_addr.data=current_user.email
+    register_form.phone_no.data=current_user.phone_number
     register_form.national_id.data=current_user.national_id
 
     biodata_form.dob.data=current_user.dob
@@ -557,8 +563,8 @@ def member_profile():
     empl_form.phone.data=current_user.employer_phone
     empl_form.retirement_date.data=current_user.retirement_date
     empl_form.business_type.data=current_user.business_type
-    empl_form.years_of_operation.data=current_user.years_of_operation
-    empl_form.business_income.data=current_user.business_income
+    empl_form.years_of_operation.data= 0 if current_user.years_of_operation is None else current_user.years_of_operation
+    empl_form.business_income.data= 0 if current_user.business_income is None else current_user.business_income
     empl_form.employment_terms.data=current_user.employment_terms
     msgs,open_messages=get_msgs()
     return render_template('member_profile.html',register_form=register_form,docs_form=docs_form,biodata_form=biodata_form,empl_form=empl_form,msgs=msgs,open_messages=open_messages,show=True)

@@ -21,67 +21,67 @@
         <div class="col-lg-8 m-auto mt-4">
             <div class="card shadow mb-4">
                 <!-- Card Header - Accordion -->
-                <a href="#collapseCardExamplec" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExamplec">
+                <a href="#collapseCardExamplec" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCardExamplec">
                     <h6 class="m-0 font-weight-bold text-Primary">Registration Data</h6>
                 </a>
                 <!-- Card Content - Collapse -->
-                <div class="collapse show" id="collapseCardExamplec">
+                <div class="collapse" id="collapseCardExamplec">
                     <div class="card-body col-lg-10 m-auto">
                         <form class="user" method="POST" enctype="multipart/form-data">
                     {{register_form.hidden_tag()}}
                     <div class="form-group">
                         {{ register_form.first_name.label() }}
                       {%if register_form.first_name.errors%}
-                            {{register_form.first_name(class="form-control is-invalid",id="exampleInputfirst_name")}}
+                            {{register_form.first_name(class="form-control is-invalid",id="exampleInputfirst_name",readonly="readonly")}}
                             <div class="invalid-feedback">
                               {%for error in register_form.first_name.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{register_form.first_name(class="form-control",id="exampleInputfirst_name",placeholder="Enter First Name...")}}
+                            {{register_form.first_name(class="form-control",id="exampleInputfirst_name",placeholder="Enter First Name...",readonly="readonly")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
                         {{ register_form.last_name.label() }}
                       {%if register_form.last_name.errors%}
-                            {{register_form.last_name(class="form-control is-invalid",id="exampleInputlast_name")}}
+                            {{register_form.last_name(class="form-control is-invalid",id="exampleInputlast_name",readonly="readonly")}}
                             <div class="invalid-feedback">
                               {%for error in register_form.last_name.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{register_form.last_name(class="form-control",id="exampleInputlast_name",placeholder="Enter Last Name...")}}
+                            {{register_form.last_name(class="form-control",id="exampleInputlast_name",placeholder="Enter Last Name...",readonly="readonly")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
-                        {{ register_form.email.label() }}
-                      {%if register_form.email.errors%}
-                            {{register_form.email(class="form-control is-invalid",id="exampleInputEmail")}}
+                        {{ register_form.email_addr.label() }}
+                      {%if register_form.email_addr.errors%}
+                            {{register_form.email_addr(class="form-control is-invalid",id="exampleInputEmail")}}
                             <div class="invalid-feedback">
-                              {%for error in register_form.email.errors%}
+                              {%for error in register_form.email_addr.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{register_form.email(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
+                            {{register_form.email_addr(class="form-control",id="exampleInputEmail",placeholder="Enter Email Address...")}}
                             {%endif%}
 
                     </div>
                     <div class="form-group">
-                        {{ register_form.phone.label() }}
-                      {%if register_form.phone.errors%}
-                            {{register_form.phone(class="form-control is-invalid",id="exampleInputphone")}}
+                        {{ register_form.phone_no.label() }}
+                      {%if register_form.phone_no.errors%}
+                            {{register_form.phone_no(class="form-control is-invalid",id="exampleInputphone_no")}}
                             <div class="invalid-feedback">
-                              {%for error in register_form.phone.errors%}
+                              {%for error in register_form.phone_no.errors%}
                               <span>{{error}}</span><br />
                               {%endfor%}
                             </div>
                             {%else%}
-                            {{register_form.phone(class="form-control",id="exampleInputphone",placeholder="Enter Phone Number...")}}
+                            {{register_form.phone_no(class="form-control",id="exampleInputphone",placeholder="Enter Phone Number...")}}
                             {%endif%}
 
                     </div>
@@ -100,9 +100,7 @@
 
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
-                          Save
-                        </button>
+                        {{register_form.submit1(class="btn btn-primary pl-3 pr-3")}}
                     </div>
                     <hr>
                   </form>
@@ -300,9 +298,7 @@
 
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
-                          Save
-                        </button>
+                        {{biodata_form.submit(class="btn btn-primary pl-3 pr-3")}}
                     </div>
                     <hr>
                   </form>
@@ -477,9 +473,7 @@
 
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
-                          Save
-                        </button>
+                        {{empl_form.submit2(class="btn btn-primary pl-3 pr-3")}}
                     </div>
                     <hr>
                   </form>
@@ -538,9 +532,7 @@
                     </div>
                     </div>
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary pl-3 pr-3 ">
-                          Save
-                        </button>
+                        {{docs_form.submit4(class="btn btn-primary pl-3 pr-3")}}
                     </div>
                     <hr>
                   </form>
