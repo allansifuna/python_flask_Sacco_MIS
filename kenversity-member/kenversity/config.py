@@ -11,15 +11,15 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     ADMINS = 'allansifuna324@gmail.com'
-    MAIL_USERNAME = 'noreply.sifuna@gmail.com'
-    MAIL_PASSWORD = 'ftsliklrueweevrl'
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = 'Kenversity SACCO Developers'
     SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
     API_ENVIRONMENT="production"
-    APP_KEY="kAXqU8JZzdzxUchRKnnaKVPX5AVl1MLZ"
-    APP_SECRET="Dmpu7oYaCULD1xZG"
-    BUSINESS_SHORTCODE="4029829"
-    PASSCODE="2ce084c9f634b1334c806ce7c7b3cbfdf8f6a5e5b1a4a94f64a5495a3cb27960"
+    APP_KEY=os.environ.get("APP_KEY")
+    APP_SECRET=os.environ.get("APP_SECRET")
+    BUSINESS_SHORTCODE=os.environ.get("BUSINESS_SHORTCODE")
+    PASSCODE=os.environ.get("PASSCODE")
     CALLBACK_URL="https://3209-154-122-233-254.in.ngrok.io/callback_url"
 
 class Development(Config):
