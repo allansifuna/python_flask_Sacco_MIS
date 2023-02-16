@@ -11,8 +11,8 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     ADMINS = 'allansifuna324@gmail.com'
-    MAIL_USERNAME = 'noreply.sifuna@gmail.com'
-    MAIL_PASSWORD = 'ftsliklrueweevrl'
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = 'Kenversity SACCO Developers'
     SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
